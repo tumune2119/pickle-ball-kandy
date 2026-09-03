@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    env:
+      # Placeholder values so build-time module evaluation (lib/db/db.ts,
+      # lib/auth.ts) has something to read - CI checks that the app compiles
+      # and typechecks, not that it can reach a real database.
+      DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      NEXT_PUBLIC_PAYHERE_MERCHANT_ID: placeholder
+      PAYHERE_SECRET: placeholder
+      PAYHERE_BASE_URL: https://sandbox.payhere.lk/pay/checkout
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run build
