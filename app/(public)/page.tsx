@@ -31,7 +31,7 @@ export default function Home() {
             What is Pickleball?
           </h2>
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="bg-gradient-to-br from-gray-300 to-gray-400 h-80 rounded-lg flex items-center justify-center">
+            <div className="bg-linear-to-br from-gray-300 to-gray-400 h-80 rounded-lg flex items-center justify-center">
               <span className="text-8xl opacity-30">🏸</span>
             </div>
             <div className="space-y-4">

@@ -18,7 +18,7 @@ export default function AboutPage() {
       {/* Story */}
       <section className="max-w-4xl mx-auto px-4 py-12 md:py-16">
         <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="bg-gradient-to-br from-blue-300 to-blue-400 h-96 rounded-lg flex items-center justify-center">
+          <div className="bg-linear-to-br from-blue-300 to-blue-400 h-96 rounded-lg flex items-center justify-center">
             <span className="text-8xl opacity-30">🏸</span>
           </div>
           <div className="space-y-6">
@@ -189,7 +189,7 @@ export default function AboutPage() {
               key={idx}
               className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition"
             >
-              <div className="bg-gradient-to-br from-blue-300 to-blue-400 h-48 flex items-center justify-center">
+              <div className="bg-linear-to-br from-blue-300 to-blue-400 h-48 flex items-center justify-center">
                 <span className="text-6xl opacity-30">👤</span>
               </div>
               <div className="p-6">

@@ -36,11 +36,11 @@ export default function ImageGallery({
             onClick={() => setSelectedImage(image)}
             className="relative h-40 sm:h-48 bg-gray-200 rounded-lg overflow-hidden hover:opacity-80 transition group"
           >
-            <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+            <div className="w-full h-full bg-linear-to-br from-gray-300 to-gray-400 flex items-center justify-center">
               <span className="text-4xl opacity-40">🏸</span>
             </div>
             {image.caption && (
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-end p-3">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition flex items-end p-3">
                 <p className="text-white text-sm font-semibold group-hover:visible">
                   {image.caption}
                 </p>
@@ -53,7 +53,7 @@ export default function ImageGallery({
       {/* Lightbox */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedImage(null)}
         >
           <div className="max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
@@ -78,7 +78,7 @@ export default function ImageGallery({
               </button>
 
               {/* Placeholder for image */}
-              <div className="bg-gradient-to-br from-gray-300 to-gray-400 h-96 sm:h-[500px] flex items-center justify-center">
+              <div className="bg-linear-to-br from-gray-300 to-gray-400 h-96 sm:h-[500px] flex items-center justify-center">
                 <span className="text-8xl opacity-20">🏸</span>
               </div>
 
