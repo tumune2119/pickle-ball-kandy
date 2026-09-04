@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">🏸</span>
               </div>
               <h3 className="font-bold text-white text-lg">{COURT_NAME}</h3>
@@ -24,22 +24,22 @@ export default function Footer() {
             <h4 className="font-semibold text-white mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="hover:text-blue-400 transition">
+                <Link href="/" className="hover:text-purple-400 transition">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-blue-400 transition">
+                <Link href="/about" className="hover:text-purple-400 transition">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="hover:text-blue-400 transition">
+                <Link href="/pricing" className="hover:text-purple-400 transition">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-blue-400 transition">
+                <Link href="/contact" className="hover:text-purple-400 transition">
                   Contact
                 </Link>
               </li>
@@ -51,22 +51,22 @@ export default function Footer() {
             <h4 className="font-semibold text-white mb-4">Information</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/faq" className="hover:text-blue-400 transition">
+                <a href="/faq" className="hover:text-purple-400 transition">
                   FAQ
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition">
+                <a href="#" className="hover:text-purple-400 transition">
                   Booking Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition">
+                <a href="#" className="hover:text-purple-400 transition">
                   Cancellation Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition">
+                <a href="#" className="hover:text-purple-400 transition">
                   Terms of Service
                 </a>
               </li>
@@ -79,7 +79,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 📞{" "}
-                <a href="tel:+94712345678" className="hover:text-blue-400 transition">
+                <a href="tel:+94712345678" className="hover:text-purple-400 transition">
                   +94 71 234 5678
                 </a>
               </li>
@@ -87,7 +87,7 @@ export default function Footer() {
                 ✉️{" "}
                 <a
                   href="mailto:hello@kandypickleball.lk"
-                  className="hover:text-blue-400 transition"
+                  className="hover:text-purple-400 transition"
                 >
                   hello@kandypickleball.lk
                 </a>
@@ -96,7 +96,7 @@ export default function Footer() {
                 💬{" "}
                 <a
                   href="https://wa.me/94712345678"
-                  className="hover:text-blue-400 transition"
+                  className="hover:text-purple-400 transition"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -104,10 +104,10 @@ export default function Footer() {
                 </a>
               </li>
               <li className="pt-4 flex space-x-4">
-                <a href="#" className="hover:text-blue-400 transition">
+                <a href="#" className="hover:text-purple-400 transition">
                   Facebook
                 </a>
-                <a href="#" className="hover:text-blue-400 transition">
+                <a href="#" className="hover:text-purple-400 transition">
                   Instagram
                 </a>
               </li>

@@ -22,7 +22,7 @@ export default function HeroSection({
       style={{
         backgroundImage: backgroundImage
           ? `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${backgroundImage})`
-          : "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)",
+          : "linear-gradient(135deg, #9333ea 0%, #6b21a8 100%)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -35,7 +35,7 @@ export default function HeroSection({
         {cta && (
           <Link
             href={cta.href}
-            className="inline-block bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg transition"
+            className="inline-block bg-purple-500 hover:bg-purple-600 text-white px-8 py-4 rounded-lg font-bold text-lg transition"
           >
             {cta.text}
           </Link>

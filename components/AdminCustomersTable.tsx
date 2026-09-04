@@ -89,76 +89,76 @@ export default function AdminCustomersTable() {
           placeholder="Search by name, email, or phone..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500"
         />
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-white/10 overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-gray-50 dark:bg-gray-950 border-b border-gray-200 dark:border-white/10">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
                 Phone
               </th>
-              <th className="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase">
+              <th className="px-6 py-3 text-center text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
                 Bookings
               </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
                 Last Booking
               </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
                 Member Since
               </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 dark:divide-white/10">
             {filteredCustomers.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-gray-600">
+                <td colSpan={7} className="px-6 py-8 text-center text-gray-600 dark:text-gray-400">
                   No customers found
                 </td>
               </tr>
             ) : (
               filteredCustomers.map((customer) => (
-                <tr key={customer.id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                <tr key={customer.id} className="hover:bg-gray-50 dark:hover:bg-gray-950 transition">
+                  <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                     {customer.fullName}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
+                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                     {customer.email}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700 font-mono">
+                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300 font-mono">
                     {customer.phoneNumber}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold text-sm">
+                    <span className="inline-block bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-full font-bold text-sm">
                       {customer.totalBookings}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
+                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                     {customer.lastBooking
                       ? formatDate(customer.lastBooking)
                       : "Never"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
+                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                     {formatDate(customer.createdAt)}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
-                      <button className="text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                      <button className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold text-sm">
                         👁️ View
                       </button>
-                      <button className="text-green-600 hover:text-green-800 font-semibold text-sm">
+                      <button className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 font-semibold text-sm">
                         📞 Contact
                       </button>
                     </div>
@@ -171,7 +171,7 @@ export default function AdminCustomersTable() {
       </div>
 
       {/* Summary */}
-      <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700">
+      <div className="bg-gray-50 dark:bg-gray-950 rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300">
         Showing {filteredCustomers.length} of {customers.length} customers
       </div>
     </div>

@@ -66,33 +66,33 @@ export default function AdminReportsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-8 text-gray-900">Reports & Analytics</h2>
+      <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">Reports & Analytics</h2>
 
       <div className="space-y-6">
         {/* Date Range Filter */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-bold text-lg mb-4 text-gray-900">📊 Report Filter</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
+          <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">📊 Report Filter</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Start Date
               </label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 End Date
               </label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg"
               />
             </div>
             <div className="flex items-end">
@@ -112,47 +112,47 @@ export default function AdminReportsPage() {
         </div>
 
         {/* Revenue Report */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-bold text-lg mb-4 text-gray-900">💰 Revenue Summary</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
+          <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">💰 Revenue Summary</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-              <p className="text-green-700 font-semibold text-sm">Total Revenue</p>
-              <p className="text-3xl font-bold text-green-600 mt-2">
+            <div className="bg-green-50 dark:bg-green-950/40 p-6 rounded-lg border border-green-200 dark:border-green-800/60">
+              <p className="text-green-700 dark:text-green-300 font-semibold text-sm">Total Revenue</p>
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">
                 {formatCurrency(reportData.revenue.total)}
               </p>
-              <p className="text-green-700 text-xs mt-2">For selected period</p>
+              <p className="text-green-700 dark:text-green-300 text-xs mt-2">For selected period</p>
             </div>
-            <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-              <p className="text-blue-700 font-semibold text-sm">Bookings Count</p>
-              <p className="text-3xl font-bold text-blue-600 mt-2">
+            <div className="bg-blue-50 dark:bg-blue-950/40 p-6 rounded-lg border border-blue-200 dark:border-blue-800/60">
+              <p className="text-blue-700 dark:text-blue-300 font-semibold text-sm">Bookings Count</p>
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">
                 {reportData.bookings.total}
               </p>
-              <p className="text-blue-700 text-xs mt-2">Total bookings completed</p>
+              <p className="text-blue-700 dark:text-blue-300 text-xs mt-2">Total bookings completed</p>
             </div>
-            <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
-              <p className="text-purple-700 font-semibold text-sm">Avg per Booking</p>
-              <p className="text-3xl font-bold text-purple-600 mt-2">
+            <div className="bg-purple-50 dark:bg-purple-950/40 p-6 rounded-lg border border-purple-200 dark:border-purple-800/60">
+              <p className="text-purple-700 dark:text-purple-300 font-semibold text-sm">Avg per Booking</p>
+              <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">
                 {formatCurrency(parseInt(reportData.payments.averageValue))}
               </p>
-              <p className="text-purple-700 text-xs mt-2">Average booking value</p>
+              <p className="text-purple-700 dark:text-purple-300 text-xs mt-2">Average booking value</p>
             </div>
           </div>
         </div>
 
         {/* Occupancy Report */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-bold text-lg mb-4 text-gray-900">📈 Occupancy Analysis</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
+          <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">📈 Occupancy Analysis</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-orange-50 p-6 rounded-lg border border-orange-200">
-              <p className="text-orange-700 font-semibold text-sm">Occupancy Rate</p>
-              <p className="text-3xl font-bold text-orange-600 mt-2">
+            <div className="bg-orange-50 dark:bg-orange-950/40 p-6 rounded-lg border border-orange-200 dark:border-orange-800/60">
+              <p className="text-orange-700 dark:text-orange-300 font-semibold text-sm">Occupancy Rate</p>
+              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-2">
                 {reportData.occupancy.rate}%
               </p>
-              <p className="text-orange-700 text-xs mt-2">Court utilization</p>
+              <p className="text-orange-700 dark:text-orange-300 text-xs mt-2">Court utilization</p>
             </div>
-            <div className="bg-indigo-50 p-6 rounded-lg border border-indigo-200">
-              <p className="text-indigo-700 font-semibold text-sm">Peak Hours %</p>
-              <p className="text-3xl font-bold text-indigo-600 mt-2">
+            <div className="bg-indigo-50 dark:bg-indigo-950/40 p-6 rounded-lg border border-indigo-200 dark:border-indigo-800/60">
+              <p className="text-indigo-700 dark:text-indigo-300 font-semibold text-sm">Peak Hours %</p>
+              <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mt-2">
                 {Math.round(
                   (reportData.occupancy.peakHours /
                     (reportData.occupancy.peakHours + reportData.occupancy.offPeakHours)) *
@@ -160,71 +160,71 @@ export default function AdminReportsPage() {
                 )}
                 %
               </p>
-              <p className="text-indigo-700 text-xs mt-2">Peak vs off-peak ratio</p>
+              <p className="text-indigo-700 dark:text-indigo-300 text-xs mt-2">Peak vs off-peak ratio</p>
             </div>
-            <div className="bg-pink-50 p-6 rounded-lg border border-pink-200">
-              <p className="text-pink-700 font-semibold text-sm">Cancellation Rate</p>
-              <p className="text-3xl font-bold text-pink-600 mt-2">
+            <div className="bg-pink-50 dark:bg-pink-950/40 p-6 rounded-lg border border-pink-200 dark:border-pink-800/60">
+              <p className="text-pink-700 dark:text-pink-300 font-semibold text-sm">Cancellation Rate</p>
+              <p className="text-3xl font-bold text-pink-600 dark:text-pink-400 mt-2">
                 {Math.round(
                   (reportData.bookings.cancelled / reportData.bookings.total) * 100
                 )}
                 %
               </p>
-              <p className="text-pink-700 text-xs mt-2">Cancelled bookings</p>
+              <p className="text-pink-700 dark:text-pink-300 text-xs mt-2">Cancelled bookings</p>
             </div>
           </div>
         </div>
 
         {/* Customer Insights */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-bold text-lg mb-4 text-gray-900">👥 Customer Insights</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
+          <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">👥 Customer Insights</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-gray-600 font-semibold mb-3">Total Players</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-gray-600 dark:text-gray-400 font-semibold mb-3">Total Players</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {reportData.customers.totalPlayers}
               </p>
-              <p className="text-gray-600 text-sm">Across all bookings</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Across all bookings</p>
             </div>
             <div>
-              <p className="text-gray-600 font-semibold mb-3">Avg Players/Booking</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-gray-600 dark:text-gray-400 font-semibold mb-3">Avg Players/Booking</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {reportData.customers.averagePerBooking}
               </p>
-              <p className="text-gray-600 text-sm">Average per booking</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Average per booking</p>
             </div>
           </div>
         </div>
 
         {/* Payment Status */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-bold text-lg mb-4 text-gray-900">💳 Payment Status</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
+          <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">💳 Payment Status</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <p className="text-gray-700 font-semibold mb-2">Paid</p>
-              <p className="text-2xl font-bold text-green-600">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-white/10">
+              <p className="text-gray-700 dark:text-gray-300 font-semibold mb-2">Paid</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {reportData.payments.paymentMethods.atVenue +
                   reportData.payments.paymentMethods.online}
               </p>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
                 {formatCurrency(reportData.revenue.paid)}
               </p>
             </div>
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <p className="text-gray-700 font-semibold mb-2">Pending</p>
-              <p className="text-2xl font-bold text-orange-600">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-white/10">
+              <p className="text-gray-700 dark:text-gray-300 font-semibold mb-2">Pending</p>
+              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                 {reportData.bookings.pending}
               </p>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
                 {formatCurrency(reportData.revenue.pending)}
               </p>
             </div>
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <p className="text-gray-700 font-semibold mb-2">At Venue</p>
-              <p className="text-2xl font-bold text-blue-600">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-white/10">
+              <p className="text-gray-700 dark:text-gray-300 font-semibold mb-2">At Venue</p>
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {reportData.payments.paymentMethods.atVenue}
               </p>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
                 {Math.round(
                   (reportData.payments.paymentMethods.atVenue /
                     (reportData.payments.paymentMethods.atVenue +

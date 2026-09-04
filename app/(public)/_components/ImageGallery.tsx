@@ -34,7 +34,7 @@ export default function ImageGallery({
           <button
             key={image.id}
             onClick={() => setSelectedImage(image)}
-            className="relative h-40 sm:h-48 bg-gray-200 rounded-lg overflow-hidden hover:opacity-80 transition group"
+            className="relative h-40 sm:h-48 bg-gray-200 dark:bg-white/10 rounded-lg overflow-hidden hover:opacity-80 transition group"
           >
             <div className="w-full h-full bg-linear-to-br from-gray-300 to-gray-400 flex items-center justify-center">
               <span className="text-4xl opacity-40">🏸</span>
@@ -57,10 +57,10 @@ export default function ImageGallery({
           onClick={() => setSelectedImage(null)}
         >
           <div className="max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
-            <div className="relative bg-white rounded-lg overflow-hidden">
+            <div className="relative bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
               <button
                 onClick={() => setSelectedImage(null)}
-                className="absolute top-4 right-4 bg-white rounded-full p-2 hover:bg-gray-100 z-10"
+                className="absolute top-4 right-4 bg-white dark:bg-gray-900 rounded-full p-2 hover:bg-gray-100 dark:hover:bg-white/5 z-10"
               >
                 <svg
                   className="w-6 h-6"
@@ -83,8 +83,8 @@ export default function ImageGallery({
               </div>
 
               {selectedImage.caption && (
-                <div className="p-6 bg-gray-50 border-t">
-                  <p className="text-gray-800 font-semibold">
+                <div className="p-6 bg-gray-50 dark:bg-gray-950 border-t">
+                  <p className="text-gray-800 dark:text-gray-100 font-semibold">
                     {selectedImage.caption}
                   </p>
                 </div>

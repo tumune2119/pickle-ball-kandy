@@ -156,7 +156,7 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
         <h3 className="text-2xl font-bold">Step 1: Select Date</h3>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
             Pick a date to play
           </label>
           <input
@@ -165,13 +165,13 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
             onChange={(e) => setSelectedDate(e.target.value)}
             min={minDate}
             max={maxDate}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-lg"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 text-lg"
           />
         </div>
 
         {selectedDate && (
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-blue-900">
+          <div className="bg-purple-50 dark:bg-purple-950/40 p-4 rounded-lg">
+            <p className="text-purple-900 dark:text-purple-200">
               📅 Selected: <strong>{new Date(selectedDate).toLocaleDateString("en-LK", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</strong>
             </p>
           </div>
@@ -180,14 +180,14 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
         <div className="flex justify-between">
           <button
             disabled
-            className="px-6 py-2 rounded-lg font-semibold text-gray-400 bg-gray-100"
+            className="px-6 py-2 rounded-lg font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-white/5"
           >
             Previous
           </button>
           <button
             onClick={handleNext}
             disabled={!selectedDate || loading}
-            className="px-6 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 transition"
+            className="px-6 py-2 rounded-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition"
           >
             Next →
           </button>
@@ -203,7 +203,7 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
         <h3 className="text-2xl font-bold">Step 2: Select Time Slots</h3>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
             Choose one or more consecutive slots (1 hour each)
           </label>
 
@@ -220,12 +220,12 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
                   disabled={isBooked}
                   className={`p-3 rounded-lg font-semibold text-center transition ${
                     isBooked
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                       : isSelected
-                      ? "bg-blue-600 text-white ring-2 ring-blue-300"
+                      ? "bg-purple-600 text-white ring-2 ring-purple-300 dark:ring-purple-700"
                       : isOffPeakSlot
-                      ? "bg-green-50 text-green-700 hover:bg-green-100 border border-green-300"
-                      : "bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-300"
+                      ? "bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/40 border border-green-300 dark:border-green-700/60"
+                      : "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 border border-orange-300 dark:border-orange-700/60"
                   }`}
                 >
                   <div className="text-sm">{slot}</div>
@@ -237,8 +237,8 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
             })}
           </div>
 
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-700">
+          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-950 rounded-lg">
+            <p className="text-sm text-gray-700 dark:text-gray-300">
               🟢 Off-peak (6 AM - 5 PM): LKR 1,500/hour | 🟠 Peak (5 PM - 10 PM):
               LKR 2,500/hour
             </p>
@@ -246,11 +246,11 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
         </div>
 
         {selectedSlots.length > 0 && (
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-            <p className="text-blue-900 font-semibold mb-2">
+          <div className="bg-purple-50 dark:bg-purple-950/40 p-4 rounded-lg border border-purple-200 dark:border-purple-800/60">
+            <p className="text-purple-900 dark:text-purple-200 font-semibold mb-2">
               Selected {selectedSlots.length} slot(s):
             </p>
-            <p className="text-blue-800">
+            <p className="text-purple-800 dark:text-purple-300">
               {selectedSlots.join(", ")} | Total: {formatCurrency(calculatePrice())}
             </p>
           </div>
@@ -259,14 +259,14 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
         <div className="flex justify-between">
           <button
             onClick={handlePrev}
-            className="px-6 py-2 rounded-lg font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition"
+            className="px-6 py-2 rounded-lg font-semibold text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
           >
             ← Previous
           </button>
           <button
             onClick={handleNext}
             disabled={selectedSlots.length === 0 || loading}
-            className="px-6 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 transition"
+            className="px-6 py-2 rounded-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition"
           >
             Next →
           </button>
@@ -282,13 +282,13 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
         <h3 className="text-2xl font-bold">Step 3: Players & Payment</h3>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Number of Players (max 4)
           </label>
           <select
             value={numPlayers}
             onChange={(e) => setNumPlayers(parseInt(e.target.value))}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
           >
             {[1, 2, 3, 4].map((n) => (
               <option key={n} value={n}>
@@ -299,11 +299,11 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Payment Method
           </label>
           <div className="space-y-2">
-            <label className="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer">
+            <label className="flex items-center p-3 border border-gray-300 dark:border-white/15 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/40 cursor-pointer">
               <input
                 type="radio"
                 name="payment"
@@ -314,13 +314,13 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
               />
               <span className="ml-3">
                 <span className="font-semibold">Pay at Venue</span>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Pay when you arrive. Booking confirmed immediately.
                 </p>
               </span>
             </label>
 
-            <label className="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer">
+            <label className="flex items-center p-3 border border-gray-300 dark:border-white/15 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/40 cursor-pointer">
               <input
                 type="radio"
                 name="payment"
@@ -331,7 +331,7 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
               />
               <span className="ml-3">
                 <span className="font-semibold">Online Payment (PayHere)</span>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Pay securely by card via PayHere. Redirects to checkout.
                 </p>
               </span>
@@ -340,14 +340,14 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm">
+          <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-700 dark:text-red-300 rounded-lg p-3 text-sm">
             {error}
           </div>
         )}
 
-        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-          <p className="text-sm text-gray-600 mb-2">Booking Summary:</p>
-          <div className="space-y-1 text-gray-900">
+        <div className="bg-gray-50 dark:bg-gray-950 p-6 rounded-lg border border-gray-200 dark:border-white/10">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Booking Summary:</p>
+          <div className="space-y-1 text-gray-900 dark:text-white">
             <div className="flex justify-between">
               <span>Date:</span>
               <strong>
@@ -372,7 +372,7 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
               <strong>{numPlayers}</strong>
             </div>
             <hr className="my-2" />
-            <div className="flex justify-between text-lg font-bold text-blue-600">
+            <div className="flex justify-between text-lg font-bold text-purple-600 dark:text-purple-400">
               <span>Total:</span>
               <span>{formatCurrency(calculatePrice())}</span>
             </div>
@@ -383,14 +383,14 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
           <button
             onClick={handlePrev}
             disabled={loading}
-            className="px-6 py-2 rounded-lg font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition"
+            className="px-6 py-2 rounded-lg font-semibold text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 transition"
           >
             ← Previous
           </button>
           <button
             onClick={handleNext}
             disabled={loading}
-            className="px-6 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 transition"
+            className="px-6 py-2 rounded-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition"
           >
             {loading ? "Processing…" : "Confirm Booking →"}
           </button>
@@ -403,31 +403,31 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
   return (
     <div className="text-center space-y-6">
       <div className="text-6xl">✓</div>
-      <h3 className="text-2xl font-bold text-green-600">Booking Confirmed!</h3>
+      <h3 className="text-2xl font-bold text-green-600 dark:text-green-400">Booking Confirmed!</h3>
 
-      <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-        <p className="text-green-900 mb-4">
+      <div className="bg-green-50 dark:bg-green-950/40 p-6 rounded-lg border border-green-200 dark:border-green-800/60">
+        <p className="text-green-900 dark:text-green-200 mb-4">
           Your court booking has been confirmed. A confirmation email has been
           sent to your registered email address.
         </p>
 
         <div className="space-y-3 text-left">
           <div>
-            <p className="text-sm text-gray-600">Booking Reference</p>
-            <p className="font-bold text-lg text-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Booking Reference</p>
+            <p className="font-bold text-lg text-gray-900 dark:text-white">
               BK#{bookingId.slice(0, 8).toUpperCase()}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Date & Time</p>
-            <p className="font-bold text-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Date & Time</p>
+            <p className="font-bold text-gray-900 dark:text-white">
               {new Date(selectedDate).toLocaleDateString("en-LK")} |{" "}
               {selectedSlots[0]} - {selectedSlots[selectedSlots.length - 1]}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Amount</p>
-            <p className="font-bold text-lg text-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Amount</p>
+            <p className="font-bold text-lg text-gray-900 dark:text-white">
               {formatCurrency(calculatePrice())}
             </p>
           </div>
@@ -437,14 +437,14 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
       <div className="space-y-2">
         <Link
           href="/my-bookings"
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition"
+          className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition"
         >
           View My Bookings
         </Link>
         <br />
         <Link
           href="/"
-          className="inline-block text-blue-600 hover:text-blue-700 font-semibold"
+          className="inline-block text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold"
         >
           Back to Home
         </Link>

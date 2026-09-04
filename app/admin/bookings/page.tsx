@@ -8,7 +8,7 @@ export default function AdminBookingsPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Manage Bookings</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Bookings</h2>
         <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition">
           + Create Booking
         </button>

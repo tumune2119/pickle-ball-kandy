@@ -25,7 +25,7 @@ export default function Home() {
       />
 
       {/* What is Pickleball? */}
-      <section className="bg-blue-50 py-12 md:py-16">
+      <section className="bg-purple-50 dark:bg-purple-950/40 py-12 md:py-16">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
             What is Pickleball?
@@ -35,35 +35,35 @@ export default function Home() {
               <span className="text-8xl opacity-30">🏸</span>
             </div>
             <div className="space-y-4">
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                 Pickleball is a paddle sport that combines elements of tennis,
                 badminton, and table tennis. It&apos;s played on a court about 1/3 the
                 size of a tennis court with a lower net, using solid paddles and a
                 perforated plastic ball.
               </p>
-              <h3 className="text-xl font-bold text-gray-900">Why Pickleball?</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Why Pickleball?</h3>
               <ul className="space-y-2">
                 <li className="flex items-start">
-                  <span className="text-blue-600 mr-3 font-bold">✓</span>
-                  <span className="text-gray-700">
+                  <span className="text-purple-600 dark:text-purple-400 mr-3 font-bold">✓</span>
+                  <span className="text-gray-700 dark:text-gray-300">
                     Easy to learn, fun to play - perfect for all ages
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-blue-600 mr-3 font-bold">✓</span>
-                  <span className="text-gray-700">
+                  <span className="text-purple-600 dark:text-purple-400 mr-3 font-bold">✓</span>
+                  <span className="text-gray-700 dark:text-gray-300">
                     Low-impact sport that&apos;s easier on joints than tennis
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-blue-600 mr-3 font-bold">✓</span>
-                  <span className="text-gray-700">
+                  <span className="text-purple-600 dark:text-purple-400 mr-3 font-bold">✓</span>
+                  <span className="text-gray-700 dark:text-gray-300">
                     Great social community and fitness benefits
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-blue-600 mr-3 font-bold">✓</span>
-                  <span className="text-gray-700">
+                  <span className="text-purple-600 dark:text-purple-400 mr-3 font-bold">✓</span>
+                  <span className="text-gray-700 dark:text-gray-300">
                     Fastest growing racquet sport in the world
                   </span>
                 </li>
@@ -79,24 +79,24 @@ export default function Home() {
       </section>
 
       {/* Quick Info */}
-      <section className="bg-white py-12 md:py-16 border-t border-b border-gray-200">
+      <section className="bg-white dark:bg-gray-900 py-12 md:py-16 border-t border-b border-gray-200 dark:border-white/10">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">1</div>
-              <p className="text-gray-600">Dedicated Court</p>
+              <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">1</div>
+              <p className="text-gray-600 dark:text-gray-400">Dedicated Court</p>
             </div>
             <div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">6am-10pm</div>
-              <p className="text-gray-600">Operating Hours</p>
+              <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">6am-10pm</div>
+              <p className="text-gray-600 dark:text-gray-400">Operating Hours</p>
             </div>
             <div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">4</div>
-              <p className="text-gray-600">Players Per Session</p>
+              <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">4</div>
+              <p className="text-gray-600 dark:text-gray-400">Players Per Session</p>
             </div>
             <div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">30+</div>
-              <p className="text-gray-600">Active Members</p>
+              <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">30+</div>
+              <p className="text-gray-600 dark:text-gray-400">Active Members</p>
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function Home() {
       </section>
 
       {/* Pricing Preview */}
-      <section className="bg-gray-50 py-12 md:py-16">
+      <section className="bg-gray-50 dark:bg-gray-950 py-12 md:py-16">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Pricing
@@ -177,7 +177,7 @@ export default function Home() {
           <div className="text-center mt-8">
             <Link
               href="/pricing"
-              className="text-blue-600 hover:text-blue-700 font-semibold"
+              className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold"
             >
               View full pricing & packages →
             </Link>
@@ -193,7 +193,7 @@ export default function Home() {
           </h2>
           <div className="grid md:grid-cols-2 gap-8">
             {/* Map Embed */}
-            <div className="bg-gray-200 rounded-lg overflow-hidden h-96">
+            <div className="bg-gray-200 dark:bg-white/10 rounded-lg overflow-hidden h-96">
               <iframe
                 width="100%"
                 height="100%"
@@ -209,13 +209,13 @@ export default function Home() {
             <div className="flex flex-col justify-center space-y-6">
               <div>
                 <h3 className="text-xl font-bold mb-2">📍 Location</h3>
-                <p className="text-gray-700">{COURT_NAME}</p>
-                <p className="text-gray-600">{COURT_LOCATION}</p>
+                <p className="text-gray-700 dark:text-gray-300">{COURT_NAME}</p>
+                <p className="text-gray-600 dark:text-gray-400">{COURT_LOCATION}</p>
               </div>
 
               <div>
                 <h3 className="text-xl font-bold mb-2">🕐 Hours of Operation</h3>
-                <ul className="text-gray-700 space-y-1">
+                <ul className="text-gray-700 dark:text-gray-300 space-y-1">
                   <li>Monday - Friday: 6:00 AM - 10:00 PM</li>
                   <li>Saturday: 7:00 AM - 10:00 PM</li>
                   <li>Sunday: 7:00 AM - 9:00 PM</li>
@@ -224,18 +224,18 @@ export default function Home() {
 
               <div>
                 <h3 className="text-xl font-bold mb-2">📞 Contact</h3>
-                <p className="text-gray-700 mb-2">
+                <p className="text-gray-700 dark:text-gray-300 mb-2">
                   <a
                     href="tel:+94712345678"
-                    className="text-blue-600 hover:underline"
+                    className="text-purple-600 dark:text-purple-400 hover:underline"
                   >
                     +94 71 234 5678
                   </a>
                 </p>
-                <p className="text-gray-700 mb-4">
+                <p className="text-gray-700 dark:text-gray-300 mb-4">
                   <a
                     href="mailto:hello@kandypickleball.lk"
-                    className="text-blue-600 hover:underline"
+                    className="text-purple-600 dark:text-purple-400 hover:underline"
                   >
                     hello@kandypickleball.lk
                   </a>
@@ -255,17 +255,17 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-12 md:py-16">
+      <section className="bg-purple-600 text-white py-12 md:py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Play?
           </h2>
-          <p className="text-lg mb-8 text-blue-100">
+          <p className="text-lg mb-8 text-purple-100">
             Join Kandy&apos;s fastest-growing pickleball community
           </p>
           <Link
             href="/book"
-            className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition"
+            className="inline-block bg-white dark:bg-gray-900 text-purple-600 dark:text-purple-400 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 dark:hover:bg-white/5 transition"
           >
             Book Your Court Now
           </Link>

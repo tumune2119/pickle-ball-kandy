@@ -66,10 +66,10 @@ export default function SignupForm() {
     return (
       <div className="w-full max-w-md text-center">
         <div className="text-6xl mb-4">✓</div>
-        <h1 className="text-3xl font-bold text-green-600 mb-2">
+        <h1 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
           Account Created!
         </h1>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           Welcome to Kandy 1st Court! You can now login with your credentials.
         </p>
         <Link
@@ -84,18 +84,18 @@ export default function SignupForm() {
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
-      <p className="text-gray-600 mb-8">Join us and book your first court session</p>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Create Account</h1>
+      <p className="text-gray-600 dark:text-gray-400 mb-8">Join us and book your first court session</p>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Full Name
           </label>
           <input
@@ -105,12 +105,12 @@ export default function SignupForm() {
             onChange={handleChange}
             placeholder="John Doe"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Email Address
           </label>
           <input
@@ -120,12 +120,12 @@ export default function SignupForm() {
             onChange={handleChange}
             placeholder="you@example.com"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Phone Number
           </label>
           <input
@@ -135,12 +135,12 @@ export default function SignupForm() {
             onChange={handleChange}
             placeholder="+94 71 234 5678"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Password
           </label>
           <input
@@ -150,15 +150,15 @@ export default function SignupForm() {
             onChange={handleChange}
             placeholder="••••••••"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
           />
-          <p className="text-xs text-gray-600 mt-1">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
             Minimum 8 characters, include uppercase, lowercase, and numbers
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Confirm Password
           </label>
           <input
@@ -168,15 +168,15 @@ export default function SignupForm() {
             onChange={handleChange}
             placeholder="••••••••"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
           />
         </div>
 
         <label className="flex items-center">
           <input type="checkbox" required className="w-4 h-4 rounded" />
-          <span className="ml-2 text-sm text-gray-700">
+          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
             I agree to the{" "}
-            <a href="#" className="text-blue-600 hover:text-blue-700 font-bold">
+            <a href="#" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-bold">
               Terms of Service
             </a>
           </span>
@@ -185,15 +185,15 @@ export default function SignupForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-3 rounded-lg font-bold transition"
+          className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white px-4 py-3 rounded-lg font-bold transition"
         >
           {loading ? "Creating account..." : "Create Account"}
         </button>
       </form>
 
-      <p className="text-gray-600 text-center mt-6">
+      <p className="text-gray-600 dark:text-gray-400 text-center mt-6">
         Already have an account?{" "}
-        <Link href="/login" className="text-blue-600 hover:text-blue-700 font-bold">
+        <Link href="/login" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-bold">
           Login here
         </Link>
       </p>

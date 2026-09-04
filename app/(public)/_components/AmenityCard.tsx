@@ -10,10 +10,10 @@ export default function AmenityCard({
   description,
 }: AmenityProps) {
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition text-center">
+    <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-white/10 hover:shadow-lg transition text-center">
       <div className="text-5xl mb-4">{icon}</div>
       <h3 className="text-xl font-bold mb-2">{title}</h3>
-      <p className="text-gray-600 text-sm">{description}</p>
+      <p className="text-gray-600 dark:text-gray-400 text-sm">{description}</p>
     </div>
   );
 }

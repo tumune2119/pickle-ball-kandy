@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // mobile/ is a separate Expo project with its own config, tsconfig,
+    // and "@/" alias - it must not be linted as part of the web app.
+    "mobile/**",
   ]),
 ]);
 

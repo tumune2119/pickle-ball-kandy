@@ -44,55 +44,55 @@ export default function ContactPage() {
       <section className="max-w-6xl mx-auto px-4 py-12 md:py-16">
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {/* Phone */}
-          <div className="bg-white rounded-lg p-8 border border-gray-200 text-center hover:shadow-lg transition">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-white/10 text-center hover:shadow-lg transition">
             <div className="text-5xl mb-4">📞</div>
             <h3 className="text-xl font-bold mb-2">Call Us</h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               Reach us by phone during business hours
             </p>
             <a
               href="tel:+94712345678"
-              className="text-blue-600 hover:text-blue-700 font-bold text-lg"
+              className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-bold text-lg"
             >
               +94 71 234 5678
             </a>
-            <p className="text-gray-600 text-sm mt-3">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mt-3">
               Mon-Sun: 6:00 AM - 10:00 PM
             </p>
           </div>
 
           {/* Email */}
-          <div className="bg-white rounded-lg p-8 border border-gray-200 text-center hover:shadow-lg transition">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-white/10 text-center hover:shadow-lg transition">
             <div className="text-5xl mb-4">✉️</div>
             <h3 className="text-xl font-bold mb-2">Email Us</h3>
-            <p className="text-gray-600 mb-4">Send us a message anytime</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">Send us a message anytime</p>
             <a
               href="mailto:hello@kandypickleball.lk"
-              className="text-blue-600 hover:text-blue-700 font-bold break-all"
+              className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-bold break-all"
             >
               hello@kandypickleball.lk
             </a>
-            <p className="text-gray-600 text-sm mt-3">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mt-3">
               Response within 24 hours
             </p>
           </div>
 
           {/* WhatsApp */}
-          <div className="bg-white rounded-lg p-8 border border-gray-200 text-center hover:shadow-lg transition">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-white/10 text-center hover:shadow-lg transition">
             <div className="text-5xl mb-4">💬</div>
             <h3 className="text-xl font-bold mb-2">WhatsApp</h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               Chat with us on WhatsApp for quick replies
             </p>
             <a
               href="https://wa.me/94712345678"
-              className="text-green-600 hover:text-green-700 font-bold text-lg"
+              className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-bold text-lg"
               target="_blank"
               rel="noopener noreferrer"
             >
               💬 Chat on WhatsApp
             </a>
-            <p className="text-gray-600 text-sm mt-3">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mt-3">
               Usually reply within minutes
             </p>
           </div>
@@ -104,14 +104,14 @@ export default function ContactPage() {
             <h2 className="text-3xl font-bold mb-8">Send us a Message</h2>
 
             {submitted && (
-              <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+              <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/40 border border-green-400 dark:border-green-600/60 text-green-700 dark:text-green-300 rounded-lg">
                 ✓ Thank you for your message! We&apos;ll get back to you shortly.
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">
+                <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
                   Name *
                 </label>
                 <input
@@ -120,14 +120,14 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
                   placeholder="Your name"
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">
+                  <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
                     Email *
                   </label>
                   <input
@@ -136,12 +136,12 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
                     placeholder="your@email.com"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">
+                  <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
                     Phone *
                   </label>
                   <input
@@ -150,14 +150,14 @@ export default function ContactPage() {
                     value={formData.phone}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
                     placeholder="+94 71 234 5678"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">
+                <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
                   Subject *
                 </label>
                 <select
@@ -165,7 +165,7 @@ export default function ContactPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
                 >
                   <option value="">Select a subject</option>
                   <option value="booking">Booking Inquiry</option>
@@ -177,7 +177,7 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">
+                <label className="block text-gray-700 dark:text-gray-300 font-semibold mb-2">
                   Message *
                 </label>
                 <textarea
@@ -186,14 +186,14 @@ export default function ContactPage() {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
                   placeholder="Tell us what you'd like to know..."
                 ></textarea>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition"
               >
                 Send Message
               </button>
@@ -205,7 +205,7 @@ export default function ContactPage() {
             <h2 className="text-3xl font-bold mb-8">Location & Hours</h2>
 
             {/* Map */}
-            <div className="bg-gray-200 rounded-lg overflow-hidden mb-8 h-96">
+            <div className="bg-gray-200 dark:bg-white/10 rounded-lg overflow-hidden mb-8 h-96">
               <iframe
                 width="100%"
                 height="100%"
@@ -218,21 +218,21 @@ export default function ContactPage() {
             </div>
 
             {/* Address */}
-            <div className="bg-white rounded-lg p-6 border border-gray-200 mb-6">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-white/10 mb-6">
               <h3 className="font-bold text-lg mb-3">📍 Address</h3>
-              <p className="text-gray-700">
+              <p className="text-gray-700 dark:text-gray-300">
                 Kandy 1st Court <br />
                 Kandy, Sri Lanka
               </p>
-              <p className="text-gray-600 text-sm mt-2">
+              <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
                 (Exact address provided upon booking confirmation)
               </p>
             </div>
 
             {/* Hours */}
-            <div className="bg-white rounded-lg p-6 border border-gray-200 mb-6">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-white/10 mb-6">
               <h3 className="font-bold text-lg mb-3">🕐 Hours</h3>
-              <ul className="space-y-2 text-gray-700">
+              <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                 <li>
                   <strong>Monday - Friday:</strong> 6:00 AM - 10:00 PM
                 </li>
@@ -242,19 +242,19 @@ export default function ContactPage() {
                 <li>
                   <strong>Sunday:</strong> 7:00 AM - 9:00 PM
                 </li>
-                <li className="text-yellow-600 font-semibold mt-3">
+                <li className="text-yellow-600 dark:text-yellow-400 font-semibold mt-3">
                   🏆 Closed on public holidays
                 </li>
               </ul>
             </div>
 
             {/* Social Media */}
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-white/10">
               <h3 className="font-bold text-lg mb-4">Follow Us</h3>
               <div className="flex space-x-4">
                 <a
                   href="#"
-                  className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center transition"
+                  className="w-12 h-12 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center justify-center transition"
                   title="Facebook"
                 >
                   f
@@ -280,7 +280,7 @@ export default function ContactPage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-gray-50 py-12 md:py-16">
+      <section className="bg-gray-50 dark:bg-gray-950 py-12 md:py-16">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Frequently Asked Questions
@@ -309,11 +309,11 @@ export default function ContactPage() {
                 a: "Yes, we rent professional paddles, shoes, and provide quality pickleballs with all bookings.",
               },
             ].map((item, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-lg border border-gray-200">
-                <h3 className="font-bold text-lg mb-2 text-gray-900">
+              <div key={idx} className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-white/10">
+                <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">
                   {item.q}
                 </h3>
-                <p className="text-gray-700">{item.a}</p>
+                <p className="text-gray-700 dark:text-gray-300">{item.a}</p>
               </div>
             ))}
           </div>
