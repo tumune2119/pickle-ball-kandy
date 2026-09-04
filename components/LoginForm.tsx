@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/auth";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,19 @@ export default function LoginForm() {
         return;
       }
 
-      // Successful login - redirect to dashboard
+      // The API route validates credentials server-side with the service
+      // role client, but that doesn't touch the browser's Supabase client -
+      // without this, the client-side session never gets established and
+      // every page that checks getCurrentUser() would think we're logged out.
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      });
+      if (sessionError) {
+        setError(sessionError.message);
+        return;
+      }
+
       window.location.href = "/dashboard";
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -92,14 +105,6 @@ export default function LoginForm() {
           Sign up here
         </Link>
       </p>
-
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <p className="text-xs text-gray-600 text-center">
-          Demo credentials:<br />
-          Email: admin@example.com<br />
-          Password: demo123
-        </p>
-      </div>
     </div>
   );
 }

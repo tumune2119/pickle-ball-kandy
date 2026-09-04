@@ -1,7 +1,12 @@
+import { config } from "dotenv";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { users, courts, bookings, pricing, settings } from "./schema";
 import * as schema from "./schema";
+
+// This script runs standalone via `tsx`, not through `next dev`, so it
+// doesn't get Next.js's automatic .env.local loading - load it explicitly.
+config({ path: ".env.local" });
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set in environment variables");
