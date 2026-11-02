@@ -2,6 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { Input, Checkbox } from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import GoogleButton from "@/components/ui/GoogleButton";
 
 export default function SignupForm() {
   const [formData, setFormData] = useState({
@@ -64,136 +69,134 @@ export default function SignupForm() {
 
   if (success) {
     return (
-      <div className="w-full max-w-md text-center">
-        <div className="text-6xl mb-4">✓</div>
-        <h1 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-          Account Created!
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Welcome to Kandy 1st Court! You can now login with your credentials.
-        </p>
-        <Link
-          href="/login"
-          className="inline-block bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-bold transition"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-md text-center"
+      >
+        <motion.div
+          initial={{ scale: 0, rotate: -45 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ duration: 0.4, delay: 0.1, type: "spring", stiffness: 200 }}
+          className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center"
         >
+          <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" aria-hidden="true" />
+        </motion.div>
+        <h1 className="text-3xl font-bold font-display text-green-600 dark:text-green-400 mb-2">Account Created!</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Welcome to Pickle Rush! You can now login with your credentials.
+        </p>
+        <Button href="/login" variant="primary" className="bg-green-600! hover:bg-green-700! shadow-green-900/20!">
           Go to Login →
-        </Link>
-      </div>
+        </Button>
+      </motion.div>
     );
   }
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Create Account</h1>
+      <h1 className="text-3xl font-bold font-display text-gray-900 dark:text-white mb-2">Create Account</h1>
       <p className="text-gray-600 dark:text-gray-400 mb-8">Join us and book your first court session</p>
 
-      {error && (
-        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
-          {error}
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="flex items-start gap-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
+              <span>{error}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Full Name
-          </label>
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            placeholder="John Doe"
-            required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
-          />
-        </div>
+        <Input
+          label="Full Name"
+          type="text"
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleChange}
+          placeholder="John Doe"
+          required
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Email Address
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
-          />
-        </div>
+        <Input
+          label="Email Address"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="you@example.com"
+          required
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Phone Number
-          </label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="+94 71 234 5678"
-            required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
-          />
-        </div>
+        <Input
+          label="Phone Number"
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          placeholder="+94 71 234 5678"
+          required
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
-          />
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-            Minimum 8 characters, include uppercase, lowercase, and numbers
-          </p>
-        </div>
+        <Input
+          label="Password"
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="••••••••"
+          required
+          hint="Minimum 8 characters, include uppercase, lowercase, and numbers"
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder="••••••••"
-            required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
-          />
-        </div>
+        <Input
+          label="Confirm Password"
+          type="password"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          placeholder="••••••••"
+          required
+        />
 
         <label className="flex items-center">
-          <input type="checkbox" required className="w-4 h-4 rounded" />
+          <Checkbox required />
           <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
             I agree to the{" "}
-            <a href="#" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-bold">
+            <a href="#" className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-bold">
               Terms of Service
             </a>
           </span>
         </label>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white px-4 py-3 rounded-lg font-bold transition"
-        >
+        <Button type="submit" loading={loading} fullWidth size="lg">
           {loading ? "Creating account..." : "Create Account"}
-        </button>
+        </Button>
       </form>
+
+      <div className="flex items-center gap-3 my-6">
+        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+        <span className="text-xs text-gray-500 dark:text-gray-400">OR</span>
+        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+      </div>
+
+      <GoogleButton label="Sign up with Google" />
 
       <p className="text-gray-600 dark:text-gray-400 text-center mt-6">
         Already have an account?{" "}
-        <Link href="/login" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-bold">
+        <Link
+          href="/login"
+          className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-bold"
+        >
           Login here
         </Link>
       </p>

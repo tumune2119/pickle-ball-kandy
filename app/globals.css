@@ -3,14 +3,340 @@
 /* Manual, class-based dark mode: toggled by ThemeToggle via a "dark" class
    on <html>, not just OS preference - lets visitors override their system
    setting. See components/ThemeToggle.tsx and the blocking script in
-   app/layout.tsx that applies the saved/system preference before paint. */
+   app/layout.tsx that applies the saved/system preference before paint.
+   Light is the default theme (see app/layout.tsx's blocking script). */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* pickle-rush design system v1 (see UI-CONFIG.md) - warm neutral base,
+   marigold brand accent, sage as the supporting secondary hue. Semantic
+   tokens swap value under .dark; component code should only ever reference
+   the semantic layer (color-bg-*, color-text-*, color-action-*, ...), never
+   the raw neutral/brand/accent/... primitives directly. Admin keeps its own
+   separate color-admin-* scale (cool blue, light by default) so brand and
+   admin surfaces never mix. */
+:root {
+  /* Semantic - light (default). Raw neutral/brand/accent/success/warning/
+     danger/info primitives live in the @theme inline block below (single
+     source of truth, also generates bg-brand-500 etc. utility classes) -
+     this block only maps them into semantic names and switches under .dark. */
+  --bg-page: var(--color-neutral-50);
+  --bg-surface: var(--color-neutral-100);
+  --bg-surface-sunken: var(--color-neutral-200);
+  --bg-highlight: var(--color-brand-100);
+  --bg-sage: var(--color-accent-100);
+  --border-default: var(--color-neutral-500);
+  --border-strong: var(--color-neutral-700);
+  --border-subtle: var(--color-neutral-200);
+  --text-primary: var(--color-neutral-900);
+  --text-muted: var(--color-neutral-700);
+  --text-faint: var(--color-neutral-500);
+  --text-on-action: var(--color-neutral-950);
+  --action-primary: var(--color-brand-500);
+  --action-primary-hover: var(--color-brand-600);
+  --action-primary-active: var(--color-brand-700);
+  --action-secondary: var(--color-accent-200);
+  --action-secondary-hover: var(--color-accent-300);
+  --focus-ring: var(--color-brand-700);
+  --shadow-color: 25 30% 20%;
+  color-scheme: light;
+
+  /* Admin - cool blue, light by default, never mixed with the above */
+  --admin-bg: var(--color-info-100);
+  --admin-surface: var(--color-info-50);
+  --admin-text: var(--color-info-950);
+  --admin-text-muted: var(--color-info-800);
+  --admin-border: var(--color-info-500);
+  --admin-action: var(--color-info-700);
+  --admin-action-hover: var(--color-info-800);
+  --admin-text-on-action: #ffffff;
+}
+
+.dark {
+  --bg-page: var(--color-neutral-950);
+  --bg-surface: var(--color-neutral-900);
+  --bg-surface-sunken: var(--color-neutral-800);
+  --bg-highlight: var(--color-brand-950);
+  --bg-sage: var(--color-accent-900);
+  --border-default: var(--color-neutral-500);
+  --border-strong: var(--color-neutral-300);
+  --border-subtle: var(--color-neutral-800);
+  --text-primary: var(--color-neutral-50);
+  --text-muted: var(--color-neutral-300);
+  --text-faint: var(--color-neutral-500);
+  --text-on-action: var(--color-neutral-950);
+  --action-primary: var(--color-brand-400);
+  --action-primary-hover: var(--color-brand-300);
+  --action-primary-active: var(--color-brand-200);
+  --action-secondary: var(--color-accent-800);
+  --action-secondary-hover: var(--color-accent-700);
+  --focus-ring: var(--color-brand-400);
+  --shadow-color: 0 0% 0%;
+  color-scheme: dark;
+
+  --admin-bg: var(--color-info-950);
+  --admin-surface: var(--color-info-900);
+  --admin-text: var(--color-info-50);
+  --admin-text-muted: var(--color-info-200);
+  --admin-border: var(--color-info-500);
+  --admin-action: var(--color-info-400);
+  --admin-action-hover: var(--color-info-300);
+  --admin-text-on-action: var(--color-info-950);
+}
+
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-karla);
+  --font-mono: var(--font-dm-mono);
+  --font-display: var(--font-fraunces);
+
+  --color-page: var(--bg-page);
+  --color-surface: var(--bg-surface);
+  --color-surface-sunken: var(--bg-surface-sunken);
+  --color-highlight: var(--bg-highlight);
+  --color-sage-tint: var(--bg-sage);
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+  --color-border-subtle: var(--border-subtle);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-text-on-action: var(--text-on-action);
+  --color-action-primary: var(--action-primary);
+  --color-action-primary-hover: var(--action-primary-hover);
+  --color-action-primary-active: var(--action-primary-active);
+  --color-action-secondary: var(--action-secondary);
+  --color-action-secondary-hover: var(--action-secondary-hover);
+  --color-focus-ring: var(--focus-ring);
+
+  --color-admin-bg: var(--admin-bg);
+  --color-admin-surface: var(--admin-surface);
+  --color-admin-text: var(--admin-text);
+  --color-admin-text-muted: var(--admin-text-muted);
+  --color-admin-border: var(--admin-border);
+  --color-admin-action: var(--admin-action);
+  --color-admin-action-hover: var(--admin-action-hover);
+  --color-admin-text-on-action: var(--admin-text-on-action);
+
+  /* Primitive scales - still exposed as utilities (bg-brand-500, text-sage-700, ...)
+     for one-off accent use, but components should prefer the semantic tokens above. */
+  --color-brand-50: #fff6e4;
+  --color-brand-100: #ffeac1;
+  --color-brand-200: #ffd277;
+  --color-brand-300: #f2b61b;
+  --color-brand-400: #cd9800;
+  --color-brand-500: #ab7f00;
+  --color-brand-600: #8d6800;
+  --color-brand-700: #715300;
+  --color-brand-800: #573e00;
+  --color-brand-900: #3d2b00;
+  --color-brand-950: #261900;
+
+  --color-sage-50: #f3f9ee;
+  --color-sage-100: #e9f1e3;
+  --color-sage-200: #d7e2cf;
+  --color-sage-300: #c1cfb7;
+  --color-sage-400: #a3b397;
+  --color-sage-500: #8a9b7c;
+  --color-sage-600: #6e7f60;
+  --color-sage-700: #566649;
+  --color-sage-800: #3f4d34;
+  --color-sage-900: #2b3522;
+  --color-sage-950: #181e13;
+
+  --color-success-50: #e9fee3;
+  --color-success-100: #dcf7d5;
+  --color-success-300: #a9d69c;
+  --color-success-500: #68a256;
+  --color-success-700: #386f24;
+  --color-success-800: #255513;
+  --color-success-900: #163b08;
+
+  --color-warning-100: #ffe6d3;
+  --color-warning-300: #f6ab6b;
+  --color-warning-700: #7e4400;
+  --color-warning-800: #613400;
+  --color-warning-900: #462400;
+
+  --color-danger-100: #ffe6e1;
+  --color-danger-300: #ffa998;
+  --color-danger-700: #972b19;
+  --color-danger-800: #781b0c;
+  --color-danger-900: #571005;
+
+  --color-info-50: #f2f7ff;
+  --color-info-100: #e3eeff;
+  --color-info-200: #c7dcff;
+  --color-info-300: #a3c6ff;
+  --color-info-400: #6fa5ff;
+  --color-info-500: #3b85ff;
+  --color-info-700: #0050c3;
+  --color-info-800: #003c97;
+  --color-info-900: #00296d;
+  --color-info-950: #001845;
+
+  --color-accent-50: #f3f9ee;
+  --color-accent-100: #e9f1e3;
+  --color-accent-200: #d7e2cf;
+  --color-accent-300: #c1cfb7;
+  --color-accent-400: #a3b397;
+  --color-accent-500: #8a9b7c;
+  --color-accent-600: #6e7f60;
+  --color-accent-700: #566649;
+  --color-accent-800: #3f4d34;
+  --color-accent-900: #2b3522;
+  --color-accent-950: #181e13;
+
+  --color-neutral-50: #fdf5ef;
+  --color-neutral-100: #f4eae3;
+  --color-neutral-200: #e4d7cc;
+  --color-neutral-300: #d0beb1;
+  --color-neutral-400: #b19d8d;
+  --color-neutral-500: #958070;
+  --color-neutral-600: #7a6657;
+  --color-neutral-700: #635144;
+  --color-neutral-800: #4d3e32;
+  --color-neutral-900: #372b22;
+  --color-neutral-950: #211a14;
+
+  /* Back-compat aliases - many existing public/customer files reference the
+     old "yellow", "blush" and "cream" utility scales directly (from the
+     pre-v1 rebrand). Repointing them to the new palette re-skins those
+     surfaces without a file-by-file rewrite; new code should use the
+     "brand"/"sage" scales (or the semantic tokens) directly instead. No
+     rose/blush hue exists in the new system, so blush folds into brand
+     (the one dominant accent). */
+  --color-yellow-50: #fff6e4;
+  --color-yellow-100: #ffeac1;
+  --color-yellow-200: #ffd277;
+  --color-yellow-300: #f2b61b;
+  --color-yellow-400: #cd9800;
+  --color-yellow-500: #ab7f00;
+  --color-yellow-600: #8d6800;
+  --color-yellow-700: #715300;
+  --color-yellow-800: #573e00;
+  --color-yellow-900: #3d2b00;
+  --color-yellow-950: #261900;
+
+  --color-blush-50: #fff6e4;
+  --color-blush-100: #ffeac1;
+  --color-blush-200: #ffd277;
+  --color-blush-300: #f2b61b;
+  --color-blush-400: #cd9800;
+  --color-blush-500: #ab7f00;
+  --color-blush-600: #8d6800;
+  --color-blush-700: #715300;
+  --color-blush-800: #573e00;
+  --color-blush-900: #3d2b00;
+  --color-blush-950: #261900;
+
+  --color-cream-50: #fdf5ef;
+  --color-cream-100: #f4eae3;
+  --color-cream-200: #e4d7cc;
+
+  --animate-fade-in-up: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fade-in 0.4s ease-out both;
+  --animate-scale-in: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-float: float 5s ease-in-out infinite;
+  --animate-ball-bounce: ball-bounce 1.4s cubic-bezier(0.5, 0, 1, 0.5) infinite;
+  --animate-ball-shadow: ball-shadow 1.4s cubic-bezier(0.5, 0, 1, 0.5) infinite;
+}
+
+@keyframes ball-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
+  45% {
+    transform: translateY(-22px) scaleX(1);
+  }
+  50% {
+    transform: translateY(-22px) scaleX(0.9);
+  }
+  55% {
+    transform: translateY(-22px) scaleX(1);
+  }
+  95% {
+    transform: translateY(0) scaleX(1.15);
+  }
+}
+
+/* Companion to ball-bounce for PickleballBounce's drop shadow - shrinks and
+   fades as the ball rises, grows back as it lands. */
+@keyframes ball-shadow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(0.55);
+    opacity: 0.25;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Skip the color-fade the instant a visitor arrives with a theme already
+   chosen (blocking script in app/layout.tsx already picked it pre-paint) -
+   otherwise the very first paint visibly animates from the light palette. */
+html:not(.theme-ready) body {
+  transition: none;
+}
+
+::selection {
+  background-color: rgba(242, 182, 27, 0.35);
+}
+
+/* The theme toggle drives this transition itself (a clip-path circle from
+   the click point, via the Web Animations API in ThemeToggle.tsx) - disable
+   the browser's default cross-fade so it doesn't double up with that. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }

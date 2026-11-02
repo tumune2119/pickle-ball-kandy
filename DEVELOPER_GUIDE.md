@@ -1,11 +1,11 @@
-# Developer Guide — Kandy 1st Court
+# Developer Guide — Pickle Rush
 
 This is the code-level reference for this repo: every table, every route, every
 gotcha found while building it. It assumes no familiarity with the running app —
 everything here is derived from the source, not the UI.
 
 Companion docs: [README.md](./README.md) (quick start), [DEPLOYMENT.md](./DEPLOYMENT.md)
-(Vercel/Docker), [mobile/README.md](./mobile/README.md) (React Native app).
+(Vercel/Docker).
 
 ---
 
@@ -20,7 +20,6 @@ Companion docs: [README.md](./README.md) (quick start), [DEPLOYMENT.md](./DEPLOY
 | ORM | Drizzle ORM (`drizzle-orm/node-postgres` + `pg`) | Schema-first, migrations via `drizzle-kit` |
 | Auth | Supabase Auth | Email/password. No cookie/session middleware — see "Authentication model" |
 | Payments | PayHere (Sri Lanka) | Custom integration in `lib/payhere.ts`, no SDK |
-| Mobile | Expo / React Native (`mobile/`) | Separate app, same backend API |
 
 ---
 
@@ -57,7 +56,6 @@ lib/
   utils.ts                     Formatting/date/slot helpers
   hooks.ts                     Generic React hooks (useForm, useAsync, useLocalStorage, ...)
 
-mobile/                      Separate Expo/React Native app - see mobile/README.md
 drizzle.config.ts            drizzle-kit config (loads .env.local explicitly - see gotchas)
 next.config.ts                output: "standalone" (for Docker)
 ```
@@ -140,7 +138,7 @@ independently decides to check. Three moving parts:
 
 2. **Login** (`POST /api/auth/login`, called by `components/LoginForm.tsx`): calls `supabase.auth.signInWithPassword` server-side (again with the service-role client) and returns the resulting `session` (access/refresh tokens) in the JSON response. **The API route validating credentials does not, by itself, log the browser in** — `LoginForm.tsx` must take that `session` and call `supabase.auth.setSession({ access_token, refresh_token })` on the *browser's* Supabase client (the `supabase` export from `lib/auth.ts`, which uses the public anon key). This was missing originally and silently broke every page that checks `getCurrentUser()` — fixed, but if you ever add another login entry point, don't skip this step.
 
-3. **Client-side checks**: `lib/auth.ts` exports `getCurrentUser()` (wraps `supabase.auth.getUser()`) and `getSession()`. Pages that need to know who's logged in call these directly in a `useEffect` (see `app/(customer)/book/page.tsx`) — there's no shared `AuthContext`/provider on the web app (the mobile app has one, in `mobile/context/AuthContext.tsx`; the web app doesn't).
+3. **Client-side checks**: `lib/auth.ts` exports `getCurrentUser()` (wraps `supabase.auth.getUser()`) and `getSession()`. Pages that need to know who's logged in call these directly in a `useEffect` (see `app/(customer)/book/page.tsx`) — there's no shared `AuthContext`/provider on the web app.
 
 **Known gap:** `/api/auth/login` only returns `{ id, email }` for the user —
 no `fullName`/`phoneNumber`. There's no "get my profile" endpoint. The
@@ -220,7 +218,7 @@ gate in `app/admin/layout.tsx`.
    - If `paymentMode === "payhere"`: `POST /api/payments/initiate`, then builds a hidden `<form>` and submits it to PayHere's `checkoutUrl` (full page navigation away from the app).
    - Otherwise: advances to the step-4 confirmation screen locally.
 4. Pricing (`off-peak` before 17:00 / `peak` after) is **hardcoded client-side** in `BookingForm.tsx` (`1500`/`2500`), not read from the `pricing` table — see Known Gaps.
-5. Slot availability shown in step 2 is **also hardcoded demo data** (`bookedSlots = ["09:00", "10:00", ...]`) — `BookingForm` never calls `GET /api/bookings/availability`. (The mobile app's booking screen does call it for real — see `mobile/app/(tabs)/book.tsx` if you want the reference implementation to port back to web.)
+5. Slot availability shown in step 2 is **also hardcoded demo data** (`bookedSlots = ["09:00", "10:00", ...]`) — `BookingForm` never calls `GET /api/bookings/availability`.
 
 ---
 
@@ -241,7 +239,7 @@ Other gaps:
 - **`/admin/*` has no auth gate** — anyone with the URL sees it
 - **Seeded demo users can't log in** — `lib/db/seed.ts` inserts directly into `users`, bypassing Supabase Auth entirely. Only accounts created via the real `/signup` flow can log in.
 - **`pricing` and `blackoutDates` tables are unused** by any route — pricing is hardcoded, blackout dates aren't checked anywhere
-- **`NEXT_PUBLIC_COURT_ID`** (a slug like `"kandy-1st-court"`) is used as a fallback in `/api/bookings/availability` but doesn't match any real `courts.id` (a uuid) — effectively dead unless a real `courtId` query param is always passed (which the frontend does via `/api/courts` now)
+- **`NEXT_PUBLIC_COURT_ID`** (a slug like `"pickle-rush"`) is used as a fallback in `/api/bookings/availability` but doesn't match any real `courts.id` (a uuid) — effectively dead unless a real `courtId` query param is always passed (which the frontend does via `/api/courts` now)
 
 ---
 
@@ -284,8 +282,3 @@ server-component wrapper or be omitted (client components can't export
 one-line comment, then read via `process.env.YOUR_VAR` (prefix
 `NEXT_PUBLIC_` only if the browser genuinely needs it — everything else
 should stay server-only).
-
-**Mobile app:** lives entirely in `mobile/`, talks to this same API over
-HTTP — it does not share code with the web app. See `mobile/README.md` for
-its own architecture notes (Expo Router, Supabase session handling, the
-WebView-based PayHere checkout).

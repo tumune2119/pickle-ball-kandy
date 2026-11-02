@@ -2,9 +2,13 @@ import { db } from "@/lib/db/db";
 import { users, bookings } from "@/lib/db/schema";
 import { and, eq, or, ilike } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server-auth";
 
 // GET /api/admin/customers - Get all customers
 export async function GET(request: NextRequest) {
+  const auth = await requireAdmin(request);
+  if (auth.response) return auth.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search");

@@ -1,4 +1,4 @@
-# 🎾 Kandy 1st Court - Complete Platform
+# 🎾 Pickle Rush - Complete Platform
 
 Complete full-stack pickleball court booking platform built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and PostgreSQL.
 
@@ -270,7 +270,7 @@ Open [http://localhost:3000](http://localhost:3000) to view.
 ## 📊 Demo Data
 
 The seed script creates:
-- 1 court (Kandy 1st Court)
+- 1 court (Pickle Rush)
 - 3 sample users (1 admin, 2 customers)
 - 2 pricing rules (off-peak/peak)
 - 3 sample bookings
@@ -336,7 +336,6 @@ For issues or questions:
 - [ ] Court calendar view for admin
 
 ### Phase 3 (Future)
-- [ ] Mobile app (React Native)
 - [ ] Video tutorials
 - [ ] Equipment rental system
 - [ ] Coach booking integration
@@ -345,4 +344,4 @@ For issues or questions:
 
 ---
 
-**Built with ❤️ for Kandy 1st Court**
+**Built with ❤️ for Pickle Rush**

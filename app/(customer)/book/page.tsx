@@ -1,13 +1,48 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { CalendarCheck, Wallet, Clock3 } from "lucide-react";
 import BookingForm from "@/components/BookingForm";
 import { getCurrentUser } from "@/lib/auth";
+import { cn } from "@/lib/cn";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
+import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
+
+const perks = [
+  {
+    icon: CalendarCheck,
+    tint: "brand" as const,
+    iconClass: "text-sage-600 dark:text-sage-400",
+    title: "Easy Booking",
+    description: "One simple form to book your preferred date and time",
+  },
+  {
+    icon: Wallet,
+    tint: "success" as const,
+    iconClass: "text-green-600 dark:text-green-400",
+    title: "Flexible Payment",
+    description: "Pay at venue or online. Instant confirmation either way.",
+  },
+  {
+    icon: Clock3,
+    tint: "brand" as const,
+    iconClass: "text-sage-600 dark:text-sage-400",
+    title: "Free Cancellation",
+    description: "Cancel free up to 4 hours before your booking",
+  },
+];
+
+interface Court {
+  id: string;
+  name: string;
+}
 
 export default function BookPage() {
   const [userId, setUserId] = useState<string | null>(null);
-  const [courtId, setCourtId] = useState<string | null>(null);
+  const [courts, setCourts] = useState<Court[]>([]);
+  const [selectedCourtId, setSelectedCourtId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,65 +53,87 @@ export default function BookPage() {
       ]);
 
       setUserId(user?.id ?? null);
-      setCourtId(courtsRes.courts?.[0]?.id ?? null);
+      setCourts(courtsRes.courts ?? []);
+      setSelectedCourtId(courtsRes.courts?.[0]?.id ?? null);
       setLoading(false);
     })();
   }, []);
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Book Your Court</h2>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">
-        Follow the steps below to reserve your pickleball court slot
-      </p>
+      <h2 className="text-2xl font-bold font-display mb-2 text-text-primary">Book Your Court</h2>
+      <p className="text-text-muted mb-8">Fill in the details below to reserve your pickleball court slot</p>
 
-      <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-white/10">
+      {!loading && !userId && (
+        <div className="mb-6 p-4 rounded-lg border border-sage-200 dark:border-sage-800/60 bg-sage-50 dark:bg-sage-950/40 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-sage-900 dark:text-sage-200">
+            Booking as a guest. Have an account? Log in to keep a history of your bookings.
+          </p>
+          <Button href="/login" variant="soft" size="sm">
+            Log In
+          </Button>
+        </div>
+      )}
+
+      <Card glass padding="lg">
         {loading ? (
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
-        ) : !userId ? (
-          <div className="text-center py-8">
-            <p className="text-gray-700 dark:text-gray-300 mb-4">Please sign in to book a court.</p>
-            <Link
-              href="/login"
-              className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-semibold transition"
-            >
-              Log In
-            </Link>
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-1/3" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-10 w-1/2" />
           </div>
-        ) : !courtId ? (
+        ) : !selectedCourtId ? (
           <p className="text-red-600 dark:text-red-400">
             No court is configured yet. Please contact the venue.
           </p>
         ) : (
-          <BookingForm userId={userId} courtId={courtId} />
+          <div className="space-y-8">
+            {/* Court - section 1, same numbered style as the rest of the
+                form below it, so the order (court -> date -> time -> ...)
+                reads as one continuous flow. */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold font-display">1. Pick a court</h3>
+              {courts.length > 1 ? (
+                <div className="flex gap-2 flex-wrap">
+                  {courts.map((court) => (
+                    <button
+                      key={court.id}
+                      type="button"
+                      onClick={() => setSelectedCourtId(court.id)}
+                      className={cn(
+                        "px-4 py-2 rounded-lg font-semibold text-sm transition-colors",
+                        selectedCourtId === court.id
+                          ? "bg-sage-600 text-white"
+                          : "bg-surface-sunken text-text-muted hover:bg-sage-50 dark:hover:bg-sage-950/40"
+                      )}
+                    >
+                      {court.name}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-text-primary font-semibold">{courts[0]?.name}</p>
+              )}
+            </div>
+
+            {/* Remount on court change - date/slot selections are
+                court-specific and shouldn't carry over when switching. */}
+            <BookingForm key={selectedCourtId} courtId={selectedCourtId} userId={userId} />
+          </div>
         )}
-      </div>
+      </Card>
 
-      <div className="mt-8 grid md:grid-cols-3 gap-6">
-        <div className="bg-purple-50 dark:bg-purple-950/40 rounded-lg p-6 border border-purple-200 dark:border-purple-800/60">
-          <div className="text-3xl mb-2">📅</div>
-          <h3 className="font-bold text-gray-900 dark:text-white mb-2">Easy Booking</h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            Simple 3-step process to book your preferred date and time
-          </p>
-        </div>
-
-        <div className="bg-green-50 dark:bg-green-950/40 rounded-lg p-6 border border-green-200 dark:border-green-800/60">
-          <div className="text-3xl mb-2">💰</div>
-          <h3 className="font-bold text-gray-900 dark:text-white mb-2">Flexible Payment</h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            Pay at venue or online. Instant confirmation either way.
-          </p>
-        </div>
-
-        <div className="bg-purple-50 dark:bg-purple-950/40 rounded-lg p-6 border border-purple-200 dark:border-purple-800/60">
-          <div className="text-3xl mb-2">⏰</div>
-          <h3 className="font-bold text-gray-900 dark:text-white mb-2">Free Cancellation</h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            Cancel free up to 4 hours before your booking
-          </p>
-        </div>
-      </div>
+      <RevealGroup className="mt-8 grid md:grid-cols-3 gap-6">
+        {perks.map((perk) => (
+          <RevealItem key={perk.title}>
+            <Card tint={perk.tint} glass padding="md" className="h-full">
+              <perk.icon className={`w-8 h-8 mb-2 ${perk.iconClass}`} aria-hidden="true" />
+              <h3 className="font-bold text-text-primary mb-2">{perk.title}</h3>
+              <p className="text-sm text-gray-700 dark:text-gray-300">{perk.description}</p>
+            </Card>
+          </RevealItem>
+        ))}
+      </RevealGroup>
     </div>
   );
 }

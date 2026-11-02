@@ -1,7 +1,7 @@
 ﻿import SignupForm from "@/components/SignupForm";
 
 export const metadata = {
-  title: "Sign Up - Kandy 1st Court",
+  title: "Sign Up - Pickle Rush",
 };
 
 export default function SignupPage() {

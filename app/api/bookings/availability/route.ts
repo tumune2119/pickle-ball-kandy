@@ -42,10 +42,12 @@ export async function GET(request: NextRequest) {
         )
       );
 
-    // Parse booked slots
+    // Parse booked slots - the DB's time column returns "HH:MM:SS", but the
+    // slots generated below are "HH:MM", so this strips the seconds to keep
+    // both sides comparable (bookedSlots.includes(slot) on the client).
     const bookedSlots: string[] = [];
     dayBookings.forEach((booking) => {
-      bookedSlots.push(booking.startTime);
+      bookedSlots.push(booking.startTime.slice(0, 5));
     });
 
     // Generate all possible slots

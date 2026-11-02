@@ -1,17 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { getTimeSlots, formatCurrency } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Calendar, CheckCircle2 } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
+import { getSession } from "@/lib/auth";
+import { cn } from "@/lib/cn";
+import Button from "@/components/ui/Button";
+import { Input, Select, Radio } from "@/components/ui/Input";
+import DatePicker, { toYMD } from "@/components/ui/DatePicker";
+import Skeleton from "@/components/ui/Skeleton";
+import PickleballBounce from "@/components/ui/PickleballBounce";
 
 interface BookingFormProps {
-  userId: string;
   courtId: string;
+  // null = not signed in - the form collects guest contact details instead
+  // and only offers "pay at venue" (see the API route for why online
+  // payment stays account-only).
+  userId: string | null;
   onBooked?: (bookingId: string) => void;
 }
 
-export default function BookingForm({ userId, courtId, onBooked }: BookingFormProps) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+export default function BookingForm({ courtId, userId, onBooked }: BookingFormProps) {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [numPlayers, setNumPlayers] = useState(2);
@@ -19,18 +29,43 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [bookingId, setBookingId] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  const [guestName, setGuestName] = useState("");
+  const [guestPhone, setGuestPhone] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
 
-  // Sample availability data (in real app, this comes from API)
-  const availableSlots = getTimeSlots("06:00", "22:00", 60);
-  const bookedSlots = ["09:00", "10:00", "17:00", "18:00"]; // Demo data
+  // Real availability for the selected date - which slots exist for this
+  // court and which are already booked - fetched from the same endpoint the
+  // (unused until now) /api/bookings/availability route exposes.
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    let cancelled = false;
+    (async () => {
+      setLoadingAvailability(true);
+      try {
+        const res = await fetch(`/api/bookings/availability?date=${selectedDate}&courtId=${courtId}`);
+        const data = await res.json();
+        if (cancelled) return;
+        setAvailableSlots(data.totalSlots ?? []);
+        setBookedSlots(data.bookedSlots ?? []);
+      } finally {
+        if (!cancelled) setLoadingAvailability(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDate, courtId]);
 
   // Booking window: today through 30 days out. Computed once per mount
   // rather than inline in JSX, since JSX must render the same output for
   // the same props/state.
-  const [minDate] = useState(() => new Date().toISOString().split("T")[0]);
-  const [maxDate] = useState(() =>
-    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
-  );
+  const [minDate] = useState(() => toYMD(new Date()));
+  const [maxDate] = useState(() => toYMD(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)));
 
   // Pricing calculation
   const isOffPeak = (time: string): boolean => {
@@ -72,295 +107,408 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
     form.submit();
   };
 
-  const handleNext = async () => {
-    if (step === 1 && !selectedDate) {
-      alert("Please select a date");
-      return;
-    }
-    if (step === 2 && selectedSlots.length === 0) {
-      alert("Please select at least one time slot");
-      return;
-    }
-    if (step === 3) {
-      setError("");
-      setLoading(true);
-      try {
-        const startTime = selectedSlots[0];
-        const lastSlotHour = parseInt(selectedSlots[selectedSlots.length - 1].split(":")[0], 10);
-        const endTime = `${String(lastSlotHour + 1).padStart(2, "0")}:00`;
+  const canSubmit =
+    !!selectedDate &&
+    selectedSlots.length > 0 &&
+    (!!userId || (!!guestName && !!guestPhone && !!guestEmail));
 
-        const bookingRes = await fetch("/api/bookings", {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedDate) {
+      setError("Please select a date.");
+      return;
+    }
+    if (selectedSlots.length === 0) {
+      setError("Please select at least one time slot.");
+      return;
+    }
+    if (!userId && (!guestName || !guestPhone || !guestEmail)) {
+      setError("Please fill in your name, phone, and email.");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+    try {
+      let authHeaders: Record<string, string> = { "Content-Type": "application/json" };
+
+      if (userId) {
+        const session = await getSession();
+        if (!session) {
+          setError("Your session has expired. Please log in again.");
+          setLoading(false);
+          return;
+        }
+        authHeaders = { ...authHeaders, Authorization: `Bearer ${session.access_token}` };
+      }
+
+      const startTime = selectedSlots[0];
+      const lastSlotHour = parseInt(selectedSlots[selectedSlots.length - 1].split(":")[0], 10);
+      const endTime = `${String(lastSlotHour + 1).padStart(2, "0")}:00`;
+
+      const bookingRes = await fetch("/api/bookings", {
+        method: "POST",
+        headers: authHeaders,
+        body: JSON.stringify({
+          courtId,
+          bookingDate: selectedDate,
+          startTime,
+          endTime,
+          numPlayers,
+          amountLkr: calculatePrice(),
+          paymentMode,
+          ...(userId ? {} : { guestName, guestPhone, guestEmail }),
+        }),
+      });
+      const bookingData = await bookingRes.json();
+
+      if (!bookingRes.ok) {
+        setError(bookingData.error || "Failed to create booking");
+        setLoading(false);
+        return;
+      }
+
+      const newBookingId = bookingData.booking.id;
+      setBookingId(newBookingId);
+
+      if (paymentMode === "payhere") {
+        const paymentRes = await fetch("/api/payments/initiate", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId,
-            courtId,
-            bookingDate: selectedDate,
-            startTime,
-            endTime,
-            numPlayers,
-            amountLkr: calculatePrice(),
-            paymentMode,
-          }),
+          headers: authHeaders,
+          body: JSON.stringify({ bookingId: newBookingId }),
         });
-        const bookingData = await bookingRes.json();
+        const paymentData = await paymentRes.json();
 
-        if (!bookingRes.ok) {
-          setError(bookingData.error || "Failed to create booking");
+        if (!paymentRes.ok) {
+          setError(paymentData.error || "Failed to start payment");
           setLoading(false);
           return;
         }
 
-        const newBookingId = bookingData.booking.id;
-        setBookingId(newBookingId);
-
-        if (paymentMode === "payhere") {
-          const paymentRes = await fetch("/api/payments/initiate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ bookingId }),
-          });
-          const paymentData = await paymentRes.json();
-
-          if (!paymentRes.ok) {
-            setError(paymentData.error || "Failed to start payment");
-            setLoading(false);
-            return;
-          }
-
-          redirectToPayHere(paymentData.checkoutUrl, paymentData.fields);
-          return; // browser is navigating away
-        }
-
-        if (onBooked) onBooked(newBookingId);
-        setStep(4);
-      } catch (err) {
-        console.error("Booking submission error:", err);
-        setError("Something went wrong. Please try again.");
-      } finally {
-        setLoading(false);
+        redirectToPayHere(paymentData.checkoutUrl, paymentData.fields);
+        return; // browser is navigating away
       }
-      return;
+
+      if (onBooked) onBooked(newBookingId);
+      setConfirmed(true);
+    } catch (err) {
+      console.error("Booking submission error:", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setStep((s) => (s + 1) as 1 | 2 | 3 | 4);
   };
 
-  const handlePrev = () => {
-    setStep((s) => (s - 1) as 1 | 2 | 3 | 4);
-  };
-
-  // Step 1: Date Selection
-  if (step === 1) {
+  if (confirmed) {
     return (
-      <div className="space-y-6">
-        <h3 className="text-2xl font-bold">Step 1: Select Date</h3>
+      <div className="text-center space-y-6">
+        <PickleballBounce className="w-10 h-10 mx-auto" />
+        <motion.div
+          initial={{ scale: 0, rotate: -45 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+          className="w-20 h-20 mx-auto rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center"
+        >
+          <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" aria-hidden="true" />
+        </motion.div>
+        <h3 className="text-2xl font-bold font-display text-green-600 dark:text-green-400">Booking Confirmed!</h3>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-            Pick a date to play
-          </label>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            min={minDate}
-            max={maxDate}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 text-lg"
-          />
+        <div className="bg-green-50 dark:bg-green-950/40 p-6 rounded-lg border border-green-200 dark:border-green-800/60">
+          <p className="text-green-900 dark:text-green-200 mb-4">
+            Your court booking has been confirmed. A confirmation email has been sent to your registered email
+            address.
+          </p>
+
+          <div className="space-y-3 text-left">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Booking Reference</p>
+              <p className="font-bold text-lg text-text-primary">BK#{bookingId.slice(0, 8).toUpperCase()}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Date & Time</p>
+              <p className="font-bold text-text-primary">
+                {new Date(selectedDate).toLocaleDateString("en-LK")} | {selectedSlots[0]} -{" "}
+                {selectedSlots[selectedSlots.length - 1]}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Amount</p>
+              <p className="font-bold text-lg text-text-primary">{formatCurrency(calculatePrice())}</p>
+            </div>
+          </div>
         </div>
 
-        {selectedDate && (
-          <div className="bg-purple-50 dark:bg-purple-950/40 p-4 rounded-lg">
-            <p className="text-purple-900 dark:text-purple-200">
-              📅 Selected: <strong>{new Date(selectedDate).toLocaleDateString("en-LK", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</strong>
-            </p>
+        <div className="space-y-2">
+          <Button href="/my-bookings" size="lg">
+            View My Bookings
+          </Button>
+          <div>
+            <Button href="/" variant="ghost" size="sm" className="hover:bg-transparent">
+              Back to Home
+            </Button>
           </div>
-        )}
-
-        <div className="flex justify-between">
-          <button
-            disabled
-            className="px-6 py-2 rounded-lg font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-white/5"
-          >
-            Previous
-          </button>
-          <button
-            onClick={handleNext}
-            disabled={!selectedDate || loading}
-            className="px-6 py-2 rounded-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition"
-          >
-            Next →
-          </button>
         </div>
       </div>
     );
   }
 
-  // Step 2: Time Slot Selection
-  if (step === 2) {
-    return (
-      <div className="space-y-6">
-        <h3 className="text-2xl font-bold">Step 2: Select Time Slots</h3>
+  return (
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Date */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold font-display">2. Pick a date</h3>
+        <DatePicker label="" value={selectedDate} onChange={setSelectedDate} min={minDate} max={maxDate} />
+        <AnimatePresence>
+          {selectedDate && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="bg-sage-50 dark:bg-sage-950/40 p-4 rounded-lg flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-sage-700 dark:text-sage-300 shrink-0" aria-hidden="true" />
+                <p className="text-sage-900 dark:text-sage-200">
+                  Selected:{" "}
+                  <strong>
+                    {new Date(selectedDate).toLocaleDateString("en-LK", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </strong>
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-            Choose one or more consecutive slots (1 hour each)
-          </label>
+      {/* Time slots */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold font-display">3. Pick your time</h3>
+        {!selectedDate ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400 p-4 bg-surface-sunken rounded-lg">
+            Pick a date above to see available times.
+          </p>
+        ) : (
+          <>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Choose one or more consecutive slots (1 hour each)
+            </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {availableSlots.map((slot) => {
-              const isBooked = bookedSlots.includes(slot);
-              const isSelected = selectedSlots.includes(slot);
-              const isOffPeakSlot = isOffPeak(slot);
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {loadingAvailability
+                ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-14" />)
+                : availableSlots.map((slot) => {
+                    const isBooked = bookedSlots.includes(slot);
+                    const isSelected = selectedSlots.includes(slot);
+                    const isOffPeakSlot = isOffPeak(slot);
 
-              return (
-                <button
-                  key={slot}
-                  onClick={() => handleSlotToggle(slot)}
-                  disabled={isBooked}
-                  className={`p-3 rounded-lg font-semibold text-center transition ${
-                    isBooked
-                      ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                      : isSelected
-                      ? "bg-purple-600 text-white ring-2 ring-purple-300 dark:ring-purple-700"
-                      : isOffPeakSlot
-                      ? "bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/40 border border-green-300 dark:border-green-700/60"
-                      : "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 border border-orange-300 dark:border-orange-700/60"
-                  }`}
+                    return (
+                      <motion.button
+                        key={slot}
+                        type="button"
+                        onClick={() => handleSlotToggle(slot)}
+                        disabled={isBooked}
+                        aria-disabled={isBooked}
+                        title={isBooked ? "Already booked" : undefined}
+                        whileTap={isBooked ? undefined : { scale: 0.94 }}
+                        whileHover={isBooked ? undefined : { scale: 1.03 }}
+                        animate={isSelected ? { scale: [1, 1.06, 1] } : { scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                        className={cn(
+                          "p-3 rounded-lg font-semibold text-center transition-colors",
+                          isBooked
+                            ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 cursor-not-allowed line-through decoration-gray-400"
+                            : isSelected
+                            ? "bg-sage-600 text-white ring-2 ring-sage-300 dark:ring-sage-700"
+                            : isOffPeakSlot
+                            ? "bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/40 border border-green-300 dark:border-green-700/60"
+                            : "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 border border-orange-300 dark:border-orange-700/60"
+                        )}
+                      >
+                        <div className="text-sm">{slot}</div>
+                        <div className="text-xs">{isBooked ? "Booked" : isOffPeakSlot ? "LKR 1,500" : "LKR 2,500"}</div>
+                      </motion.button>
+                    );
+                  })}
+            </div>
+
+            <div className="p-4 bg-surface-sunken rounded-lg">
+              <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500" aria-hidden="true" />
+                  Off-peak (6 AM - 5 PM): LKR 1,500/hour
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-orange-500" aria-hidden="true" />
+                  Peak (5 PM - 10 PM): LKR 2,500/hour
+                </span>
+              </p>
+            </div>
+
+            <AnimatePresence>
+              {selectedSlots.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
                 >
-                  <div className="text-sm">{slot}</div>
-                  <div className="text-xs">
-                    {isOffPeakSlot ? "LKR 1,500" : "LKR 2,500"}
+                  <div className="bg-sage-50 dark:bg-sage-950/40 p-4 rounded-lg border border-sage-200 dark:border-sage-800/60">
+                    <p className="text-sage-900 dark:text-sage-200 font-semibold mb-2">
+                      Selected {selectedSlots.length} slot(s):
+                    </p>
+                    <p className="text-sage-800 dark:text-sage-300">
+                      {selectedSlots.join(", ")} | Total: {formatCurrency(calculatePrice())}
+                    </p>
                   </div>
-                </button>
-              );
-            })}
-          </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        )}
+      </div>
 
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-950 rounded-lg">
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              🟢 Off-peak (6 AM - 5 PM): LKR 1,500/hour | 🟠 Peak (5 PM - 10 PM):
-              LKR 2,500/hour
-            </p>
-          </div>
-        </div>
+      {/* Players & guest details */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold font-display">4. Your details</h3>
 
-        {selectedSlots.length > 0 && (
-          <div className="bg-purple-50 dark:bg-purple-950/40 p-4 rounded-lg border border-purple-200 dark:border-purple-800/60">
-            <p className="text-purple-900 dark:text-purple-200 font-semibold mb-2">
-              Selected {selectedSlots.length} slot(s):
+        {!userId && (
+          <div className="space-y-4 p-4 rounded-lg border border-gray-200 dark:border-white/10 bg-surface-sunken">
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Booking without an account - we just need a way to reach you
             </p>
-            <p className="text-purple-800 dark:text-purple-300">
-              {selectedSlots.join(", ")} | Total: {formatCurrency(calculatePrice())}
-            </p>
+            <Input
+              label="Full Name"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              placeholder="Your name"
+              required
+            />
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Input
+                label="Phone Number"
+                type="tel"
+                value={guestPhone}
+                onChange={(e) => setGuestPhone(e.target.value)}
+                placeholder="+94 71 234 5678"
+                required
+              />
+              <Input
+                label="Email"
+                type="email"
+                value={guestEmail}
+                onChange={(e) => setGuestEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+              />
+            </div>
           </div>
         )}
 
-        <div className="flex justify-between">
-          <button
-            onClick={handlePrev}
-            className="px-6 py-2 rounded-lg font-semibold text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+        <Select
+          label="Number of Players (max 4)"
+          value={numPlayers}
+          onChange={(e) => setNumPlayers(parseInt(e.target.value))}
+        >
+          {[1, 2, 3, 4].map((n) => (
+            <option key={n} value={n}>
+              {n} player{n > 1 ? "s" : ""}
+            </option>
+          ))}
+        </Select>
+      </div>
+
+      {/* Payment */}
+      <div className="space-y-3">
+        <h3 className="text-xl font-bold font-display">5. Payment method</h3>
+        <div className="space-y-2">
+          <label
+            className={cn(
+              "flex items-center p-3 border rounded-lg cursor-pointer transition-colors",
+              paymentMode === "pay_at_venue"
+                ? "border-sage-400 dark:border-sage-600 bg-sage-50 dark:bg-sage-950/40"
+                : "border-gray-300 dark:border-white/15 hover:bg-sage-50 dark:hover:bg-sage-950/40"
+            )}
           >
-            ← Previous
-          </button>
-          <button
-            onClick={handleNext}
-            disabled={selectedSlots.length === 0 || loading}
-            className="px-6 py-2 rounded-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition"
+            <Radio
+              name="payment"
+              value="pay_at_venue"
+              checked={paymentMode === "pay_at_venue"}
+              onChange={(e) => setPaymentMode(e.target.value)}
+            />
+            <span className="ml-3">
+              <span className="font-semibold">Pay at Venue</span>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Pay when you arrive. Booking confirmed immediately.
+              </p>
+            </span>
+          </label>
+
+          <label
+            className={cn(
+              "flex items-center p-3 border rounded-lg cursor-pointer transition-colors",
+              paymentMode === "payhere"
+                ? "border-sage-400 dark:border-sage-600 bg-sage-50 dark:bg-sage-950/40"
+                : "border-gray-300 dark:border-white/15 hover:bg-sage-50 dark:hover:bg-sage-950/40"
+            )}
           >
-            Next →
-          </button>
+            <Radio
+              name="payment"
+              value="payhere"
+              checked={paymentMode === "payhere"}
+              onChange={(e) => setPaymentMode(e.target.value)}
+            />
+            <span className="ml-3">
+              <span className="font-semibold">Online Payment (PayHere)</span>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Pay securely by card via PayHere. Redirects to checkout.
+              </p>
+            </span>
+          </label>
         </div>
       </div>
-    );
-  }
 
-  // Step 3: Player Count & Payment
-  if (step === 3) {
-    return (
-      <div className="space-y-6">
-        <h3 className="text-2xl font-bold">Step 3: Players & Payment</h3>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Number of Players (max 4)
-          </label>
-          <select
-            value={numPlayers}
-            onChange={(e) => setNumPlayers(parseInt(e.target.value))}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
-          >
-            {[1, 2, 3, 4].map((n) => (
-              <option key={n} value={n}>
-                {n} player{n > 1 ? "s" : ""}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Payment Method
-          </label>
-          <div className="space-y-2">
-            <label className="flex items-center p-3 border border-gray-300 dark:border-white/15 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/40 cursor-pointer">
-              <input
-                type="radio"
-                name="payment"
-                value="pay_at_venue"
-                checked={paymentMode === "pay_at_venue"}
-                onChange={(e) => setPaymentMode(e.target.value)}
-                className="w-4 h-4"
-              />
-              <span className="ml-3">
-                <span className="font-semibold">Pay at Venue</span>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Pay when you arrive. Booking confirmed immediately.
-                </p>
-              </span>
-            </label>
-
-            <label className="flex items-center p-3 border border-gray-300 dark:border-white/15 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/40 cursor-pointer">
-              <input
-                type="radio"
-                name="payment"
-                value="payhere"
-                checked={paymentMode === "payhere"}
-                onChange={(e) => setPaymentMode(e.target.value)}
-                className="w-4 h-4"
-              />
-              <span className="ml-3">
-                <span className="font-semibold">Online Payment (PayHere)</span>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Pay securely by card via PayHere. Redirects to checkout.
-                </p>
-              </span>
-            </label>
-          </div>
-        </div>
-
+      <AnimatePresence>
         {error && (
-          <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-700 dark:text-red-300 rounded-lg p-3 text-sm">
-            {error}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-700 dark:text-red-300 rounded-lg p-3 text-sm">
+              {error}
+            </div>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        <div className="bg-gray-50 dark:bg-gray-950 p-6 rounded-lg border border-gray-200 dark:border-white/10">
+      {/* Summary + submit */}
+      <div className="bg-surface-sunken p-6 rounded-lg border border-gray-200 dark:border-white/10 space-y-4">
+        <div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Booking Summary:</p>
-          <div className="space-y-1 text-gray-900 dark:text-white">
+          <div className="space-y-1 text-text-primary">
             <div className="flex justify-between">
               <span>Date:</span>
               <strong>
-                {new Date(selectedDate).toLocaleDateString("en-LK", {
-                  month: "short",
-                  day: "numeric",
-                })}
+                {selectedDate
+                  ? new Date(selectedDate).toLocaleDateString("en-LK", { month: "short", day: "numeric" })
+                  : "-"}
               </strong>
             </div>
             <div className="flex justify-between">
               <span>Time:</span>
               <strong>
-                {selectedSlots[0]} - {selectedSlots[selectedSlots.length - 1]}
+                {selectedSlots.length > 0
+                  ? `${selectedSlots[0]} - ${selectedSlots[selectedSlots.length - 1]}`
+                  : "-"}
               </strong>
             </div>
             <div className="flex justify-between">
@@ -371,84 +519,18 @@ export default function BookingForm({ userId, courtId, onBooked }: BookingFormPr
               <span>Players:</span>
               <strong>{numPlayers}</strong>
             </div>
-            <hr className="my-2" />
-            <div className="flex justify-between text-lg font-bold text-purple-600 dark:text-purple-400">
+            <div className="my-2 border-t border-gray-200 dark:border-white/10" />
+            <div className="flex justify-between text-lg font-bold text-sage-600 dark:text-sage-400">
               <span>Total:</span>
               <span>{formatCurrency(calculatePrice())}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-between">
-          <button
-            onClick={handlePrev}
-            disabled={loading}
-            className="px-6 py-2 rounded-lg font-semibold text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 transition"
-          >
-            ← Previous
-          </button>
-          <button
-            onClick={handleNext}
-            disabled={loading}
-            className="px-6 py-2 rounded-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition"
-          >
-            {loading ? "Processing…" : "Confirm Booking →"}
-          </button>
-        </div>
+        <Button type="submit" fullWidth size="lg" loading={loading} disabled={!canSubmit || loading}>
+          {loading ? "Processing…" : "Confirm Booking →"}
+        </Button>
       </div>
-    );
-  }
-
-  // Step 4: Confirmation
-  return (
-    <div className="text-center space-y-6">
-      <div className="text-6xl">✓</div>
-      <h3 className="text-2xl font-bold text-green-600 dark:text-green-400">Booking Confirmed!</h3>
-
-      <div className="bg-green-50 dark:bg-green-950/40 p-6 rounded-lg border border-green-200 dark:border-green-800/60">
-        <p className="text-green-900 dark:text-green-200 mb-4">
-          Your court booking has been confirmed. A confirmation email has been
-          sent to your registered email address.
-        </p>
-
-        <div className="space-y-3 text-left">
-          <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Booking Reference</p>
-            <p className="font-bold text-lg text-gray-900 dark:text-white">
-              BK#{bookingId.slice(0, 8).toUpperCase()}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Date & Time</p>
-            <p className="font-bold text-gray-900 dark:text-white">
-              {new Date(selectedDate).toLocaleDateString("en-LK")} |{" "}
-              {selectedSlots[0]} - {selectedSlots[selectedSlots.length - 1]}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Amount</p>
-            <p className="font-bold text-lg text-gray-900 dark:text-white">
-              {formatCurrency(calculatePrice())}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Link
-          href="/my-bookings"
-          className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition"
-        >
-          View My Bookings
-        </Link>
-        <br />
-        <Link
-          href="/"
-          className="inline-block text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold"
-        >
-          Back to Home
-        </Link>
-      </div>
-    </div>
+    </form>
   );
 }

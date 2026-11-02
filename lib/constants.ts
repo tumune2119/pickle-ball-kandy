@@ -1,14 +1,14 @@
-// App-wide constants for Kandy 1st Court
+// App-wide constants for Pickle Rush
 
 export const TIMEZONE = "Asia/Colombo";
 export const CURRENCY = "LKR";
 export const CURRENCY_SYMBOL = "LKR";
 
 // Court details
-export const COURT_NAME = "Kandy 1st Court";
+export const COURT_NAME = "Pickle Rush";
 export const COURT_LOCATION = "Kandy, Sri Lanka";
 export const COURT_GOOGLE_MAPS_URL =
-  "https://maps.google.com/?q=Kandy+1st+Court+Kandy+Sri+Lanka";
+  "https://maps.google.com/?q=Pickle+Rush+Kandy+Sri+Lanka";
 
 // Default operating hours
 export const DEFAULT_OPENING_TIME = "06:00"; // 6 AM

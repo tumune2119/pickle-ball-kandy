@@ -52,6 +52,23 @@ export async function verifyOTP(phone: string, token: string) {
   return { data, error };
 }
 
+// Redirects the browser to Google's consent screen; Supabase handles the
+// callback and restores the session automatically once the user lands back
+// on `redirectTo` (its client already has detectSessionInUrl on by
+// default). Requires the Google provider to be enabled in the Supabase
+// dashboard (Authentication > Providers) with a Google OAuth client id/
+// secret - this call will fail with "provider is not enabled" until then.
+export async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/dashboard`,
+    },
+  });
+
+  return { data, error };
+}
+
 export async function logout() {
   const { error } = await supabase.auth.signOut();
   return { error };

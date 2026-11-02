@@ -1,7 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { getSession } from "@/lib/auth";
+import { cn } from "@/lib/cn";
+import Badge, { bookingStatusTone, paymentStatusTone } from "@/components/ui/Badge";
+import Skeleton from "@/components/ui/Skeleton";
+import { Select } from "@/components/ui/Input";
+import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
 interface AdminBooking {
   id: string;
@@ -12,193 +19,238 @@ interface AdminBooking {
   status: string;
   paymentStatus: string;
   amountLkr: number;
-  userId: string;
+  userId: string | null;
+  courtId: string;
+  courtName: string;
+  customerName: string;
+  isGuest: boolean;
 }
 
-// TODO: replace with a fetch from /api/admin/bookings once wired to real auth.
-function buildDemoBookings(): AdminBooking[] {
-  return [
-      {
-        id: "bk-001",
-        bookingDate: new Date().toISOString().split("T")[0],
-        startTime: "09:00",
-        endTime: "10:00",
-        numPlayers: 2,
-        status: "confirmed",
-        paymentStatus: "unpaid",
-        amountLkr: 1500,
-        userId: "user-1",
-      },
-      {
-        id: "bk-002",
-        bookingDate: new Date().toISOString().split("T")[0],
-        startTime: "10:00",
-        endTime: "11:00",
-        numPlayers: 4,
-        status: "confirmed",
-        paymentStatus: "paid",
-        amountLkr: 1500,
-        userId: "user-2",
-      },
-      {
-        id: "bk-003",
-        bookingDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0],
-        startTime: "17:00",
-        endTime: "18:00",
-        numPlayers: 3,
-        status: "confirmed",
-        paymentStatus: "unpaid",
-        amountLkr: 2500,
-        userId: "user-3",
-      },
-      {
-        id: "bk-004",
-        bookingDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0],
-        startTime: "18:00",
-        endTime: "19:00",
-        numPlayers: 2,
-        status: "pending_payment",
-        paymentStatus: "unpaid",
-        amountLkr: 2500,
-        userId: "user-4",
-      },
-  ];
+interface Court {
+  id: string;
+  name: string;
 }
+
+const statusLabel: Record<string, string> = {
+  confirmed: "Confirmed",
+  pending_payment: "Pending",
+  cancelled: "Cancelled",
+};
+
+const paymentLabel: Record<string, string> = {
+  paid: "Paid",
+  unpaid: "Unpaid",
+};
+
+const filters = ["all", "confirmed", "pending_payment", "cancelled"];
+const filterLabel: Record<string, string> = {
+  all: "All",
+  confirmed: "Confirmed",
+  pending_payment: "Pending Payment",
+  cancelled: "Cancelled",
+};
 
 export default function AdminBookingsTable() {
-  const [bookings] = useState<AdminBooking[]>(buildDemoBookings);
+  const [bookings, setBookings] = useState<AdminBooking[]>([]);
+  const [courts, setCourts] = useState<Court[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterCourt, setFilterCourt] = useState<string>("all");
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const session = await getSession();
+      if (!session) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
+      const [bookingsRes, courtsRes] = await Promise.all([
+        fetch("/api/admin/bookings", {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        }),
+        fetch("/api/courts"),
+      ]);
+      const data = await bookingsRes.json();
+      const courtsData = await courtsRes.json();
+      if (!cancelled) {
+        setBookings(bookingsRes.ok ? data.bookings ?? [] : []);
+        setCourts(courtsData.courts ?? []);
+        setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleCancel = async (bookingId: string) => {
+    const session = await getSession();
+    if (!session) return;
+    setCancellingId(bookingId);
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, ...data.booking } : b)));
+      }
+    } finally {
+      setCancellingId(null);
+    }
+  };
 
   const filteredBookings = bookings.filter((b) => {
-    if (filterStatus === "all") return true;
-    return b.status === filterStatus;
+    if (filterStatus !== "all" && b.status !== filterStatus) return false;
+    if (filterCourt !== "all" && b.courtId !== filterCourt) return false;
+    return true;
   });
-
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      confirmed: "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300",
-      pending_payment: "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300",
-      cancelled: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300",
-    };
-    return colors[status] || "bg-gray-100 dark:bg-white/5 text-gray-800 dark:text-gray-100";
-  };
 
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <div className="flex gap-2 flex-wrap">
-        {["all", "confirmed", "pending_payment", "cancelled"].map((status) => (
-          <button
-            key={status}
-            onClick={() => setFilterStatus(status)}
-            className={`px-4 py-2 rounded-lg font-semibold transition ${
-              filterStatus === status
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 dark:bg-white/10 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700"
-            }`}
+      <div className="flex gap-2 flex-wrap items-center justify-between">
+        <div className="flex gap-2 flex-wrap">
+          {filters.map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              className={cn(
+                "px-4 py-2 rounded-lg font-semibold transition-colors",
+                filterStatus === status
+                  ? "bg-admin-action text-admin-text-on-action"
+                  : "bg-admin-surface text-admin-text-muted hover:bg-admin-bg border border-admin-border"
+              )}
+            >
+              {filterLabel[status]} ({bookings.filter((b) => status === "all" || b.status === status).length})
+            </button>
+          ))}
+        </div>
+        {courts.length > 1 && (
+          <Select
+            value={filterCourt}
+            onChange={(e) => setFilterCourt(e.target.value)}
+            wrapperClassName="w-44"
+            className="focus:ring-admin-action"
           >
-            {status === "all" && "All"}
-            {status === "confirmed" && "✓ Confirmed"}
-            {status === "pending_payment" && "⏳ Pending Payment"}
-            {status === "cancelled" && "✗ Cancelled"}
-            {" "}
-            ({bookings.filter((b) => status === "all" || b.status === status).length})
-          </button>
-        ))}
+            <option value="all">All Courts</option>
+            {courts.map((court) => (
+              <option key={court.id} value={court.id}>
+                {court.name}
+              </option>
+            ))}
+          </Select>
+        )}
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-white/10 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 dark:bg-gray-950 border-b border-gray-200 dark:border-white/10">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
-                Booking ID
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
-                Date & Time
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
-                Players
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
-                Payment
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
-                Amount
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-white/10">
-            {filteredBookings.length === 0 ? (
+      <div className="bg-admin-surface rounded-xl border border-admin-border shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-admin-bg border-b border-admin-border">
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-gray-600 dark:text-gray-400">
-                  No bookings found
-                </td>
+                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Booking ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Customer
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Court
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Date & Time
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Players
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Payment
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-bold text-admin-text-muted uppercase">
+                  Amount
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Actions
+                </th>
               </tr>
-            ) : (
-              filteredBookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-gray-50 dark:hover:bg-gray-950 transition">
-                  <td className="px-6 py-4 font-mono text-sm font-semibold text-gray-900 dark:text-white">
-                    {booking.id}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                    <div>{formatDate(booking.bookingDate)}</div>
-                    <div className="text-blue-600 dark:text-blue-400 font-semibold">
-                      {booking.startTime} - {booking.endTime}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-semibold">
-                    {booking.numPlayers}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(booking.status)}`}
-                    >
-                      {booking.status === "confirmed" && "✓ Confirmed"}
-                      {booking.status === "pending_payment" && "⏳ Pending"}
-                      {booking.status === "cancelled" && "✗ Cancelled"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
-                        booking.paymentStatus === "paid"
-                          ? "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300"
-                          : "bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-300"
-                      }`}
-                    >
-                      {booking.paymentStatus === "paid" ? "✓ Paid" : "⏳ Unpaid"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(booking.amountLkr)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <button className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold text-sm">
-                        ✎ Edit
-                      </button>
-                      <button className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-semibold text-sm">
-                        ✕ Cancel
-                      </button>
-                    </div>
+            </thead>
+            {loading ? (
+              <tbody>
+                {[1, 2, 3].map((i) => (
+                  <tr key={i}>
+                    <td colSpan={9} className="px-6 py-4">
+                      <Skeleton className="h-6 w-full" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            ) : filteredBookings.length === 0 ? (
+              <tbody>
+                <tr>
+                  <td colSpan={9} className="px-6 py-8 text-center text-admin-text-muted">
+                    No bookings found
                   </td>
                 </tr>
-              ))
+              </tbody>
+            ) : (
+              <RevealGroup as="tbody" className="divide-y divide-admin-border" stagger={0.04}>
+                {filteredBookings.map((booking) => (
+                  <RevealItem key={booking.id} as="tr" y={8} className="hover:bg-admin-bg/60 transition-colors">
+                    <td className="px-6 py-4 font-mono text-sm font-semibold text-admin-text">
+                      {booking.id.slice(0, 8)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-admin-text">
+                      {booking.customerName}
+                      {booking.isGuest && (
+                        <span className="ml-1.5 text-xs text-admin-text-muted">(Guest)</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-admin-text">{booking.courtName}</td>
+                    <td className="px-6 py-4 text-sm text-admin-text">
+                      <div>{formatDate(booking.bookingDate)}</div>
+                      <div className="text-admin-action font-semibold">
+                        {booking.startTime} - {booking.endTime}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-admin-text font-semibold">{booking.numPlayers}</td>
+                    <td className="px-6 py-4">
+                      <Badge tone={bookingStatusTone(booking.status)}>
+                        {statusLabel[booking.status] ?? booking.status}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <Badge tone={paymentStatusTone(booking.paymentStatus)}>
+                        {paymentLabel[booking.paymentStatus] ?? booking.paymentStatus}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-right font-bold text-admin-text">
+                      {formatCurrency(booking.amountLkr)}
+                    </td>
+                    <td className="px-6 py-4">
+                      {booking.status !== "cancelled" && (
+                        <button
+                          onClick={() => handleCancel(booking.id)}
+                          disabled={cancellingId === booking.id}
+                          className="flex items-center gap-1 text-danger-700 dark:text-danger-300 hover:text-danger-900 dark:hover:text-danger-100 font-semibold text-sm transition-colors disabled:opacity-50"
+                        >
+                          <X className="w-3.5 h-3.5" aria-hidden="true" />
+                          {cancellingId === booking.id ? "Cancelling…" : "Cancel"}
+                        </button>
+                      )}
+                    </td>
+                  </RevealItem>
+                ))}
+              </RevealGroup>
             )}
-          </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   );

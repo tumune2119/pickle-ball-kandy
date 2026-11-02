@@ -1,4 +1,4 @@
-# Kandy 1st Court - Pickleball Booking Platform
+# Pickle Rush - Pickleball Booking Platform
 
 A full-stack booking system for Sri Lanka's first dedicated pickleball court in Kandy. Built with Next.js 16, TypeScript, Tailwind CSS, Supabase, and Drizzle ORM.
 

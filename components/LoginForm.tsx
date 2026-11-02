@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertCircle } from "lucide-react";
 import { supabase } from "@/lib/auth";
+import { Input } from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import GoogleButton from "@/components/ui/GoogleButton";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -52,57 +57,70 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome Back</h1>
+      <h1 className="text-3xl font-bold font-display text-gray-900 dark:text-white mb-2">Welcome Back</h1>
       <p className="text-gray-600 dark:text-gray-400 mb-8">Login to your account to access bookings</p>
 
-      {error && (
-        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
-          {error}
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="flex items-start gap-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
+              <span>{error}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Email Address
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
-          />
-        </div>
+        <Input
+          label="Email Address"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          required
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500"
-          />
-        </div>
+        <Input
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="••••••••"
+          required
+        />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white px-4 py-3 rounded-lg font-bold transition"
-        >
+        <Button type="submit" loading={loading} fullWidth size="lg">
           {loading ? "Logging in..." : "Login"}
-        </button>
+        </Button>
       </form>
+
+      <div className="flex items-center gap-3 my-6">
+        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+        <span className="text-xs text-gray-500 dark:text-gray-400">OR</span>
+        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+      </div>
+
+      <GoogleButton label="Continue with Google" />
 
       <p className="text-gray-600 dark:text-gray-400 text-center mt-6">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-bold">
+        <Link
+          href="/signup"
+          className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-bold"
+        >
           Sign up here
+        </Link>
+      </p>
+      <p className="text-gray-500 dark:text-gray-500 text-center text-sm mt-2">
+        <Link href="/admin/login" className="hover:text-gray-700 dark:hover:text-gray-300">
+          Staff login →
         </Link>
       </p>
     </div>

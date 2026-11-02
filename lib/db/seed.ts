@@ -34,10 +34,10 @@ async function seed() {
     const courtResult = await db
       .insert(courts)
       .values({
-        name: "Kandy 1st Court",
+        name: "Pickle Rush",
         location: "Kandy, Sri Lanka",
         googleMapsUrl:
-          "https://maps.google.com/?q=Kandy+1st+Court+Kandy+Sri+Lanka",
+          "https://maps.google.com/?q=Pickle+Rush+Kandy+Sri+Lanka",
         openingTime: "06:00",
         closingTime: "22:00",
         slotDuration: 60,
@@ -173,7 +173,7 @@ async function seed() {
 
     console.log("✅ Database seed completed successfully!");
     console.log("\n📊 Summary:");
-    console.log(`  - Court: Kandy 1st Court (${courtId})`);
+    console.log(`  - Court: Pickle Rush (${courtId})`);
     console.log(`  - Admin: admin@kandypickleball.lk (${adminId})`);
     console.log(`  - Customers: 2 test users created`);
     console.log(`  - Sample bookings: 3 bookings for testing`);

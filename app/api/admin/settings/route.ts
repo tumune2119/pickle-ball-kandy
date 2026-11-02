@@ -2,9 +2,13 @@ import { db } from "@/lib/db/db";
 import { settings, courts } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server-auth";
 
 // GET /api/admin/settings - Get all settings
 export async function GET(request: NextRequest) {
+  const auth = await requireAdmin(request);
+  if (auth.response) return auth.response;
+
   try {
     const courtId = request.headers.get("X-Court-ID") || "";
 
@@ -42,6 +46,9 @@ export async function GET(request: NextRequest) {
 
 // PATCH /api/admin/settings - Update settings
 export async function PATCH(request: NextRequest) {
+  const auth = await requireAdmin(request);
+  if (auth.response) return auth.response;
+
   try {
     const body = await request.json();
     const { courtId, settings: newSettings } = body;

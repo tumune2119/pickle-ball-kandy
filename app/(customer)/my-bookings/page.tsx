@@ -1,41 +1,43 @@
-﻿import MyBookingsList from "@/components/MyBookingsList";
+import { ClipboardList, Check } from "lucide-react";
+import MyBookingsList from "@/components/MyBookingsList";
+import Card from "@/components/ui/Card";
 
 export const metadata = {
-  title: "My Bookings - Kandy 1st Court",
+  title: "My Bookings - Pickle Rush",
 };
+
+const policies = [
+  "Free cancellation up to 4 hours before your booking",
+  "Reschedule to any available date/time for free",
+  "No-show forfeits the full amount (non-refundable)",
+  "Group discount available for 3+ consecutive bookings",
+  "Membership discounts applied automatically at checkout",
+];
 
 export default function MyBookingsPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">My Bookings</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          View, reschedule, or cancel your court bookings below
-        </p>
+        <h2 className="text-2xl font-bold font-display text-text-primary mb-2">My Bookings</h2>
+        <p className="text-text-muted">View, reschedule, or cancel your court bookings below</p>
       </div>
 
       <MyBookingsList />
 
-      <div className="mt-8 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 rounded-lg p-6">
-        <h3 className="font-bold text-gray-900 dark:text-white mb-4">📋 Booking Policy</h3>
+      <Card tint="brand" glass padding="md" className="mt-8">
+        <h3 className="font-bold text-text-primary mb-4 flex items-center gap-2">
+          <ClipboardList className="w-5 h-5" aria-hidden="true" />
+          Booking Policy
+        </h3>
         <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-          <li>
-            ✓ Free cancellation up to 4 hours before your booking
-          </li>
-          <li>
-            ✓ Reschedule to any available date/time for free
-          </li>
-          <li>
-            ✓ No-show forfeits the full amount (non-refundable)
-          </li>
-          <li>
-            ✓ Group discount available for 3+ consecutive bookings
-          </li>
-          <li>
-            ✓ Membership discounts applied automatically at checkout
-          </li>
+          {policies.map((policy) => (
+            <li key={policy} className="flex items-start gap-2">
+              <Check className="w-4 h-4 mt-0.5 shrink-0 text-sage-600 dark:text-sage-400" aria-hidden="true" />
+              {policy}
+            </li>
+          ))}
         </ul>
-      </div>
+      </Card>
     </div>
   );
 }

@@ -43,6 +43,3 @@ pw.txt
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# mobile (Expo/React Native): mobile/.gitignore already covers its own
-# node_modules, .expo, dist, ios/android, etc. - nothing to duplicate here.

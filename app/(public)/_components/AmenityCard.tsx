@@ -1,19 +1,20 @@
+import type { LucideIcon } from "lucide-react";
+import Card from "@/components/ui/Card";
+
 interface AmenityProps {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   description: string;
 }
 
-export default function AmenityCard({
-  icon,
-  title,
-  description,
-}: AmenityProps) {
+export default function AmenityCard({ icon: Icon, title, description }: AmenityProps) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-white/10 hover:shadow-lg transition text-center">
-      <div className="text-5xl mb-4">{icon}</div>
+    <Card hover glass padding="lg" className="text-center h-full">
+      <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-sage-50 dark:bg-sage-950/40 flex items-center justify-center">
+        <Icon className="w-7 h-7 text-sage-600 dark:text-sage-400" aria-hidden="true" />
+      </div>
       <h3 className="text-xl font-bold mb-2">{title}</h3>
       <p className="text-gray-600 dark:text-gray-400 text-sm">{description}</p>
-    </div>
+    </Card>
   );
 }

@@ -2,18 +2,19 @@ import { db } from "@/lib/db/db";
 import { bookings } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { requireAuth, getOptionalAuth } from "@/lib/server-auth";
+import { calculateBookingAmount } from "@/lib/utils";
 
-// GET /api/bookings - Get user's bookings
+// GET /api/bookings - Get the authenticated user's bookings
 export async function GET(request: NextRequest) {
-  try {
-    // In a real app, get userId from Supabase auth session
-    // For now, we'll return demo data
-    const userId = request.headers.get("X-User-ID") || "demo-user";
+  const auth = await requireAuth(request);
+  if (auth.response) return auth.response;
 
+  try {
     const userBookings = await db
       .select()
       .from(bookings)
-      .where(eq(bookings.userId, userId));
+      .where(eq(bookings.userId, auth.user.id));
 
     return NextResponse.json({
       bookings: userBookings.map((b) => ({
@@ -30,24 +31,31 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/bookings - Create a new booking
+// POST /api/bookings - Create a new booking. Works signed-in or as a guest:
+// a valid Authorization header attaches the booking to that account,
+// otherwise guestName/guestPhone/guestEmail are required instead.
 export async function POST(request: NextRequest) {
+  const user = await getOptionalAuth(request);
+
   try {
     const body = await request.json();
     const {
-      userId,
       courtId,
       bookingDate,
       startTime,
       endTime,
       numPlayers,
-      amountLkr,
       paymentMode,
+      guestName,
+      guestPhone,
+      guestEmail,
     } = body;
+    // The authenticated session decides whose booking this is - a client-
+    // supplied userId would let anyone create bookings as anyone else.
+    const userId = user?.id ?? null;
 
     // Validate required fields
     if (
-      !userId ||
       !courtId ||
       !bookingDate ||
       !startTime ||
@@ -56,6 +64,18 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    // The server computes the price itself from startTime/endTime - a
+    // client-supplied amount would let anyone book at whatever price they
+    // send, including through the online PayHere flow.
+    const amountLkr = calculateBookingAmount(startTime, endTime);
+
+    if (!userId && (!guestName || !guestPhone || !guestEmail)) {
+      return NextResponse.json(
+        { error: "Guest bookings require guestName, guestPhone, and guestEmail" },
         { status: 400 }
       );
     }
@@ -91,6 +111,9 @@ export async function POST(request: NextRequest) {
         startTime,
         endTime,
         numPlayers,
+        guestName: userId ? null : guestName,
+        guestPhone: userId ? null : guestPhone,
+        guestEmail: userId ? null : guestEmail,
         amountLkr: amountLkr.toString(),
         status: paymentMode === "payhere" ? "pending_payment" : "confirmed",
         paymentStatus: "unpaid",

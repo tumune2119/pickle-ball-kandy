@@ -2,9 +2,13 @@ import { db } from "@/lib/db/db";
 import { bookings } from "@/lib/db/schema";
 import { and, gte, lte } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server-auth";
 
 // GET /api/admin/reports - Get analytics data
 export async function GET(request: NextRequest) {
+  const auth = await requireAdmin(request);
+  if (auth.response) return auth.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const startDate = searchParams.get("startDate");

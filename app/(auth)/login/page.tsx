@@ -1,7 +1,7 @@
 ﻿import LoginForm from "@/components/LoginForm";
 
 export const metadata = {
-  title: "Login - Kandy 1st Court",
+  title: "Login - Pickle Rush",
 };
 
 export default function LoginPage() {

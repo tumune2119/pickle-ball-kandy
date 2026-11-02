@@ -1,4 +1,7 @@
+import { Check } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 interface PricingTierProps {
   title: string;
@@ -18,15 +21,19 @@ export default function PricingCard({
   highlighted = false,
 }: PricingTierProps) {
   return (
-    <div
-      className={`rounded-lg border-2 p-6 sm:p-8 transition ${
+    <Card
+      hover={!highlighted}
+      glass
+      padding="lg"
+      tint={highlighted ? "brand" : "neutral"}
+      className={
         highlighted
-          ? "border-purple-600 bg-purple-50 dark:bg-purple-950/40 shadow-lg transform scale-105"
-          : "border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 hover:shadow-lg"
-      }`}
+          ? "border-2 border-sage-600 shadow-lg shadow-sage-600/10 md:scale-105 relative"
+          : "border-2"
+      }
     >
       {highlighted && (
-        <div className="mb-4 inline-block bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+        <div className="mb-4 inline-block bg-sage-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
           Most Popular
         </div>
       )}
@@ -44,21 +51,15 @@ export default function PricingCard({
       <ul className="space-y-3 mb-8">
         {features.map((feature, idx) => (
           <li key={idx} className="flex items-start">
-            <span className="text-green-500 dark:text-green-400 mr-3">✓</span>
+            <Check className="w-5 h-5 text-green-500 dark:text-green-400 mr-3 shrink-0" aria-hidden="true" />
             <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
           </li>
         ))}
       </ul>
 
-      <button
-        className={`w-full py-3 rounded-lg font-semibold transition ${
-          highlighted
-            ? "bg-purple-600 text-white hover:bg-purple-700"
-            : "bg-gray-100 dark:bg-white/5 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10"
-        }`}
-      >
+      <Button variant={highlighted ? "primary" : "secondary"} fullWidth size="md">
         Book Now
-      </button>
-    </div>
+      </Button>
+    </Card>
   );
 }
