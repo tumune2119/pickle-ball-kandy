@@ -8,7 +8,6 @@ import Card, { type CardTint } from "@/components/ui/Card";
 import Badge, { bookingStatusTone } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
-import AdminResetPanel from "@/components/AdminResetPanel";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
 interface ReportData {
@@ -38,10 +37,9 @@ interface DashboardData {
   upcoming: UpcomingBooking[];
 }
 
-// Pure fetch, no setState - called from both the mount effect and the
-// manual refresh-after-reset path below, each of which handles its own
-// setState calls inline (setState reachable through a named helper, rather
-// than directly in the caller, trips the react-hooks/set-state-in-effect
+// Pure fetch, no setState - called from the mount effect, which handles its
+// own setState calls inline (setState reachable through a named helper,
+// rather than directly in the caller, trips the react-hooks/set-state-in-effect
 // rule for the effect call site).
 async function fetchDashboardData(accessToken: string): Promise<DashboardData> {
   const authHeaders = { Authorization: `Bearer ${accessToken}` };
@@ -101,20 +99,6 @@ export default function AdminDashboardContent() {
     };
   }, []);
 
-  const refresh = async () => {
-    setLoading(true);
-    const session = await getSession();
-    if (!session) {
-      setLoading(false);
-      return;
-    }
-    const data = await fetchDashboardData(session.access_token);
-    setReport(data.report);
-    setMemberCount(data.memberCount);
-    setUpcoming(data.upcoming);
-    setLoading(false);
-  };
-
   const occupancyRate =
     report && report.bookings.total > 0
       ? Math.round(((report.bookings.total - report.bookings.cancelled) / report.bookings.total) * 100)
@@ -158,8 +142,6 @@ export default function AdminDashboardContent() {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-8 text-text-primary">Dashboard</h2>
-
-      <AdminResetPanel onReset={refresh} />
 
       {/* Stats Cards */}
       {loading ? (

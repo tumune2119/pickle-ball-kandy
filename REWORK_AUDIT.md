@@ -10,6 +10,8 @@ The real problem is **trust, not plumbing**: multiple customer-facing promises �
 
 **19 findings total: 6 Critical, 6 High, 8 Medium/Low**, plus a zero-test-coverage risk ranking. Full list below, worst first.
 
+**Update, same day:** C1 (the unconditional reset endpoint) has been fixed — removed outright, at your request, ahead of Phase 2. See C1 below for what changed and how it was verified.
+
 ---
 
 ## Before you read this: skill substitutions
@@ -52,8 +54,9 @@ No skill name was invented or pretended-at. Where a named skill wasn't available
 
 ## Findings — Critical
 
-### C1. `/api/admin/reset` unconditionally deletes all bookings and all customer accounts, with no server-side confirmation
-**File:** `app/api/admin/reset/route.ts:18-47`, `components/AdminResetPanel.tsx`
+### C1. ~~`/api/admin/reset` unconditionally deletes all bookings and all customer accounts, with no server-side confirmation~~ — **FIXED**
+**Status:** Fixed on `rework/pickle-rush` ahead of Phase 2, at your request. `app/api/admin/reset/route.ts` and `components/AdminResetPanel.tsx` were deleted outright (the route's own comment already said to remove it before launch); the dashboard's `<AdminResetPanel onReset={refresh} />` usage and its now-dead `refresh` callback were removed from `components/AdminDashboardContent.tsx`. Verified: `npx tsc --noEmit` clean, `npm run lint` unchanged (same 6 pre-existing warnings, nothing new), `npm run build` succeeds with `/api/admin/reset` gone from the route list (33 routes, down from 34).
+**File (as found):** `app/api/admin/reset/route.ts:18-47`, `components/AdminResetPanel.tsx`
 **What goes wrong:** `db.delete(bookings).returning(...)` has **no `WHERE` clause at all** — it deletes every row in the `bookings` table, not just "test" bookings, plus every Supabase Auth account and `users` row with `role = "customer"`. The only gate is `requireAdmin` (a valid staff session). The UI's "type RESET to confirm" dialog (`components/AdminResetPanel.tsx:85-116`) is **client-side only** — the API itself accepts the POST with zero body/confirmation check, so anything holding a valid admin bearer token (a curl request, a compromised admin session, a browser extension with devtools access) can wipe the database in one call.
 **Plain English:** This is a loaded gun pointed at your own database. The code comment literally says *"Remove this route... before launch"* — it was built as a dev convenience and never removed. One mistaken click, leaked admin token, or automated test hitting the wrong environment permanently destroys every real customer and booking.
 **Note:** I never called this route, per your safety rules.
