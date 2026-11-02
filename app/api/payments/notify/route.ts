@@ -41,6 +41,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Payment not found" }, { status: 404 });
     }
 
+    // Defense in depth: the signature already proves this notification
+    // genuinely came from PayHere (it's computed over payhere_amount itself,
+    // so it can't be forged without the merchant secret) - but a success
+    // notification for a different amount than we actually charged for
+    // shouldn't silently mark the booking paid regardless. Small tolerance
+    // for floating-point formatting, not for any real discrepancy.
+    const expectedAmount = parseFloat(payment[0].amountLkr as string);
+    const notifiedAmount = parseFloat(payhereAmount);
+    if (
+      statusCode === PAYHERE_STATUS.SUCCESS &&
+      Number.isFinite(notifiedAmount) &&
+      Math.abs(notifiedAmount - expectedAmount) > 0.01
+    ) {
+      console.error("PayHere notify: amount mismatch, not marking paid", {
+        orderId,
+        expectedAmount,
+        notifiedAmount,
+      });
+      return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
+    }
+
     if (statusCode === PAYHERE_STATUS.SUCCESS) {
       await db
         .update(payments)

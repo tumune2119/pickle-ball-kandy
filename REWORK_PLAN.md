@@ -92,7 +92,7 @@ Each slice is independently testable and can ship/be reviewed on its own, per yo
 
 | # | Slice | Covers | Why this order |
 |---|---|---|---|
-| 1 | **Security & data-integrity fixes** | H2 (rate limit), M2 (friendly 409 on race), M3 (signup transaction), M1's amount cross-check half | Nothing else depends on these; they're pure hardening with no visual/content dependency |
+| 1 | ✅ **Security & data-integrity fixes** | H2 (rate limit), M2 (friendly 409 on race), M3 (signup transaction), M1's amount cross-check half | Nothing else depends on these; they're pure hardening with no visual/content dependency |
 | 2 | **Settings/pricing wiring** | C2, H3 | Unblocks admin trust in their own tools; needed before slice 6 (admin) is meaningfully "done" |
 | 3 | **Cancellation policy enforcement** | C3 | Needed before slice 5 can honestly rewrite the Booking Policy box |
 | 4 | **Design-system finishing pass** | H7, M6 | Pure visual migration, no logic change, easy to review in isolation |
@@ -103,6 +103,16 @@ Each slice is independently testable and can ship/be reviewed on its own, per yo
 | 9 | **Cleanup** | Dead-code deletion, hero image compression, stale-doc fixes | Lowest risk, can run anytime, last so it doesn't get in the way of review diffs on the slices above |
 
 Each slice gets its own commit(s) on `rework/pickle-rush`, its own `tsc`/`lint`/`build` + Taste-inspector-equivalent pass, and (where it touches booking/payment/auth logic) TDD-style tests written first — once a confirmed test database exists, per your safety rule.
+
+### Slice 1 — done, 2026-11-03
+- `lib/rate-limit.ts` (new): simple in-memory sliding-window limiter, documented single-instance caveat.
+- `app/api/auth/login/route.ts`: rate-limited 5 attempts / 15 min per IP+email (429 + `Retry-After`); switched to the anon-key client instead of service-role (no reason it needed admin privileges).
+- `lib/db/db.ts`: added `isUniqueViolation()` helper (Postgres code `23505`).
+- `app/api/bookings/route.ts`, `app/api/bookings/[id]/route.ts`: catch a unique-constraint race and return the existing friendly 409 instead of a generic 500.
+- `app/api/auth/signup/route.ts`: compensating-delete of the Supabase Auth user if the DB insert fails, so a DB hiccup can't orphan an email permanently; added phone-format validation via the previously-dead `isValidPhoneNumber`.
+- `app/api/payments/notify/route.ts`: cross-checks `payhere_amount` against the expected `payments.amountLkr` before marking a booking paid.
+- **Verified:** `npx tsc --noEmit` clean, `npm run lint` unchanged (same 6 pre-existing warnings), `npm run build` succeeds, all 33 routes present.
+- **Not done:** no Playwright tests were added or run. Every "main journey" this slice touches (login, signup, booking creation, payment) requires creating real data to exercise meaningfully, and no test database is confirmed yet — per your safety rule, I stopped rather than test against production. Let me know when a test DB exists and I'll write and run real tests for this slice's logic (especially the rate limiter and the signup rollback, which are the two riskiest to leave unverified).
 
 ---
 

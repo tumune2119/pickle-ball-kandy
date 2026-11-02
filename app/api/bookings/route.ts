@@ -1,4 +1,4 @@
-import { db } from "@/lib/db/db";
+import { db, isUniqueViolation } from "@/lib/db/db";
 import { bookings } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -134,6 +134,17 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+    // The pre-check SELECT above closes the common case, but two requests
+    // for the same slot can still race each other between that SELECT and
+    // this INSERT - the unique index (schema.ts) stops the actual double
+    // booking either way, this just gives the loser the same friendly
+    // message as the pre-check instead of a generic 500.
+    if (isUniqueViolation(error)) {
+      return NextResponse.json(
+        { error: "Slot already booked" },
+        { status: 409 }
+      );
+    }
     console.error("Create booking error:", error);
     return NextResponse.json(
       { error: "Failed to create booking" },

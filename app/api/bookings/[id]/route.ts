@@ -1,4 +1,4 @@
-import { db } from "@/lib/db/db";
+import { db, isUniqueViolation } from "@/lib/db/db";
 import { bookings, users } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -140,6 +140,15 @@ export async function PATCH(
       },
     });
   } catch (error) {
+    // Same race as booking creation (see app/api/bookings/route.ts) - the
+    // pre-check above closes the common case, the unique index is the real
+    // guard, this just gives a losing reschedule the friendly message.
+    if (isUniqueViolation(error)) {
+      return NextResponse.json(
+        { error: "New slot already booked" },
+        { status: 409 }
+      );
+    }
     console.error("Update booking error:", error);
     return NextResponse.json(
       { error: "Failed to update booking" },
