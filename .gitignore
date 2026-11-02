@@ -43,3 +43,6 @@ pw.txt
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# graphify knowledge-graph output (regeneratable via /graphify .)
+graphify-out/
