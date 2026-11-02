@@ -35,10 +35,13 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
   const [guestEmail, setGuestEmail] = useState("");
 
   // Real availability for the selected date - which slots exist for this
-  // court and which are already booked - fetched from the same endpoint the
-  // (unused until now) /api/bookings/availability route exposes.
+  // court, which are already booked, and what each costs - fetched from
+  // /api/bookings/availability, which reads the same pricing (lib/pricing.ts)
+  // the server will actually charge, so what's shown here never diverges
+  // from what POST /api/bookings bills.
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [rates, setRates] = useState<Record<string, { rate: number; peak: boolean }>>({});
   const [loadingAvailability, setLoadingAvailability] = useState(false);
 
   useEffect(() => {
@@ -52,6 +55,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
         if (cancelled) return;
         setAvailableSlots(data.totalSlots ?? []);
         setBookedSlots(data.bookedSlots ?? []);
+        setRates(data.rates ?? {});
       } finally {
         if (!cancelled) setLoadingAvailability(false);
       }
@@ -67,20 +71,23 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
   const [minDate] = useState(() => toYMD(new Date()));
   const [maxDate] = useState(() => toYMD(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)));
 
-  // Pricing calculation
-  const isOffPeak = (time: string): boolean => {
-    const [hour] = time.split(":").map(Number);
-    return hour < 17;
-  };
+  // Falls back to the same 6am-5pm/5pm-10pm split the server defaults to
+  // (lib/pricing.ts) only for the brief window before `rates` has loaded -
+  // once loaded, this always reflects the real, possibly admin-configured
+  // rate for this court.
+  const slotRate = (slot: string): { rate: number; peak: boolean } =>
+    rates[slot] ?? {
+      rate: parseInt(slot.split(":")[0], 10) < 17 ? 1500 : 2500,
+      peak: parseInt(slot.split(":")[0], 10) >= 17,
+    };
 
-  const calculatePrice = (): number => {
-    let total = 0;
-    selectedSlots.forEach((slot) => {
-      const price = isOffPeak(slot) ? 1500 : 2500;
-      total += price;
-    });
-    return total;
-  };
+  const calculatePrice = (): number => selectedSlots.reduce((total, slot) => total + slotRate(slot).rate, 0);
+
+  // Representative off-peak/peak rates for the legend below the slot grid -
+  // picked from whatever slots actually loaded, so it reflects this court's
+  // real configured rates rather than always showing the hardcoded default.
+  const offPeakRate = availableSlots.map(slotRate).find((r) => !r.peak)?.rate ?? 1500;
+  const peakRate = availableSlots.map(slotRate).find((r) => r.peak)?.rate ?? 2500;
 
   const handleSlotToggle = (slot: string) => {
     if (selectedSlots.includes(slot)) {
@@ -305,7 +312,8 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
                 : availableSlots.map((slot) => {
                     const isBooked = bookedSlots.includes(slot);
                     const isSelected = selectedSlots.includes(slot);
-                    const isOffPeakSlot = isOffPeak(slot);
+                    const { rate: slotPrice, peak: isPeakSlot } = slotRate(slot);
+                    const isOffPeakSlot = !isPeakSlot;
 
                     return (
                       <motion.button
@@ -331,7 +339,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
                         )}
                       >
                         <div className="text-sm">{slot}</div>
-                        <div className="text-xs">{isBooked ? "Booked" : isOffPeakSlot ? "LKR 1,500" : "LKR 2,500"}</div>
+                        <div className="text-xs">{isBooked ? "Booked" : formatCurrency(slotPrice)}</div>
                       </motion.button>
                     );
                   })}
@@ -341,11 +349,11 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500" aria-hidden="true" />
-                  Off-peak (6 AM - 5 PM): LKR 1,500/hour
+                  Off-peak (6 AM - 5 PM): {formatCurrency(offPeakRate)}/hour
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-orange-500" aria-hidden="true" />
-                  Peak (5 PM - 10 PM): LKR 2,500/hour
+                  Peak (5 PM - 10 PM): {formatCurrency(peakRate)}/hour
                 </span>
               </p>
             </div>

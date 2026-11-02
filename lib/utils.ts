@@ -1,4 +1,4 @@
-import { TIMEZONE, SAMPLE_PRICING } from "./constants";
+import { TIMEZONE } from "./constants";
 
 // Format currency (LKR)
 export function formatCurrency(amount: number | string): string {
@@ -86,17 +86,6 @@ export function calculateBookingHours(
   const endTotalMin = endHour * 60 + endMin;
 
   return (endTotalMin - startTotalMin) / 60;
-}
-
-// Authoritative price for a booking spanning startTime-endTime, one hour at
-// a time (off-peak before 5pm, peak from 5pm) - the server's own source of
-// truth for what a booking costs, since a client-supplied amount can't be
-// trusted (see app/api/bookings/route.ts).
-export function calculateBookingAmount(startTime: string, endTime: string): number {
-  return getTimeSlots(startTime, endTime, 60).reduce((total, slot) => {
-    const hour = parseInt(slot.split(":")[0], 10);
-    return total + (hour < 17 ? SAMPLE_PRICING.offPeakRate : SAMPLE_PRICING.peakRate);
-  }, 0);
 }
 
 // Format phone number (Sri Lankan)

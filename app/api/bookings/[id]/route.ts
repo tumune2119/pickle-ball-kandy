@@ -3,7 +3,7 @@ import { bookings, users } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/server-auth";
-import { calculateBookingAmount } from "@/lib/utils";
+import { calculateBookingAmountForCourt } from "@/lib/pricing";
 
 // A booking may be read/changed by the customer who made it, or by an
 // admin/staff member. Returns null (allowed) or the 403 response to return.
@@ -112,7 +112,8 @@ export async function PATCH(
     // amount.
     const newAmount =
       startTime || endTime
-        ? calculateBookingAmount(
+        ? await calculateBookingAmountForCourt(
+            existing[0].courtId,
             startTime || existing[0].startTime,
             endTime || existing[0].endTime
           )

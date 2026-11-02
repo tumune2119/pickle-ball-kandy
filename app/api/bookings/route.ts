@@ -3,7 +3,7 @@ import { bookings } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, getOptionalAuth } from "@/lib/server-auth";
-import { calculateBookingAmount } from "@/lib/utils";
+import { calculateBookingAmountForCourt } from "@/lib/pricing";
 
 // GET /api/bookings - Get the authenticated user's bookings
 export async function GET(request: NextRequest) {
@@ -68,10 +68,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // The server computes the price itself from startTime/endTime - a
-    // client-supplied amount would let anyone book at whatever price they
-    // send, including through the online PayHere flow.
-    const amountLkr = calculateBookingAmount(startTime, endTime);
+    // The server computes the price itself from startTime/endTime and this
+    // court's real rates - a client-supplied amount would let anyone book at
+    // whatever price they send, including through the online PayHere flow.
+    const amountLkr = await calculateBookingAmountForCourt(courtId, startTime, endTime);
 
     if (!userId && (!guestName || !guestPhone || !guestEmail)) {
       return NextResponse.json(
