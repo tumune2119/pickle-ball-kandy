@@ -14,10 +14,7 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    // Warm cream background for the editorial rebrand (admin keeps the
-    // shared neutral bg-page token - this is a local override, not a
-    // change to that token).
-    <div className="min-h-screen flex flex-col bg-cream-100 dark:bg-gray-950">
+    <div className="min-h-screen flex flex-col">
       <PageBackdrop />
       <Navigation />
       <main className="flex-grow">{children}</main>
