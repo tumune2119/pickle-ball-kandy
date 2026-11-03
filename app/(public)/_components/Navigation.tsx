@@ -5,10 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, LogOut, CircleUserRound } from "lucide-react";
+import { Menu, X, LogOut, CircleUserRound, LayoutDashboard } from "lucide-react";
 import { COURT_NAME } from "@/lib/constants";
 import { supabase } from "@/lib/auth";
 import { useAuthUser } from "@/lib/useAuthUser";
+import { useAdminRole } from "@/lib/useAdminRole";
 import ThemeToggle from "@/components/ThemeToggle";
 import Button from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
@@ -45,6 +46,8 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const user = useAuthUser();
+  const adminRole = useAdminRole();
+  const isStaff = adminRole === "admin" || adminRole === "staff";
   const router = useRouter();
   const scrolled = useScrolled();
   // Transparent while still at the very top (riding over the hero's photo
@@ -86,7 +89,7 @@ export default function Navigation() {
   // height behind it (HeroSection compensates with extra top padding).
   const linkColor = transparent
     ? "text-white/90 hover:text-white"
-    : "text-text-muted hover:text-rush-blue-600 dark:hover:text-rush-blue-400";
+    : "text-text-muted hover:text-lime-600 dark:hover:text-lime-400";
 
   return (
     <header
@@ -144,10 +147,17 @@ export default function Navigation() {
               <div className="w-16 h-5" aria-hidden="true" />
             ) : user ? (
               <>
-                <Link href="/dashboard" className={cn("flex items-center gap-1.5 font-medium transition-colors px-3", linkColor)}>
-                  <CircleUserRound className="w-4 h-4" aria-hidden="true" />
-                  My Account
-                </Link>
+                {isStaff ? (
+                  <Link href="/admin/dashboard" className={cn("flex items-center gap-1.5 font-medium transition-colors px-3", linkColor)}>
+                    <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
+                    Admin Dashboard
+                  </Link>
+                ) : (
+                  <Link href="/dashboard" className={cn("flex items-center gap-1.5 font-medium transition-colors px-3", linkColor)}>
+                    <CircleUserRound className="w-4 h-4" aria-hidden="true" />
+                    My Account
+                  </Link>
+                )}
                 <button onClick={handleLogout} className={cn("flex items-center gap-1.5 font-medium transition-colors px-3", linkColor)}>
                   <LogOut className="w-4 h-4" aria-hidden="true" />
                   Logout
@@ -214,14 +224,25 @@ export default function Navigation() {
                 <div className="pt-2 space-y-1 border-t border-border-default">
                   {user ? (
                     <>
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <CircleUserRound className="w-4 h-4" aria-hidden="true" />
-                        My Account
-                      </Link>
+                      {isStaff ? (
+                        <Link
+                          href="/admin/dashboard"
+                          className="flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
+                          Admin Dashboard
+                        </Link>
+                      ) : (
+                        <Link
+                          href="/dashboard"
+                          className="flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <CircleUserRound className="w-4 h-4" aria-hidden="true" />
+                          My Account
+                        </Link>
+                      )}
                       <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"

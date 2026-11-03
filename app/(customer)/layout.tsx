@@ -2,9 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LogOut, Home } from "lucide-react";
+import { LogOut, Home, LayoutDashboard } from "lucide-react";
 import { supabase } from "@/lib/auth";
 import { useAuthUser } from "@/lib/useAuthUser";
+import { useAdminRole } from "@/lib/useAdminRole";
 import ThemeToggle from "@/components/ThemeToggle";
 import PageBackdrop from "@/components/ui/PageBackdrop";
 
@@ -14,6 +15,7 @@ export default function CustomerLayout({
   children: React.ReactNode;
 }) {
   const user = useAuthUser();
+  const adminRole = useAdminRole();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -35,7 +37,15 @@ export default function CustomerLayout({
               <Home className="w-4 h-4" aria-hidden="true" />
               Home
             </Link>
-            <h1 className="text-2xl md:text-3xl font-display uppercase text-text-primary skew-display">My Account</h1>
+            {(adminRole === "admin" || adminRole === "staff") && (
+              <Link
+                href="/admin/dashboard"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-bold text-text-muted hover:bg-surface-sunken hover:text-text-primary transition-colors"
+              >
+                <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
+                Admin Dashboard
+              </Link>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
