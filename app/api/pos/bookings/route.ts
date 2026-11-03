@@ -1,9 +1,10 @@
 import { db, isUniqueViolation } from "@/lib/db/db";
-import { bookings, payments } from "@/lib/db/schema";
+import { bookings, payments, courts } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/server-auth";
 import { calculateBookingAmountForCourt } from "@/lib/pricing";
+import { sendBookingSms } from "@/lib/sms";
 
 // POST /api/pos/bookings - A walk-in court booking rung up at the counter.
 // Separate from the public POST /api/bookings rather than overloading it:
@@ -99,6 +100,16 @@ export async function POST(request: NextRequest) {
       gateway: "manual",
       status: "completed",
     });
+
+    if (customerPhone) {
+      const court = await db.select({ name: courts.name }).from(courts).where(eq(courts.id, courtId)).limit(1);
+      await sendBookingSms(customerPhone, {
+        courtName: court[0]?.name ?? "the court",
+        bookingDate,
+        startTime,
+        bookingRef: id,
+      });
+    }
 
     return NextResponse.json({ booking: newBooking[0] }, { status: 201 });
   } catch (error) {

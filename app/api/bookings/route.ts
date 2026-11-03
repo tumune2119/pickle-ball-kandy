@@ -1,9 +1,10 @@
 import { db, isUniqueViolation } from "@/lib/db/db";
-import { bookings } from "@/lib/db/schema";
+import { bookings, courts, users } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, getOptionalAuth } from "@/lib/server-auth";
 import { calculateBookingAmountForCourt } from "@/lib/pricing";
+import { sendBookingSms } from "@/lib/sms";
 
 // GET /api/bookings - Get the authenticated user's bookings
 export async function GET(request: NextRequest) {
@@ -120,6 +121,22 @@ export async function POST(request: NextRequest) {
         notes: `Booked via online system - ${paymentMode}`,
       })
       .returning();
+
+    // Fire the confirmation SMS to whichever phone this booking has - the
+    // guest's own number, or a lookup of the signed-in user's. Never lets an
+    // SMS failure affect the booking response (see lib/sms.ts).
+    const recipientPhone = userId
+      ? (await db.select({ phoneNumber: users.phoneNumber }).from(users).where(eq(users.id, userId)).limit(1))[0]?.phoneNumber
+      : guestPhone;
+    if (recipientPhone) {
+      const court = await db.select({ name: courts.name }).from(courts).where(eq(courts.id, courtId)).limit(1);
+      await sendBookingSms(recipientPhone, {
+        courtName: court[0]?.name ?? "the court",
+        bookingDate,
+        startTime,
+        bookingRef: newBooking[0].id,
+      });
+    }
 
     return NextResponse.json(
       {

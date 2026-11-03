@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Printer } from "lucide-react";
+import { Printer, MessageSquare } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
@@ -13,6 +13,8 @@ export default function ReprintBookingTicketPage() {
   const [booking, setBooking] = useState<TicketBooking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [sendingSms, setSendingSms] = useState(false);
+  const [smsSent, setSmsSent] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,12 +68,30 @@ export default function ReprintBookingTicketPage() {
     return <p className="text-center text-danger-700 dark:text-danger-300">{error}</p>;
   }
 
+  const resendSms = async () => {
+    setSendingSms(true);
+    const session = await getSession();
+    if (session) {
+      await fetch(`/api/bookings/${params.id}/resend-sms`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      setSmsSent(true);
+      setTimeout(() => setSmsSent(false), 3000);
+    }
+    setSendingSms(false);
+  };
+
   return (
     <div>
-      <div className="flex justify-center mb-4 print:hidden">
+      <div className="flex justify-center gap-3 mb-4 print:hidden">
         <Button onClick={() => window.print()} tone="admin">
           <Printer className="w-4 h-4" aria-hidden="true" />
           Print
+        </Button>
+        <Button onClick={resendSms} tone="admin" variant="secondary" loading={sendingSms}>
+          <MessageSquare className="w-4 h-4" aria-hidden="true" />
+          {smsSent ? "Sent!" : "Resend SMS"}
         </Button>
       </div>
       <BookingTicket booking={booking} />
