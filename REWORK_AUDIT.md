@@ -12,6 +12,8 @@ The real problem is **trust, not plumbing**: multiple customer-facing promises �
 
 **Update, same day:** C1 (the unconditional reset endpoint) has been fixed — removed outright, at your request, ahead of Phase 2. See C1 below for what changed and how it was verified.
 
+**Update, Phase 4 (end of this same day):** all nine Phase 3 rework slices are complete and every Critical/High finding below is now fixed. An independent re-audit (three fresh-context review agents, plus this session's own re-verification) found two new Critical bugs that Phase 3's own work had introduced — a guest-booking auth bypass and a cancellation-policy timezone error — both fixed before this document was finalized. **Jump to [Phase 4 — Re-Test & Report](#phase-4--re-test--report-2026-11-03) at the end of this file for the full before/after.**
+
 ---
 
 ## Before you read this: skill substitutions
@@ -331,3 +333,132 @@ This is the end of Phase 1. Per your instructions, I'm stopping here for your re
 - Which Critical findings (C1-C6) do you want fixed as part of this rework vs. handled separately/immediately regardless of the rework's timeline? (C1, in particular — the reset endpoint — is the kind of thing I'd suggest addressing first, independent of everything else.)
 - Real values for "Founded in [year]," team/staff info (or a decision to remove that section), and whatever "30+ Active Members" should actually say.
 - Whether a confirmed test database exists yet (Phase 3 can't write Playwright tests against real data until one does, per your own safety rules).
+
+---
+
+# Phase 4 — Re-Test & Report (2026-11-03)
+
+Phase 3 shipped nine slices on `rework/pickle-rush` (see `REWORK_PLAN.md` for the full per-slice write-up: what changed, why, and how each was verified). This section re-checks every Phase 1 finding against the current code, reports three independent review agents' results (`agent-skills:code-reviewer`, `agent-skills:security-auditor`, `agent-skills:web-performance-auditor` — all genuinely installed by this point, unlike Phase 1), and says plainly what's fixed, what's deliberately not, and what's still open.
+
+**Headline: the independent review found a real, critical auth-bypass bug and a real, critical timezone bug in this rework's own new code — both fixed same-day, before this report was written.** Phase 1's own findings (C1-H7, M1-M7, L1-L8) are essentially all closed; the new bugs were introduced by Phase 3 itself, not inherited from before. Re-test exists precisely to catch this class of thing, and it worked.
+
+## Updated scorecard
+
+| Area | Phase 1 | Phase 4 | What changed |
+|---|---|---|---|
+| Security & data integrity | 2/5 | **4/5** | Reset endpoint deleted, rate limiting (login/signup/guest-lookup, plus a second IP-independent layer on login), real server-side auth on every route, cancellation policy enforced server-side with a correct (venue-timezone) clock, PayHere amount cross-check + timing-safe signature compare, admin price-trust closed. Not 5/5: in-memory rate limiting is still single-process-only, and no CSP is configured (see below). |
+| Business-fact & content accuracy | 1/5 | **5/5** | Fabricated stats/team/founding-date removed; ToS/Privacy drafted (marked placeholder); booking-policy copy now states only what's enforced; one more fabrication (a broken homepage photo gallery, 6 images that never existed) found and removed during cleanup. |
+| UI/UX, accessibility, responsive | 3/5 | **4.5/5** | Design-token migration finished (H7, M6), auth-layout overlap bug fixed (H6), decorative emoji removed (M7). Not 5/5: L7 (768px stat-label wrap) and L8 (no axe-core pass) are both still open, unchanged, both Low. |
+| Performance | 4/5 | **4.5/5** | Hero image 3.1MB → 301KB. Independent performance re-audit found 0 Critical/High; two Medium findings (guest-lookup full-table scan, admin-reports in-memory aggregation) both explicitly assessed as "fine now, revisit at real scale" — not fixed, logged below. |
+| Code quality, API consistency, test coverage | 2/5 | **3/5** | Dead code deleted (L5), stale docs rewritten (L4 — including correcting docs that claimed no auth existed, which was dangerous to leave as-is), N+1 fixed, admin-reports math fixed (H5). Test coverage is still 1/5: **zero tests exist**, unchanged from Phase 1 — no test database was ever confirmed during this rework, so no Playwright/integration tests were written, per your own safety rule ("stop and ask if there isn't one"). This is the one area Phase 3 did not move at all. |
+
+## Finding-by-finding status
+
+### Critical (Phase 1)
+| # | Finding | Status |
+|---|---|---|
+| C1 | Unconditional admin reset endpoint | **Fixed** (pre-Phase 3, see original entry above) |
+| C2 | Admin settings `handleSave` didn't call the API | **Fixed** (Slice 2) |
+| C3 | Cancellation policy not enforced | **Fixed** (Slice 3, then corrected for the timezone bug — see below) |
+| C4 | Booking Policy box made unbacked promises | **Fixed** (Slice 7 — rewritten to state only what's enforced) |
+| C5 | ToS link pointed nowhere | **Fixed** (Slice 5 — real `/terms` + `/privacy`, marked draft) |
+| C6 | Fabricated "Our Team" / "30+ Active Members" | **Fixed** (Slice 5 — removed, not replaced with more invented facts) |
+
+### High (Phase 1)
+| # | Finding | Status |
+|---|---|---|
+| H1 | Guests can't cancel their own booking | **Fixed** (Slice 6 — real guest self-service via `/manage-booking`) |
+| H2 | No rate limiting on login | **Fixed** (Slice 1, hardened further in Phase 4 — see below) |
+| H3 | `pricing`/`settings` tables ignored | **Fixed** (Slice 2 — `lib/pricing.ts` is now the real source of truth) |
+| H4 | "30+ Active Members" false claim | **Fixed** (Slice 5, same fix as C6) |
+| H5 | Admin revenue reporting wrong (3 bugs) | **Fixed** (Slice 8, plus one more scope-consistency bug found and fixed in Phase 4 — see below) |
+| H6 | Signup "Back to Home" overlaps card at 390px | **Fixed** (Slice 5) |
+| H7 | `BookingForm.tsx` raw Tailwind colors | **Fixed** (Slice 4) |
+
+### Medium (Phase 1)
+| # | Finding | Status |
+|---|---|---|
+| M1 | No payment-amount cross-check; no retry UI | **Fixed** (Slice 1 for the cross-check, Slice 6 for Retry Payment UI) |
+| M2 | Double-booking race returns a generic 500 | **Fixed** (Slice 1) |
+| M3 | Signup enumeration + non-transactional | **Partially fixed** — compensating rollback fixed (Slice 1); the distinct "Email already registered" message is a knowingly-kept trade-off, now rate-limited (Phase 4) |
+| M4 | "Today" computed in browser timezone | **Fixed** (Slice 6) |
+| M5 | "Weekend rate" defined but never used | **Still true**, for a new reason — `lib/pricing.ts` (the real DB-driven pricing added in Slice 2) still never filters on `dayOfWeek`, same end result as before. Not fixed; no weekend-specific pricing exists anywhere. Flagging as still-open rather than silently dropping it. |
+| M6 | Auth card reads cool-gray, not warm palette | **Fixed** (Slice 4) |
+| M7 | Decorative emoji in hero subtitle | **Fixed** (Slice 5) |
+
+### Low (Phase 1)
+| # | Finding | Status |
+|---|---|---|
+| L1 | Admin walk-in booking trusts client price | **Fixed** (Phase 4 — now recomputed server-side, same rule as the customer route; no live UI called this endpoint, so no behavior change for any real caller) |
+| L2 | Session tokens in `localStorage` | **Unchanged** — documented architectural trade-off, not fixed, not expected to be |
+| L3 | PayHere signature `===` not constant-time | **Fixed** (Phase 4 — `crypto.timingSafeEqual`) |
+| L4 | `DEVELOPER_GUIDE.md` substantially stale | **Fixed** (Slice 9) — including correcting the claim that routes have no auth, which by Phase 1 was already false and actively dangerous to leave written down |
+| L5 | `lib/hooks.ts` entirely dead code | **Fixed** (Slice 9) |
+| L6 | Six smaller findings (service-role login client, no phone validation, stale seed script, N+1, last-booking ordering, `window.location.href`) | **Mostly fixed**: service-role→anon key (Slice 1), phone validation (Slice 1), N+1 (Slice 8), last-booking ordering (Slice 8). **Not fixed**: `seed.ts` still seeds a schema-drifted single court (touching it means running close to `db:seed`, which the safety rules keep off the table without your go-ahead); `window.location.href` full-page navigation is still present — it's one of the 6 standing lint warnings, cosmetic, never touched. |
+
+### Code-quality / test-coverage findings (Phase 1)
+| Finding | Status |
+|---|---|
+| Admin input validation gaps | **Partially fixed** — admin walk-in price validated via server recompute (L1), admin settings pricing/hours validated as finite positive numbers (Phase 4). Reschedule `PATCH` still doesn't validate its body shape beyond what the DB itself would reject. |
+| Dead code cluster | **Fixed** (Slice 9) |
+| Admin-reports analytics correctness | **Fixed** (Slice 8, plus the total/paid/pending scope bug found and fixed in Phase 4) |
+| **Zero test coverage** | **Unchanged.** Still 0 test files, 0 test framework configured. No test database was ever confirmed during this entire rework (Phase 1 through Phase 4) — every slice that touched booking/payment/auth logic was instead verified via: live `tsc`/lint/build, live `playwright-cli` visual checks, and short-lived read-only Node scripts against the real DB for data-shape verification, never a real write. This is the single largest gap this rework leaves behind. |
+
+### Performance findings (Phase 1)
+| Finding | Status |
+|---|---|
+| 3.1MB hero PNG | **Fixed** (Slice 9 — 301KB JPEG, same resolution) |
+| 5 unused starter SVGs | **Fixed** (Slice 9) |
+| `/api/admin/reset` N+1 loop | **Moot** — route deleted (C1) |
+
+## What the independent re-audit found (new, not in Phase 1)
+
+Three agents (`agent-skills:code-reviewer`, `agent-skills:security-auditor`, `agent-skills:web-performance-auditor`) reviewed the full `main...rework/pickle-rush` diff independently, each starting from zero context, each under the same read-only/no-live-mutation constraints as this whole rework. This is exactly the review Phase 4 called for, and it surfaced real bugs Phase 3's own live-testing had missed:
+
+**CRITICAL — fixed same-day:**
+- **Guest-booking lookup was fully bypassable.** `app/api/bookings/manage/route.ts` stripped a `"BK"`/`"BK#"` prefix off the submitted code with no length check afterward — sending `code: "BK"` strips to an empty string, and `"anything".startsWith("")` is always `true` in JavaScript. The two-factor "code + phone" guest-cancellation design (built in Slice 6, specifically to give guests real self-service cancellation per your instruction) collapsed to **phone-number-only** — anyone who knew a guest's phone number could view and cancel their booking with two requests, no brute force needed. **Fixed**: the normalized code must now match `^[0-9a-f]{8}$` exactly before it's used in any comparison. Verified live against the running dev server: the exploit payload now 404s identically to a genuine wrong-code attempt.
+- **The cancellation-policy clock was wrong by ~5.5 hours in production.** `lib/cancellation.ts` (added in Slice 3/6 specifically to enforce the free-cancellation window) built `bookingDateTime` via a bare `new Date(\`${date}T${time}\`)`, which Node parses in the **server process's own timezone** — not the venue's (Asia/Colombo). The Dockerfile set no `TZ`, so the production container defaults to UTC. A booking 30 minutes away could compute as ~6 hours away and get waved through as freely cancellable. Every live test run during Slices 3 and 6 happened on a local machine already set to Asia/Colombo, which is exactly why this passed every check at the time without ever exercising the real bug. **Fixed**: a proper `venueDateTime()` helper now computes the real UTC instant for any venue-timezone wall-clock string, used everywhere a booking's date/time gets compared against "now" (the cancellation check, admin-reports peak-day, and four client components' upcoming/past classification, which had the same bug, lower stakes). `TZ=Asia/Colombo` was also added to the Dockerfile as defense-in-depth, though the code fix alone is correct regardless of server timezone.
+- **The guest-cancel endpoint didn't re-check the confirmation code at all** (only phone), so once the first bug above was closed this became a much smaller residual gap, but was hardened anyway: cancel now independently re-verifies both code and phone, not just phone, matching the lookup endpoint's own rule of never trusting a prior response.
+
+**REQUIRED/MEDIUM — mitigated, not eliminated:**
+- **Rate limiting is only as good as `X-Forwarded-For` being trustworthy**, and `docker-compose.yml` exposes port 3000 directly with no reverse proxy specified anywhere in this repo's own deployment docs. On Vercel this header is reliable (Vercel's edge sets it); on a bare Docker/VPS deployment exactly as documented, it's attacker-controlled, which would let someone reset their rate-limit budget on every request. **Mitigated**: login now has a second, IP-independent limiter keyed on the email alone (deliberately generous — 20/hour — so it only bounds a spoofing attacker's total guesses rather than ever locking out a real user). Guest-lookup wasn't given the same treatment: its real protection is the now-fixed 8-hex-char exact code match (16⁸ ≈ 4.3 billion combinations), which IP spoofing doesn't meaningfully help defeat. **Not eliminated**: if this app is ever deployed on raw Docker with no trusted proxy in front, rate limiting on signup and guest-booking-lookup is still spoofable. This needs a decision before a non-Vercel production launch: either confirm a reverse proxy will always sit in front (and document it as a requirement), or move `clientIp()` to not trust the header unconditionally.
+- **In-memory rate limiting only works single-process** (already self-documented in `lib/rate-limit.ts`). Unchanged — this is a known, pre-existing architectural limit, worth a real fix (Upstash/Vercel KV) before any multi-instance deployment.
+
+**LOW/MEDIUM — fixed:**
+- PayHere signature comparison now timing-safe (was `===`).
+- Signup email now normalized to lowercase before the duplicate check and the insert.
+- Admin settings pricing/hours now validated as finite positive numbers before any write happens (not partway through).
+- Admin-reports `paid`/`pending` now scoped identically to `total` so they always sum to it (previously a cancelled-but-paid booking could inflate `paid` past `total`).
+- Basic security headers added (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, HSTS). Deliberately no CSP — this app embeds a Google Maps iframe and talks to Supabase/PayHere, and a wrong CSP fails closed; it needs its own tuning/testing pass against those exact origins, not a guess added here.
+
+**Flagged, not acted on (explicitly judged non-urgent at current scale):**
+- Guest-booking lookup (`app/api/bookings/manage/route.ts`) loads every guest booking into memory and matches in JS rather than SQL. The performance agent's own assessment: "fine today — a handful of bookings total; start caring in the low thousands, a real bottleneck somewhere in the tens of thousands." Not fixed.
+- `/api/admin/reports` aggregates a date range fully in memory rather than with SQL `GROUP BY`/`SUM`. Same assessment: fine at current booking volume, worth revisiting if the venue scales to multiple years of multi-court history or "all time" report ranges become common.
+- `app/api/admin/bookings/route.ts` fetches the full (tiny) courts table on every request — negligible at 3 courts, the existing batch-fetch pattern is already correct if that ever grows.
+- No pagination UI on admin customers/bookings lists past their `limit=50` default — a correctness/UX gap, not a performance one yet.
+
+## Updated business-fact verification
+
+Re-confirmed via the same read-only-query pattern used in Phase 1 (nothing new changed here since Phase 1 beyond what Slice 5 already fixed):
+
+| Claim | Status |
+|---|---|
+| "3 Dedicated Courts" | ✅ True — unchanged, 3 real courts |
+| "6am-10pm" hours | ✅ True — unchanged |
+| "30+ Active Members" | **Removed** (Slice 5), not replaced with another invented number |
+| "Our Team" | **Removed** (Slice 5) |
+| "Founded in 2024" | **Removed** (Slice 5) |
+| 4-hour free cancellation | ✅ **Now actually enforced** — and, as of this Phase 4 fix, enforced against the correct real-world clock, not a ~5.5-hour-wrong one |
+| Homepage photo gallery (6 images) | **Removed** (Slice 9) — found during cleanup, the referenced images never existed in `public/`, a 404 on every homepage load; not caught in Phase 1 |
+
+## What I did not do (Phase 4)
+
+- **No test database was ever confirmed**, so no Playwright/integration tests exist for any of the booking/payment/auth/guest-cancellation logic this rework touched — every verification was static analysis, live read-only checks, or short self-contained `node -e`/`assert` checks on pure functions. This is an honest, standing gap, not an oversight: the safety rules required stopping and asking before writing tests against real data, and no test DB was ever offered.
+- **No CSP was added** — deliberately deferred, see above, rather than shipping an untested one that could silently break Google Maps/Supabase/PayHere.
+- **The `X-Forwarded-For` trust question was mitigated, not resolved** — it depends on a deployment-topology decision (reverse proxy or not) that's yours to make, not something I should guess at by rewriting `clientIp()`'s trust model unprompted.
+- **M5 (no weekend-specific pricing) and L2 (localStorage tokens) are unchanged** — both pre-existing, both explicitly scoped out (M5 would need you to specify real weekend rates; L2 is a architecture-level trade-off, not a quick fix).
+- **No live write-path test of the admin settings Save button** — same reasoning as Slice 2's original write-up: would require either your explicit go-ahead to write real Court 1/2/3 configuration, or a way to log in as admin without creating a new account. Still open.
+
+## Honest summary
+
+Every Critical and High finding from Phase 1 is fixed. Phase 3's own work introduced two new Critical-severity bugs (the guest-lookup auth bypass and the cancellation-window timezone error) that an independent re-audit caught and this session fixed the same day, before merge. Test coverage remains at zero — the one area this entire four-phase process never moved, because the precondition (a confirmed test database) was never met. Everything above that says "Fixed" was verified by an actual `tsc`/lint/build run, a live request against the running dev server, a `playwright-cli` screenshot, or a read-only script against the real database — not asserted without having run it.
