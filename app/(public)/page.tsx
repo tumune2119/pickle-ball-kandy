@@ -374,7 +374,7 @@ export default function Home() {
                 <div className="w-12 h-12 mx-auto mb-3 rounded-full border-2 border-ink bg-highlight flex items-center justify-center">
                   <value.icon className="w-6 h-6 text-lime-800 dark:text-lime-300" aria-hidden="true" />
                 </div>
-                <h3 className="font-bold text-base mb-1">{value.title}</h3>
+                <h3 className="font-display uppercase text-base mb-1">{value.title}</h3>
                 <p className="text-text-muted text-xs">{value.description}</p>
               </Card>
             </RevealItem>
@@ -549,7 +549,7 @@ export default function Home() {
                   <div className="w-12 h-12 mb-4 rounded-md border-2 border-ink bg-surface flex items-center justify-center">
                     <item.icon className="w-6 h-6 text-rush-blue-600 dark:text-rush-blue-400" aria-hidden="true" />
                   </div>
-                  <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                  <h3 className="font-display uppercase text-lg mb-2">{item.title}</h3>
                   <p className="text-text-muted text-sm mb-4">{item.description}</p>
                   <p className="font-mono text-2xl font-bold tabular-nums text-text-primary">{item.price}</p>
                   <p className="text-xs text-text-muted mt-2">{item.footnote}</p>
@@ -571,7 +571,7 @@ export default function Home() {
           {pricingFaqs.map((item) => (
             <RevealItem key={item.q}>
               <div className="py-6">
-                <h3 className="font-bold text-lg mb-2 text-text-primary">{item.q}</h3>
+                <h3 className="font-editorial font-semibold text-lg mb-2 text-text-primary">{item.q}</h3>
                 <p className="font-editorial text-text-muted">{item.a}</p>
               </div>
             </RevealItem>
@@ -713,7 +713,7 @@ export default function Home() {
               </div>
 
               <div className="rounded-lg border-2 border-concrete-700 p-6 mb-6">
-                <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
+                <h4 className="font-display uppercase text-lg mb-3 flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-action-lime" aria-hidden="true" />
                   Address
                 </h4>
@@ -727,7 +727,7 @@ export default function Home() {
               </div>
 
               <div className="rounded-lg border-2 border-concrete-700 p-6 mb-6">
-                <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
+                <h4 className="font-display uppercase text-lg mb-3 flex items-center gap-2">
                   <Clock className="w-5 h-5 text-action-lime" aria-hidden="true" />
                   Hours
                 </h4>
@@ -749,7 +749,7 @@ export default function Home() {
               </div>
 
               <div className="rounded-lg border-2 border-concrete-700 p-6">
-                <h4 className="font-bold text-lg mb-4">Follow Us</h4>
+                <h4 className="font-display uppercase text-lg mb-4">Follow Us</h4>
                 <div className="flex space-x-4">
                   <a
                     href="#"
@@ -793,7 +793,7 @@ export default function Home() {
           {contactFaqs.map((item) => (
             <RevealItem key={item.q}>
               <div className="py-6">
-                <h3 className="font-bold text-lg mb-2 text-text-primary">{item.q}</h3>
+                <h3 className="font-editorial font-semibold text-lg mb-2 text-text-primary">{item.q}</h3>
                 <p className="font-editorial text-text-muted">{item.a}</p>
               </div>
             </RevealItem>

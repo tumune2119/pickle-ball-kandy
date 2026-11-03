@@ -128,7 +128,7 @@ export default function BookPage() {
           <RevealItem key={perk.title}>
             <Card tint={perk.tint} padding="md" className="h-full">
               <perk.icon className={`w-8 h-8 mb-2 ${perk.iconClass}`} aria-hidden="true" />
-              <h3 className="font-bold text-text-primary mb-2">{perk.title}</h3>
+              <h3 className="font-display uppercase text-text-primary mb-2">{perk.title}</h3>
               <p className="text-sm text-text-muted">{perk.description}</p>
             </Card>
           </RevealItem>

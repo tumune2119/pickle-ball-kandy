@@ -16,7 +16,7 @@ export default function AmenityCard({ icon: Icon, title, description }: AmenityP
         <Icon className="w-5 h-5 text-lime-800 dark:text-lime-300" aria-hidden="true" />
       </div>
       <div>
-        <h3 className="font-bold text-lg text-text-primary">{title}</h3>
+        <h3 className="font-display uppercase text-lg text-text-primary">{title}</h3>
         <p className="text-text-muted text-sm mt-0.5">{description}</p>
       </div>
     </div>

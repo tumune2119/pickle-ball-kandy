@@ -97,7 +97,7 @@ export default function CustomerProfile() {
     <div className="space-y-6">
       {/* Profile Info */}
       <Card padding="md">
-        <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
           <User className="w-5 h-5" aria-hidden="true" />
           Personal Information
         </h3>
@@ -135,7 +135,7 @@ export default function CustomerProfile() {
 
       {/* Booking Statistics */}
       <Card padding="md">
-        <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
           <BarChart3 className="w-5 h-5" aria-hidden="true" />
           Booking Statistics
         </h3>
@@ -159,7 +159,7 @@ export default function CustomerProfile() {
 
       {/* Preferences */}
       <Card padding="md">
-        <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
           <Settings className="w-5 h-5" aria-hidden="true" />
           Preferences
         </h3>
@@ -185,7 +185,7 @@ export default function CustomerProfile() {
 
       {/* Account Actions */}
       <Card padding="md">
-        <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
           <Lock className="w-5 h-5" aria-hidden="true" />
           Account
         </h3>
@@ -211,7 +211,7 @@ export default function CustomerProfile() {
 
       {/* Support */}
       <Card tint="brand" padding="md">
-        <h3 className="font-bold text-text-primary mb-2 flex items-center gap-2">
+        <h3 className="font-display uppercase text-text-primary mb-2 flex items-center gap-2">
           <MessageCircle className="w-5 h-5" aria-hidden="true" />
           Need Help?
         </h3>

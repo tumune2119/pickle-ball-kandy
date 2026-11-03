@@ -27,7 +27,7 @@ export default function MyBookingsPage() {
       <MyBookingsList />
 
       <Card tint="brand" padding="md" className="mt-8">
-        <h3 className="font-bold text-text-primary mb-4 flex items-center gap-2">
+        <h3 className="font-display uppercase text-text-primary mb-4 flex items-center gap-2">
           <ClipboardList className="w-5 h-5" aria-hidden="true" />
           Booking Policy
         </h3>

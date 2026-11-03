@@ -106,7 +106,7 @@ export default function CustomerDashboard() {
 
       {/* Quick Actions */}
       <div>
-        <h3 className="text-xl font-bold text-text-primary mb-4">Quick Actions</h3>
+        <h3 className="text-xl font-display uppercase text-text-primary mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button href="/book" size="lg" className="py-4 gap-2">
             <Calendar className="w-5 h-5" aria-hidden="true" />
@@ -121,7 +121,7 @@ export default function CustomerDashboard() {
 
       {/* Recent Bookings */}
       <div>
-        <h3 className="text-xl font-bold text-text-primary mb-4">Recent Bookings</h3>
+        <h3 className="text-xl font-display uppercase text-text-primary mb-4">Recent Bookings</h3>
         {loading ? (
           <div className="space-y-3">
             <Skeleton className="h-20" />
@@ -158,7 +158,7 @@ export default function CustomerDashboard() {
 
       {/* Membership Info */}
       <Card tint="warning" padding="md">
-        <h3 className="font-bold text-text-primary mb-3 flex items-center gap-2">
+        <h3 className="font-display uppercase text-text-primary mb-3 flex items-center gap-2">
           <CreditCard className="w-5 h-5" aria-hidden="true" />
           Membership Status
         </h3>

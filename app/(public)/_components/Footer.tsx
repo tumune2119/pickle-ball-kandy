@@ -26,7 +26,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-bold text-white mb-4">Quick Links</h4>
+            <h4 className="font-display uppercase text-white mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="#home" className="hover:text-lime-400 transition-colors">
@@ -53,7 +53,7 @@ export default function Footer() {
 
           {/* Information */}
           <div>
-            <h4 className="font-bold text-white mb-4">Information</h4>
+            <h4 className="font-display uppercase text-white mb-4">Information</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/manage-booking" className="hover:text-lime-400 transition-colors">
@@ -90,7 +90,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-bold text-white mb-4">Contact</h4>
+            <h4 className="font-display uppercase text-white mb-4">Contact</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 shrink-0" aria-hidden="true" />
