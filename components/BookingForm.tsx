@@ -214,32 +214,32 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
           initial={{ scale: 0, rotate: -45 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
-          className="w-20 h-20 mx-auto rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center"
+          className="w-20 h-20 mx-auto rounded-full bg-success-100 dark:bg-success-900/40 flex items-center justify-center"
         >
-          <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" aria-hidden="true" />
+          <CheckCircle2 className="w-12 h-12 text-success-700 dark:text-success-300" aria-hidden="true" />
         </motion.div>
-        <h3 className="text-2xl font-bold font-display text-green-600 dark:text-green-400">Booking Confirmed!</h3>
+        <h3 className="text-2xl font-bold font-display text-success-700 dark:text-success-300">Booking Confirmed!</h3>
 
-        <div className="bg-green-50 dark:bg-green-950/40 p-6 rounded-lg border border-green-200 dark:border-green-800/60">
-          <p className="text-green-900 dark:text-green-200 mb-4">
+        <div className="bg-success-50 dark:bg-success-900/30 p-6 rounded-lg border border-success-300 dark:border-success-700/60">
+          <p className="text-success-900 dark:text-success-100 mb-4">
             Your court booking has been confirmed. A confirmation email has been sent to your registered email
             address.
           </p>
 
           <div className="space-y-3 text-left">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Booking Reference</p>
+              <p className="text-sm text-text-muted">Booking Reference</p>
               <p className="font-bold text-lg text-text-primary">BK#{bookingId.slice(0, 8).toUpperCase()}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Date & Time</p>
+              <p className="text-sm text-text-muted">Date & Time</p>
               <p className="font-bold text-text-primary">
                 {new Date(selectedDate).toLocaleDateString("en-LK")} | {selectedSlots[0]} -{" "}
                 {selectedSlots[selectedSlots.length - 1]}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Amount</p>
+              <p className="text-sm text-text-muted">Amount</p>
               <p className="font-bold text-lg text-text-primary">{formatCurrency(calculatePrice())}</p>
             </div>
           </div>
@@ -297,12 +297,12 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
       <div className="space-y-4">
         <h3 className="text-xl font-bold font-display">3. Pick your time</h3>
         {!selectedDate ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400 p-4 bg-surface-sunken rounded-lg">
+          <p className="text-sm text-text-muted p-4 bg-surface-sunken rounded-lg">
             Pick a date above to see available times.
           </p>
         ) : (
           <>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-text-muted">
               Choose one or more consecutive slots (1 hour each)
             </p>
 
@@ -330,12 +330,12 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
                         className={cn(
                           "p-3 rounded-lg font-semibold text-center transition-colors",
                           isBooked
-                            ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 cursor-not-allowed line-through decoration-gray-400"
+                            ? "bg-surface-sunken text-text-faint cursor-not-allowed line-through decoration-text-faint"
                             : isSelected
                             ? "bg-sage-600 text-white ring-2 ring-sage-300 dark:ring-sage-700"
                             : isOffPeakSlot
-                            ? "bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/40 border border-green-300 dark:border-green-700/60"
-                            : "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 border border-orange-300 dark:border-orange-700/60"
+                            ? "bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-300 hover:bg-success-100 dark:hover:bg-success-900/50 border border-success-300 dark:border-success-700/60"
+                            : "bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300 hover:bg-warning-100/70 dark:hover:bg-warning-900/50 border border-warning-300 dark:border-warning-700/60"
                         )}
                       >
                         <div className="text-sm">{slot}</div>
@@ -346,13 +346,13 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
             </div>
 
             <div className="p-4 bg-surface-sunken rounded-lg">
-              <p className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2 flex-wrap">
+              <p className="text-sm text-text-muted flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500" aria-hidden="true" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-success-500" aria-hidden="true" />
                   Off-peak (6 AM - 5 PM): {formatCurrency(offPeakRate)}/hour
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-orange-500" aria-hidden="true" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-warning-700" aria-hidden="true" />
                   Peak (5 PM - 10 PM): {formatCurrency(peakRate)}/hour
                 </span>
               </p>
@@ -387,8 +387,8 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
         <h3 className="text-xl font-bold font-display">4. Your details</h3>
 
         {!userId && (
-          <div className="space-y-4 p-4 rounded-lg border border-gray-200 dark:border-white/10 bg-surface-sunken">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <div className="space-y-4 p-4 rounded-lg border border-border-subtle bg-surface-sunken">
+            <p className="text-sm font-medium text-text-muted">
               Booking without an account - we just need a way to reach you
             </p>
             <Input
@@ -441,7 +441,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               "flex items-center p-3 border rounded-lg cursor-pointer transition-colors",
               paymentMode === "pay_at_venue"
                 ? "border-sage-400 dark:border-sage-600 bg-sage-50 dark:bg-sage-950/40"
-                : "border-gray-300 dark:border-white/15 hover:bg-sage-50 dark:hover:bg-sage-950/40"
+                : "border-border-default hover:bg-sage-50 dark:hover:bg-sage-950/40"
             )}
           >
             <Radio
@@ -452,7 +452,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
             />
             <span className="ml-3">
               <span className="font-semibold">Pay at Venue</span>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-text-muted">
                 Pay when you arrive. Booking confirmed immediately.
               </p>
             </span>
@@ -463,7 +463,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               "flex items-center p-3 border rounded-lg cursor-pointer transition-colors",
               paymentMode === "payhere"
                 ? "border-sage-400 dark:border-sage-600 bg-sage-50 dark:bg-sage-950/40"
-                : "border-gray-300 dark:border-white/15 hover:bg-sage-50 dark:hover:bg-sage-950/40"
+                : "border-border-default hover:bg-sage-50 dark:hover:bg-sage-950/40"
             )}
           >
             <Radio
@@ -474,7 +474,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
             />
             <span className="ml-3">
               <span className="font-semibold">Online Payment (PayHere)</span>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-text-muted">
                 Pay securely by card via PayHere. Redirects to checkout.
               </p>
             </span>
@@ -491,7 +491,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-700 dark:text-red-300 rounded-lg p-3 text-sm">
+            <div className="bg-danger-100 dark:bg-danger-900/40 border border-danger-300 dark:border-danger-800/60 text-danger-700 dark:text-danger-300 rounded-lg p-3 text-sm">
               {error}
             </div>
           </motion.div>
@@ -499,9 +499,9 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
       </AnimatePresence>
 
       {/* Summary + submit */}
-      <div className="bg-surface-sunken p-6 rounded-lg border border-gray-200 dark:border-white/10 space-y-4">
+      <div className="bg-surface-sunken p-6 rounded-lg border border-border-subtle space-y-4">
         <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Booking Summary:</p>
+          <p className="text-sm text-text-muted mb-2">Booking Summary:</p>
           <div className="space-y-1 text-text-primary">
             <div className="flex justify-between">
               <span>Date:</span>
@@ -527,7 +527,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               <span>Players:</span>
               <strong>{numPlayers}</strong>
             </div>
-            <div className="my-2 border-t border-gray-200 dark:border-white/10" />
+            <div className="my-2 border-t border-border-subtle" />
             <div className="flex justify-between text-lg font-bold text-sage-600 dark:text-sage-400">
               <span>Total:</span>
               <span>{formatCurrency(calculatePrice())}</span>

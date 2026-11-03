@@ -79,15 +79,15 @@ export default function SignupForm() {
           initial={{ scale: 0, rotate: -45 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ duration: 0.4, delay: 0.1, type: "spring", stiffness: 200 }}
-          className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center"
+          className="w-20 h-20 mx-auto mb-4 rounded-full bg-success-100 dark:bg-success-900/40 flex items-center justify-center"
         >
-          <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" aria-hidden="true" />
+          <CheckCircle2 className="w-12 h-12 text-success-700 dark:text-success-300" aria-hidden="true" />
         </motion.div>
-        <h1 className="text-3xl font-bold font-display text-green-600 dark:text-green-400 mb-2">Account Created!</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <h1 className="text-3xl font-bold font-display text-success-700 dark:text-success-300 mb-2">Account Created!</h1>
+        <p className="text-text-muted mb-6">
           Welcome to Pickle Rush! You can now login with your credentials.
         </p>
-        <Button href="/login" variant="primary" className="bg-green-600! hover:bg-green-700! shadow-green-900/20!">
+        <Button href="/login" variant="primary" className="bg-success-700! hover:bg-success-800! shadow-success-900/20!">
           Go to Login →
         </Button>
       </motion.div>
@@ -96,8 +96,8 @@ export default function SignupForm() {
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-3xl font-bold font-display text-gray-900 dark:text-white mb-2">Create Account</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">Join us and book your first court session</p>
+      <h1 className="text-3xl font-bold font-display text-text-primary mb-2">Create Account</h1>
+      <p className="text-text-muted mb-8">Join us and book your first court session</p>
 
       <AnimatePresence>
         {error && (
@@ -108,7 +108,7 @@ export default function SignupForm() {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
+            <div className="flex items-start gap-2 bg-danger-100 dark:bg-danger-900/40 border border-danger-300 dark:border-danger-800/60 text-danger-800 dark:text-danger-300 px-4 py-3 rounded-lg mb-6">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
               <span>{error}</span>
             </div>
@@ -170,7 +170,7 @@ export default function SignupForm() {
 
         <label className="flex items-center">
           <Checkbox required />
-          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+          <span className="ml-2 text-sm text-text-muted">
             I agree to the{" "}
             <a href="#" className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-bold">
               Terms of Service
@@ -184,14 +184,14 @@ export default function SignupForm() {
       </form>
 
       <div className="flex items-center gap-3 my-6">
-        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
-        <span className="text-xs text-gray-500 dark:text-gray-400">OR</span>
-        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+        <div className="h-px flex-1 bg-border-subtle" />
+        <span className="text-xs text-text-faint">OR</span>
+        <div className="h-px flex-1 bg-border-subtle" />
       </div>
 
       <GoogleButton label="Sign up with Google" />
 
-      <p className="text-gray-600 dark:text-gray-400 text-center mt-6">
+      <p className="text-text-muted text-center mt-6">
         Already have an account?{" "}
         <Link
           href="/login"

@@ -39,7 +39,7 @@ export default function AuthLayout({
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-md bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl border border-white/60 dark:border-white/10 rounded-2xl shadow-2xl shadow-sage-950/30 p-8"
+        className="relative w-full max-w-md bg-white/55 dark:bg-white/[0.06] backdrop-blur-xl border border-white/60 dark:border-white/10 rounded-2xl shadow-2xl shadow-sage-950/30 p-8"
       >
         {children}
       </motion.div>

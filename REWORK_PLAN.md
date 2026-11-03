@@ -132,6 +132,11 @@ Guest bookings aren't affected by this change since guests can't call this endpo
 
 **Verified:** `tsc --noEmit` clean, lint unchanged, `npm run build` succeeds. Self-checked `canCancelBooking`'s date-math boundary directly (5h-ahead allowed, 3h-ahead blocked, just-over-4h allowed) since it's a pure function and didn't need the DB. No UI changed in this slice (pure backend behavior), so nothing new to view at the three widths.
 
+### Slice 4 — done, 2026-11-03
+Finished migrating raw Tailwind colors (H7, M6) to the semantic design tokens already established elsewhere in the app (`text-text-primary`/`text-text-muted`/`text-text-faint`, `border-border-subtle`, `success-*`/`warning-*`/`danger-*`). Covered `components/BookingForm.tsx` (slot grid, legend, guest-details box, payment cards, error banner, summary card), `app/(auth)/layout.tsx` (glass-card background now matches `Card.tsx`'s neutral `GLASS_TINTS` pattern instead of a one-off `gray-900/60`), `components/LoginForm.tsx`, and `components/SignupForm.tsx` (including the post-signup success state's green checkmark/button, now `success-*`). Confirmed against the real scale in `app/globals.css` before substituting — no `warning-500`/`success-500`/`danger-500`/`-200`/`-950` steps exist, so spots that would've used those fall back to the nearest real step (e.g. `warning-700` for a peak-slot accent dot instead of a nonexistent `warning-500`).
+
+**Verified:** grepped all four files for `gray-[0-9]|white/[0-9]|green-[0-9]|red-[0-9]|orange-[0-9]|blue-[0-9]` — zero matches. `tsc --noEmit` clean, `npm run build` succeeds (32 routes), lint still exactly the 6 pre-existing warnings (none new). Viewed `/login` and `/signup` live at 390/768/1440px — glass card, inputs, and the OR-divider all render correctly with real tokens. Did **not** get a working dark-mode screenshot: the dark toggle here is class-based (persisted via the UI toggle), not pure `prefers-color-scheme`, so Playwright's `emulateMedia` didn't flip it — not a regression from this slice, just a verification gap; a real click-the-toggle check would be needed to see dark mode live.
+
 ---
 
 ## Questions — only what I can't work out myself
