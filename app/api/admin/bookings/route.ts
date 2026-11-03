@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
     const status = searchParams.get("status");
     const date = searchParams.get("date");
     const startDate = searchParams.get("startDate");
@@ -22,6 +23,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50");
 
     const conditions = [];
+    if (id) conditions.push(eq(bookings.id, id));
     if (status) conditions.push(eq(bookings.status, status));
     if (date) conditions.push(eq(bookings.bookingDate, date));
     if (courtId) conditions.push(eq(bookings.courtId, courtId));
@@ -52,6 +54,9 @@ export async function GET(request: NextRequest) {
         ...b,
         amountLkr: b.amountLkr ? parseFloat(b.amountLkr as string) : 0,
         customerName: b.userId ? customerById.get(b.userId)?.fullName ?? "Unknown" : b.guestName,
+        // Registered users only carry guestPhone=null on the row itself -
+        // needed on the printed ticket to show a contact number either way.
+        customerPhone: b.userId ? customerById.get(b.userId)?.phoneNumber ?? null : b.guestPhone,
         isGuest: !b.userId,
         courtName: courtById.get(b.courtId)?.name ?? "Unknown Court",
       })),

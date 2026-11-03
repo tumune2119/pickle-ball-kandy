@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import Link from "next/link";
+import { X, Printer, UserCheck, CheckCircle2 } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
 import { cn } from "@/lib/cn";
@@ -24,6 +25,7 @@ interface AdminBooking {
   courtName: string;
   customerName: string;
   isGuest: boolean;
+  checkedInAt: string | null;
 }
 
 interface Court {
@@ -57,6 +59,7 @@ export default function AdminBookingsTable() {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [filterCourt, setFilterCourt] = useState<string>("all");
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [checkingInId, setCheckingInId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,6 +103,24 @@ export default function AdminBookingsTable() {
       }
     } finally {
       setCancellingId(null);
+    }
+  };
+
+  const handleCheckIn = async (bookingId: string) => {
+    const session = await getSession();
+    if (!session) return;
+    setCheckingInId(bookingId);
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/check-in`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, ...data.booking } : b)));
+      }
+    } finally {
+      setCheckingInId(null);
     }
   };
 
@@ -234,16 +255,42 @@ export default function AdminBookingsTable() {
                       {formatCurrency(booking.amountLkr)}
                     </td>
                     <td className="px-6 py-4">
-                      {booking.status !== "cancelled" && (
-                        <button
-                          onClick={() => handleCancel(booking.id)}
-                          disabled={cancellingId === booking.id}
-                          className="flex items-center gap-1 text-danger-700 dark:text-danger-300 hover:text-danger-900 dark:hover:text-danger-100 font-semibold text-sm transition-colors disabled:opacity-50"
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Link
+                          href={`/pos/receipt/booking/${booking.id}`}
+                          target="_blank"
+                          className="flex items-center gap-1 text-admin-action hover:text-admin-action-hover font-semibold text-sm transition-colors"
                         >
-                          <X className="w-3.5 h-3.5" aria-hidden="true" />
-                          {cancellingId === booking.id ? "Cancelling…" : "Cancel"}
-                        </button>
-                      )}
+                          <Printer className="w-3.5 h-3.5" aria-hidden="true" />
+                          Print
+                        </Link>
+                        {booking.status !== "cancelled" &&
+                          (booking.checkedInAt ? (
+                            <span className="flex items-center gap-1 text-success-700 dark:text-success-400 font-semibold text-sm">
+                              <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
+                              Checked in
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleCheckIn(booking.id)}
+                              disabled={checkingInId === booking.id}
+                              className="flex items-center gap-1 text-admin-text-muted hover:text-admin-action font-semibold text-sm transition-colors disabled:opacity-50"
+                            >
+                              <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
+                              {checkingInId === booking.id ? "Checking in…" : "Check In"}
+                            </button>
+                          ))}
+                        {booking.status !== "cancelled" && (
+                          <button
+                            onClick={() => handleCancel(booking.id)}
+                            disabled={cancellingId === booking.id}
+                            className="flex items-center gap-1 text-danger-700 dark:text-danger-300 hover:text-danger-900 dark:hover:text-danger-100 font-semibold text-sm transition-colors disabled:opacity-50"
+                          >
+                            <X className="w-3.5 h-3.5" aria-hidden="true" />
+                            {cancellingId === booking.id ? "Cancelling…" : "Cancel"}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </RevealItem>
                 ))}
