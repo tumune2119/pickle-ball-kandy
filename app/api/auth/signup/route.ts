@@ -4,15 +4,27 @@ import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { isValidPhoneNumber } from "@/lib/utils";
+import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
   process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
 
-// POST /api/auth/signup - Sign up with phone OTP
+const MAX_SIGNUP_ATTEMPTS = 5;
+const SIGNUP_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
+// POST /api/auth/signup - Create an account (email + password)
 export async function POST(request: NextRequest) {
   try {
+    const rateLimit = checkRateLimit(`signup:${clientIp(request)}`, MAX_SIGNUP_ATTEMPTS, SIGNUP_WINDOW_MS);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many signup attempts. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+      );
+    }
+
     const body = await request.json();
     const { email, phone, fullName, password } = body;
 
@@ -30,7 +42,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user exists
+    // Check if user exists. The distinct "already registered" message is a
+    // known, accepted email-enumeration trade-off (flagged, not silently
+    // left undocumented) - rate limiting above is the real mitigation,
+    // since it caps how many emails any one source can probe.
     const existing = await db
       .select()
       .from(users)

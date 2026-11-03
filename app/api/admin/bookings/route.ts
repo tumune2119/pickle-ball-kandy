@@ -3,6 +3,7 @@ import { bookings, users, courts } from "@/lib/db/schema";
 import { eq, and, gte, lte, inArray } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/server-auth";
+import { calculateBookingAmountForCourt } from "@/lib/pricing";
 
 // GET /api/admin/bookings - Get all bookings for admin. Supports a single
 // `date`, a `startDate`/`endDate` range (used by the weekly schedule), and
@@ -79,7 +80,6 @@ export async function POST(request: NextRequest) {
       startTime,
       endTime,
       numPlayers,
-      amountLkr,
     } = body;
 
     // Check if slot is available
@@ -102,6 +102,10 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       );
     }
+
+    // Server computes the price itself, same rule as the customer-facing
+    // route - a client-supplied amount is never trusted, admin UI included.
+    const amountLkr = await calculateBookingAmountForCourt(courtId, startTime, endTime);
 
     const newBooking = await db
       .insert(bookings)
