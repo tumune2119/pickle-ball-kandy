@@ -2,7 +2,7 @@ import { db } from "@/lib/db/db";
 import { bookings } from "@/lib/db/schema";
 import { and, gte, lte } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/server-auth";
+import { requireAdminOnly } from "@/lib/server-auth";
 import { TIMEZONE } from "@/lib/constants";
 import { venueDateTime } from "@/lib/utils";
 
@@ -39,7 +39,7 @@ function computePeakPaymentDay(confirmedBookings: (typeof bookings.$inferSelect)
 
 // GET /api/admin/reports - Get analytics data
 export async function GET(request: NextRequest) {
-  const auth = await requireAdmin(request);
+  const auth = await requireAdminOnly(request);
   if (auth.response) return auth.response;
 
   try {

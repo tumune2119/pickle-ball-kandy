@@ -3,24 +3,29 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { LayoutDashboard, CalendarDays, Users, Settings, LineChart, Printer, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, CalendarDays, Users, Settings, LineChart, Printer, ArrowLeft, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { useAdminRole } from "@/lib/useAdminRole";
 
+// roles omitted = visible to both admin and staff.
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/bookings", label: "Bookings", icon: CalendarDays },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/schedule", label: "Weekly Schedule", icon: Printer },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
-  { href: "/admin/reports", label: "Reports", icon: LineChart },
+  { href: "/pos", label: "Till", icon: ShoppingCart },
+  { href: "/admin/settings", label: "Settings", icon: Settings, roles: ["admin"] as const },
+  { href: "/admin/reports", label: "Reports", icon: LineChart, roles: ["admin"] as const },
 ];
 
 export default function AdminSidebarNav() {
   const pathname = usePathname();
+  const role = useAdminRole();
+  const visibleItems = navItems.filter((item) => !item.roles || (role && item.roles.includes(role as "admin")));
 
   return (
     <div className="bg-admin-surface rounded-xl border border-admin-border shadow-sm p-4 space-y-1">
-      {navItems.map((item) => {
+      {visibleItems.map((item) => {
         const active = pathname === item.href;
         return (
           <Link

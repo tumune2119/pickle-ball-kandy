@@ -79,3 +79,20 @@ export async function requireAdmin(request: NextRequest): Promise<AdminAuthResul
 
   return { user: dbUser };
 }
+
+// Stricter than requireAdmin - role must be exactly "admin", not "staff".
+// Used for routes staff shouldn't reach even though they can sign in to the
+// admin area: reports, settings, POS product catalog edits, POS sales data.
+export async function requireAdminOnly(request: NextRequest): Promise<AdminAuthResult> {
+  const auth = await requireAuth(request);
+  if (auth.response) return { response: auth.response };
+
+  const rows = await db.select().from(users).where(eq(users.id, auth.user.id)).limit(1);
+  const dbUser = rows[0];
+
+  if (!dbUser || dbUser.role !== "admin") {
+    return { response: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
+  }
+
+  return { user: dbUser };
+}

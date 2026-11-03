@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { BarChart3, Wallet, Percent, Users, CreditCard, Download } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
+import { useAdminRole } from "@/lib/useAdminRole";
 import Card, { type CardTint } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
@@ -65,6 +67,14 @@ async function fetchReport(accessToken: string, startDate: string, endDate: stri
 }
 
 export default function AdminReportsPage() {
+  const router = useRouter();
+  const role = useAdminRole();
+  // Client-side UX only (same documented role as AdminAuthGate) - the real
+  // boundary is requireAdminOnly on /api/admin/reports itself.
+  useEffect(() => {
+    if (role === "staff") router.replace("/admin/dashboard");
+  }, [role, router]);
+
   const [reportData, setReportData] = useState<ReportData>(EMPTY_REPORT);
   const [loading, setLoading] = useState(true);
 

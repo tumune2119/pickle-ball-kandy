@@ -2,14 +2,14 @@ import { db } from "@/lib/db/db";
 import { settings, courts, pricing } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/server-auth";
+import { requireAdminOnly } from "@/lib/server-auth";
 import { getCourtRates } from "@/lib/pricing";
 
 // GET /api/admin/settings - Get a court's operating hours, pricing, and
 // free-form settings (e.g. cancellation_policy_hours) in one call, so the
 // admin Settings page can show real values instead of hardcoded defaults.
 export async function GET(request: NextRequest) {
-  const auth = await requireAdmin(request);
+  const auth = await requireAdminOnly(request);
   if (auth.response) return auth.response;
 
   try {
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 // stays the generic key-value store for things like
 // cancellation_policy_hours that don't have a dedicated column anywhere.
 export async function PATCH(request: NextRequest) {
-  const auth = await requireAdmin(request);
+  const auth = await requireAdminOnly(request);
   if (auth.response) return auth.response;
 
   try {

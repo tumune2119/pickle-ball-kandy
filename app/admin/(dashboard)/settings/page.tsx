@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, Target, Wallet, XCircle, Save, CheckCircle2, AlertCircle } from "lucide-react";
 import { getSession } from "@/lib/auth";
+import { useAdminRole } from "@/lib/useAdminRole";
 import { cn } from "@/lib/cn";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -34,6 +36,14 @@ const DEFAULT_FORM: SettingsFormData = {
 };
 
 export default function AdminSettingsPage() {
+  const router = useRouter();
+  const role = useAdminRole();
+  // Client-side UX only (same documented role as AdminAuthGate) - the real
+  // boundary is requireAdminOnly on /api/admin/settings itself.
+  useEffect(() => {
+    if (role === "staff") router.replace("/admin/dashboard");
+  }, [role, router]);
+
   const [courts, setCourts] = useState<Court[]>([]);
   const [selectedCourtId, setSelectedCourtId] = useState<string | null>(null);
   const [formData, setFormData] = useState<SettingsFormData>(DEFAULT_FORM);
