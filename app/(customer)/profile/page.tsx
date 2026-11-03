@@ -7,7 +7,7 @@ export const metadata = {
 export default function ProfilePage() {
   return (
     <div className="max-w-2xl">
-      <h2 className="text-2xl font-bold font-display mb-8 text-text-primary">My Profile</h2>
+      <h2 className="text-2xl md:text-3xl font-display uppercase mb-8 text-text-primary skew-display">My Profile</h2>
       <CustomerProfile />
     </div>
   );

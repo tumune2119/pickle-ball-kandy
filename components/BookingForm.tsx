@@ -202,7 +202,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
         >
           <CheckCircle2 className="w-12 h-12 text-success-700 dark:text-success-300" aria-hidden="true" />
         </motion.div>
-        <h3 className="text-2xl font-bold font-display text-success-700 dark:text-success-300">Booking Confirmed!</h3>
+        <h3 className="text-2xl font-display uppercase text-success-700 dark:text-success-300">Booking Confirmed!</h3>
 
         <div className="bg-success-50 dark:bg-success-900/30 p-6 rounded-lg border border-success-300 dark:border-success-700/60">
           <p className="text-success-900 dark:text-success-100 mb-4">
@@ -213,7 +213,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
           <div className="space-y-3 text-left">
             <div>
               <p className="text-sm text-text-muted">Booking Reference</p>
-              <p className="font-bold text-lg text-text-primary">BK#{bookingId.slice(0, 8).toUpperCase()}</p>
+              <p className="font-mono font-bold text-lg text-text-primary">BK#{bookingId.slice(0, 8).toUpperCase()}</p>
             </div>
             <div>
               <p className="text-sm text-text-muted">Date & Time</p>
@@ -230,7 +230,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
         </div>
 
         <div className="space-y-2">
-          <Button href={userId ? "/my-bookings" : "/manage-booking"} size="lg">
+          <Button href={userId ? "/my-bookings" : "/manage-booking"} variant="lime" size="lg">
             {userId ? "View My Bookings" : "Manage This Booking"}
           </Button>
           <div>
@@ -247,7 +247,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Date */}
       <div className="space-y-4">
-        <h3 className="text-xl font-bold font-display">2. Pick a date</h3>
+        <h3 className="text-xl font-display uppercase">2. Pick a date</h3>
         <DatePicker label="" value={selectedDate} onChange={setSelectedDate} min={minDate} max={maxDate} />
         <AnimatePresence>
           {selectedDate && (
@@ -258,9 +258,9 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="bg-sage-50 dark:bg-sage-950/40 p-4 rounded-lg flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-sage-700 dark:text-sage-300 shrink-0" aria-hidden="true" />
-                <p className="text-sage-900 dark:text-sage-200">
+              <div className="bg-rush-blue-50 dark:bg-rush-blue-950/40 p-4 rounded-lg flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-rush-blue-700 dark:text-rush-blue-300 shrink-0" aria-hidden="true" />
+                <p className="text-rush-blue-900 dark:text-rush-blue-200">
                   Selected:{" "}
                   <strong>
                     {new Date(selectedDate).toLocaleDateString("en-LK", {
@@ -279,7 +279,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
 
       {/* Time slots */}
       <div className="space-y-4">
-        <h3 className="text-xl font-bold font-display">3. Pick your time</h3>
+        <h3 className="text-xl font-display uppercase">3. Pick your time</h3>
         {!selectedDate ? (
           <p className="text-sm text-text-muted p-4 bg-surface-sunken rounded-lg">
             Pick a date above to see available times.
@@ -312,18 +312,18 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
                         animate={isSelected ? { scale: [1, 1.06, 1] } : { scale: 1 }}
                         transition={{ duration: 0.2 }}
                         className={cn(
-                          "p-3 rounded-lg font-semibold text-center transition-colors",
+                          "p-3 rounded-lg font-bold text-center transition-colors border-2",
                           isBooked
-                            ? "bg-surface-sunken text-text-faint cursor-not-allowed line-through decoration-text-faint"
+                            ? "bg-surface-sunken text-text-faint border-transparent cursor-not-allowed line-through decoration-text-faint"
                             : isSelected
-                            ? "bg-sage-600 text-white ring-2 ring-sage-300 dark:ring-sage-700"
+                            ? "bg-action-lime border-ink text-text-on-lime"
                             : isOffPeakSlot
-                            ? "bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-300 hover:bg-success-100 dark:hover:bg-success-900/50 border border-success-300 dark:border-success-700/60"
-                            : "bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300 hover:bg-warning-100/70 dark:hover:bg-warning-900/50 border border-warning-300 dark:border-warning-700/60"
+                            ? "bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-300 hover:bg-success-100 dark:hover:bg-success-900/50 border-success-300 dark:border-success-700/60"
+                            : "bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300 hover:bg-warning-100/70 dark:hover:bg-warning-900/50 border-warning-300 dark:border-warning-700/60"
                         )}
                       >
-                        <div className="text-sm">{slot}</div>
-                        <div className="text-xs">{isBooked ? "Booked" : formatCurrency(slotPrice)}</div>
+                        <div className="text-sm font-mono">{slot}</div>
+                        <div className="text-xs font-mono">{isBooked ? "Booked" : formatCurrency(slotPrice)}</div>
                       </motion.button>
                     );
                   })}
@@ -351,11 +351,11 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <div className="bg-sage-50 dark:bg-sage-950/40 p-4 rounded-lg border border-sage-200 dark:border-sage-800/60">
-                    <p className="text-sage-900 dark:text-sage-200 font-semibold mb-2">
+                  <div className="bg-highlight p-4 rounded-lg border-2 border-ink">
+                    <p className="text-text-primary font-bold mb-2">
                       Selected {selectedSlots.length} slot(s):
                     </p>
-                    <p className="text-sage-800 dark:text-sage-300">
+                    <p className="text-text-muted font-mono">
                       {selectedSlots.join(", ")} | Total: {formatCurrency(calculatePrice())}
                     </p>
                   </div>
@@ -368,7 +368,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
 
       {/* Players & guest details */}
       <div className="space-y-4">
-        <h3 className="text-xl font-bold font-display">4. Your details</h3>
+        <h3 className="text-xl font-display uppercase">4. Your details</h3>
 
         {!userId && (
           <div className="space-y-4 p-4 rounded-lg border border-border-subtle bg-surface-sunken">
@@ -418,14 +418,14 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
 
       {/* Payment */}
       <div className="space-y-3">
-        <h3 className="text-xl font-bold font-display">5. Payment method</h3>
+        <h3 className="text-xl font-display uppercase">5. Payment method</h3>
         <div className="space-y-2">
           <label
             className={cn(
-              "flex items-center p-3 border rounded-lg cursor-pointer transition-colors",
+              "flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors",
               paymentMode === "pay_at_venue"
-                ? "border-sage-400 dark:border-sage-600 bg-sage-50 dark:bg-sage-950/40"
-                : "border-border-default hover:bg-sage-50 dark:hover:bg-sage-950/40"
+                ? "border-ink bg-highlight"
+                : "border-border-default hover:border-rush-blue-300"
             )}
           >
             <Radio
@@ -444,10 +444,10 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
 
           <label
             className={cn(
-              "flex items-center p-3 border rounded-lg cursor-pointer transition-colors",
+              "flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors",
               paymentMode === "payhere"
-                ? "border-sage-400 dark:border-sage-600 bg-sage-50 dark:bg-sage-950/40"
-                : "border-border-default hover:bg-sage-50 dark:hover:bg-sage-950/40"
+                ? "border-ink bg-highlight"
+                : "border-border-default hover:border-rush-blue-300"
             )}
           >
             <Radio
@@ -512,14 +512,14 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               <strong>{numPlayers}</strong>
             </div>
             <div className="my-2 border-t border-border-subtle" />
-            <div className="flex justify-between text-lg font-bold text-sage-600 dark:text-sage-400">
+            <div className="flex justify-between text-lg font-bold text-rush-blue-700 dark:text-rush-blue-400">
               <span>Total:</span>
-              <span>{formatCurrency(calculatePrice())}</span>
+              <span className="font-mono">{formatCurrency(calculatePrice())}</span>
             </div>
           </div>
         </div>
 
-        <Button type="submit" fullWidth size="lg" loading={loading} disabled={!canSubmit || loading}>
+        <Button type="submit" variant="lime" fullWidth size="lg" loading={loading} disabled={!canSubmit || loading}>
           {loading ? "Processing…" : "Confirm Booking →"}
         </Button>
       </div>

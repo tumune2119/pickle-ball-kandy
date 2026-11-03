@@ -121,8 +121,8 @@ export default function ManageBookingForm() {
 
   return (
     <section className="max-w-xl mx-auto px-4 py-16 md:py-20">
-      <h1 className="text-3xl md:text-4xl font-bold font-display mb-2">Manage Your Booking</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">
+      <h1 className="text-3xl md:text-4xl font-display uppercase mb-2 skew-display">Manage Your Booking</h1>
+      <p className="text-text-muted mb-8">
         Booked as a guest? Look up your booking with your confirmation reference and the phone
         number you gave at booking.
       </p>
@@ -168,21 +168,21 @@ export default function ManageBookingForm() {
       </form>
 
       {booking && (
-        <Card glass padding="lg">
+        <Card poster padding="lg">
           <div className="grid md:grid-cols-2 gap-6 mb-4">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center gap-1.5">
+              <p className="text-sm text-text-muted mb-1 flex items-center gap-1.5">
                 <Calendar className="w-4 h-4" aria-hidden="true" />
                 Date & Time
               </p>
               <p className="text-lg font-bold text-text-primary">{formatDate(booking.bookingDate)}</p>
-              <p className="text-sage-600 dark:text-sage-400 font-semibold">
+              <p className="text-rush-blue-700 dark:text-rush-blue-400 font-bold font-mono">
                 {booking.startTime} - {booking.endTime}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Amount</p>
-              <p className="text-2xl font-bold text-sage-600 dark:text-sage-400">
+              <p className="text-sm text-text-muted mb-1">Amount</p>
+              <p className="font-mono text-2xl font-bold text-rush-blue-700 dark:text-rush-blue-400">
                 {formatCurrency(booking.amountLkr)}
               </p>
             </div>
@@ -212,11 +212,11 @@ export default function ManageBookingForm() {
           )}
 
           {booking.status === "cancelled" ? (
-            <p className="text-sm text-gray-600 dark:text-gray-400">This booking has been cancelled.</p>
+            <p className="text-sm text-text-muted">This booking has been cancelled.</p>
           ) : canCancel ? (
             confirmingCancel ? (
               <div className="space-y-2">
-                <p className="text-sm text-gray-700 dark:text-gray-300">Cancel this booking? This can&apos;t be undone.</p>
+                <p className="text-sm text-text-muted">Cancel this booking? This can&apos;t be undone.</p>
                 <div className="flex gap-2">
                   <Button
                     variant="destructive"
@@ -240,7 +240,7 @@ export default function ManageBookingForm() {
               </Button>
             )
           ) : (
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-text-muted">
               Free cancellation requires at least {cancellationHours} hours&apos; notice - this booking is too
               close to its start time to cancel online. Contact us if you need help.
             </p>

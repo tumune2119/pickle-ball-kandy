@@ -22,29 +22,27 @@ export default function CustomerLayout({
   };
 
   return (
-    // Warm cream background for the editorial rebrand (admin keeps the
-    // shared neutral bg-page token - this is a local override).
-    <div className="min-h-screen bg-cream-100 dark:bg-gray-950">
+    <div className="min-h-screen bg-page">
       <PageBackdrop />
       {/* Header */}
-      <header className="border-b border-gray-200 dark:border-white/10 bg-cream-50/70 dark:bg-surface/70 backdrop-blur-xl">
+      <header className="border-b-2 border-border-default bg-surface/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-bold text-text-muted hover:bg-surface-sunken hover:text-text-primary transition-colors"
             >
               <Home className="w-4 h-4" aria-hidden="true" />
               Home
             </Link>
-            <h1 className="text-3xl font-bold text-text-primary">My Account</h1>
+            <h1 className="text-2xl md:text-3xl font-display uppercase text-text-primary skew-display">My Account</h1>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             {user && (
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-bold text-text-muted hover:bg-surface-sunken hover:text-text-primary transition-colors"
               >
                 <LogOut className="w-4 h-4" aria-hidden="true" />
                 Logout

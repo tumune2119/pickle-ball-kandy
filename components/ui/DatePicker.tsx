@@ -81,8 +81,8 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
   }
 
   // Portaled to <body> and positioned via fixed coords (not a CSS-relative
-  // absolute child) - the calendar's trigger commonly sits inside a `glass`
-  // Card, and that Card's backdrop-blur creates its own stacking context,
+  // absolute child) - the calendar's trigger commonly sits inside a `poster`
+  // Card, and a transformed/shadowed ancestor creates its own stacking context,
   // which traps a same-context absolute popover beneath later sibling
   // cards on the page regardless of z-index. Portaling escapes that.
   useEffect(() => {

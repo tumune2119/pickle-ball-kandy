@@ -70,8 +70,8 @@ export default function CustomerProfile() {
 
   if (signedOut) {
     return (
-      <Card glass padding="md" className="text-center">
-        <p className="text-gray-600 dark:text-gray-400 mb-4">Log in to see your profile.</p>
+      <Card padding="md" className="text-center">
+        <p className="text-text-muted mb-4">Log in to see your profile.</p>
         <Button href="/login">Log In</Button>
       </Card>
     );
@@ -96,14 +96,14 @@ export default function CustomerProfile() {
   return (
     <div className="space-y-6">
       {/* Profile Info */}
-      <Card glass padding="md">
+      <Card padding="md">
         <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
           <User className="w-5 h-5" aria-hidden="true" />
           Personal Information
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+            <label className="block text-sm font-bold text-text-muted mb-2">Full Name</label>
             {loading ? (
               <Skeleton className="h-9 w-full" />
             ) : (
@@ -111,7 +111,7 @@ export default function CustomerProfile() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+            <label className="block text-sm font-bold text-text-muted mb-2">Email</label>
             {loading ? (
               <Skeleton className="h-9 w-full" />
             ) : (
@@ -119,14 +119,14 @@ export default function CustomerProfile() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+            <label className="block text-sm font-bold text-text-muted mb-2">Phone Number</label>
             {loading ? (
               <Skeleton className="h-9 w-full" />
             ) : (
               <p className="px-4 py-2 bg-surface-sunken rounded-lg text-text-primary">{me?.phoneNumber}</p>
             )}
           </div>
-          <Button variant="ghost" size="sm" className="px-0 justify-start text-sage-600 dark:text-sage-400 hover:bg-transparent hover:text-sage-700 dark:hover:text-sage-300">
+          <Button variant="ghost" size="sm" className="px-0 justify-start text-rush-blue-600 dark:text-rush-blue-400 hover:bg-transparent hover:text-rush-blue-700 dark:hover:text-rush-blue-300">
             <Pencil className="w-4 h-4" aria-hidden="true" />
             Edit Profile
           </Button>
@@ -134,7 +134,7 @@ export default function CustomerProfile() {
       </Card>
 
       {/* Booking Statistics */}
-      <Card glass padding="md">
+      <Card padding="md">
         <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
           <BarChart3 className="w-5 h-5" aria-hidden="true" />
           Booking Statistics
@@ -148,9 +148,9 @@ export default function CustomerProfile() {
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {stats.map((stat) => (
-              <Card key={stat.label} tint={stat.tint} glass padding="sm">
-                <p className="text-sage-700 dark:text-sage-300 font-semibold text-sm">{stat.label}</p>
-                <p className="text-2xl font-bold text-sage-600 dark:text-sage-400 mt-1">{stat.value}</p>
+              <Card key={stat.label} tint={stat.tint} padding="sm">
+                <p className="text-text-muted font-bold text-sm">{stat.label}</p>
+                <p className="font-mono text-2xl font-bold text-text-primary mt-1">{stat.value}</p>
               </Card>
             ))}
           </div>
@@ -158,7 +158,7 @@ export default function CustomerProfile() {
       </Card>
 
       {/* Preferences */}
-      <Card glass padding="md">
+      <Card padding="md">
         <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
           <Settings className="w-5 h-5" aria-hidden="true" />
           Preferences
@@ -166,17 +166,17 @@ export default function CustomerProfile() {
         <div className="space-y-4">
           <label className="flex items-center">
             <Checkbox defaultChecked />
-            <span className="ml-3 text-gray-700 dark:text-gray-300">Receive booking reminders via email</span>
+            <span className="ml-3 text-text-muted">Receive booking reminders via email</span>
           </label>
           <label className="flex items-center">
             <Checkbox defaultChecked />
-            <span className="ml-3 text-gray-700 dark:text-gray-300">Receive SMS reminders 24 hours before</span>
+            <span className="ml-3 text-text-muted">Receive SMS reminders 24 hours before</span>
           </label>
           <label className="flex items-center">
             <Checkbox />
-            <span className="ml-3 text-gray-700 dark:text-gray-300">Subscribe to special offers and promotions</span>
+            <span className="ml-3 text-text-muted">Subscribe to special offers and promotions</span>
           </label>
-          <Button variant="ghost" size="sm" className="px-0 justify-start mt-4 text-sage-600 dark:text-sage-400 hover:bg-transparent hover:text-sage-700 dark:hover:text-sage-300">
+          <Button variant="ghost" size="sm" className="px-0 justify-start mt-4 text-rush-blue-600 dark:text-rush-blue-400 hover:bg-transparent hover:text-rush-blue-700 dark:hover:text-rush-blue-300">
             <Check className="w-4 h-4" aria-hidden="true" />
             Save Preferences
           </Button>
@@ -184,25 +184,25 @@ export default function CustomerProfile() {
       </Card>
 
       {/* Account Actions */}
-      <Card glass padding="md">
+      <Card padding="md">
         <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
           <Lock className="w-5 h-5" aria-hidden="true" />
           Account
         </h3>
         <div className="space-y-3">
-          <button className="w-full flex items-center gap-3 text-left px-4 py-3 bg-surface-sunken hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-sage-600 dark:text-sage-400 font-semibold transition-colors">
+          <button className="w-full flex items-center gap-3 text-left px-4 py-3 bg-surface-sunken hover:bg-rush-blue-50 dark:hover:bg-rush-blue-950/40 rounded-lg text-rush-blue-700 dark:text-rush-blue-400 font-bold transition-colors">
             <KeyRound className="w-4 h-4" aria-hidden="true" />
             Change Password
           </button>
           <button
             onClick={() => handleLogout("global")}
             disabled={loggingOut}
-            className="w-full flex items-center gap-3 text-left px-4 py-3 bg-surface-sunken hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-sage-600 dark:text-sage-400 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center gap-3 text-left px-4 py-3 bg-surface-sunken hover:bg-rush-blue-50 dark:hover:bg-rush-blue-950/40 rounded-lg text-rush-blue-700 dark:text-rush-blue-400 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <LogOut className="w-4 h-4" aria-hidden="true" />
             {loggingOut ? "Logging out..." : "Logout from All Devices"}
           </button>
-          <button className="w-full flex items-center gap-3 text-left px-4 py-3 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-lg text-red-600 dark:text-red-400 font-semibold transition-colors">
+          <button className="w-full flex items-center gap-3 text-left px-4 py-3 bg-danger-100 dark:bg-danger-900/40 hover:bg-danger-300/60 dark:hover:bg-danger-800/40 rounded-lg text-danger-800 dark:text-danger-300 font-bold transition-colors">
             <Trash2 className="w-4 h-4" aria-hidden="true" />
             Delete Account (Permanent)
           </button>
@@ -210,12 +210,12 @@ export default function CustomerProfile() {
       </Card>
 
       {/* Support */}
-      <Card tint="brand" glass padding="md">
+      <Card tint="brand" padding="md">
         <h3 className="font-bold text-text-primary mb-2 flex items-center gap-2">
           <MessageCircle className="w-5 h-5" aria-hidden="true" />
           Need Help?
         </h3>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
+        <p className="text-text-muted mb-4">
           Have questions about your bookings or account? Our support team is here to help.
         </p>
         <Button href="/contact">Contact Support</Button>

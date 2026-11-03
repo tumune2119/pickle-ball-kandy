@@ -14,21 +14,21 @@ const perks = [
   {
     icon: CalendarCheck,
     tint: "brand" as const,
-    iconClass: "text-sage-600 dark:text-sage-400",
+    iconClass: "text-rush-blue-600 dark:text-rush-blue-400",
     title: "Easy Booking",
     description: "One simple form to book your preferred date and time",
   },
   {
     icon: Wallet,
     tint: "success" as const,
-    iconClass: "text-green-600 dark:text-green-400",
+    iconClass: "text-success-700 dark:text-success-400",
     title: "Flexible Payment",
     description: "Pay at venue or online. Instant confirmation either way.",
   },
   {
     icon: Clock3,
     tint: "brand" as const,
-    iconClass: "text-sage-600 dark:text-sage-400",
+    iconClass: "text-rush-blue-600 dark:text-rush-blue-400",
     title: "Free Cancellation",
     description: "Cancel free up to 4 hours before your booking",
   },
@@ -65,8 +65,8 @@ export default function BookPage() {
       <p className="text-text-muted mb-8">Fill in the details below to reserve your pickleball court slot</p>
 
       {!loading && !userId && (
-        <div className="mb-6 p-4 rounded-lg border border-sage-200 dark:border-sage-800/60 bg-sage-50 dark:bg-sage-950/40 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-sage-900 dark:text-sage-200">
+        <div className="mb-6 p-4 rounded-lg border-2 border-rush-blue-200 dark:border-rush-blue-800/60 bg-rush-blue-50 dark:bg-rush-blue-950/40 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-rush-blue-900 dark:text-rush-blue-200">
             Booking as a guest. Have an account? Log in to keep a history of your bookings.
           </p>
           <Button href="/login" variant="soft" size="sm">
@@ -75,7 +75,7 @@ export default function BookPage() {
         </div>
       )}
 
-      <Card glass padding="lg">
+      <Card padding="lg">
         {loading ? (
           <div className="space-y-4">
             <Skeleton className="h-6 w-1/3" />
@@ -83,7 +83,7 @@ export default function BookPage() {
             <Skeleton className="h-10 w-1/2" />
           </div>
         ) : !selectedCourtId ? (
-          <p className="text-red-600 dark:text-red-400">
+          <p className="text-danger-700 dark:text-danger-400">
             No court is configured yet. Please contact the venue.
           </p>
         ) : (
@@ -92,7 +92,7 @@ export default function BookPage() {
                 form below it, so the order (court -> date -> time -> ...)
                 reads as one continuous flow. */}
             <div className="space-y-4">
-              <h3 className="text-xl font-bold font-display">1. Pick a court</h3>
+              <h3 className="text-xl font-bold font-display uppercase">1. Pick a court</h3>
               {courts.length > 1 ? (
                 <div className="flex gap-2 flex-wrap">
                   {courts.map((court) => (
@@ -101,10 +101,10 @@ export default function BookPage() {
                       type="button"
                       onClick={() => setSelectedCourtId(court.id)}
                       className={cn(
-                        "px-4 py-2 rounded-lg font-semibold text-sm transition-colors",
+                        "px-4 py-2 rounded-lg font-bold text-sm transition-colors border-2",
                         selectedCourtId === court.id
-                          ? "bg-sage-600 text-white"
-                          : "bg-surface-sunken text-text-muted hover:bg-sage-50 dark:hover:bg-sage-950/40"
+                          ? "bg-action-primary border-ink text-text-on-action"
+                          : "bg-surface-sunken border-border-default text-text-muted hover:border-rush-blue-400"
                       )}
                     >
                       {court.name}
@@ -126,10 +126,10 @@ export default function BookPage() {
       <RevealGroup className="mt-8 grid md:grid-cols-3 gap-6">
         {perks.map((perk) => (
           <RevealItem key={perk.title}>
-            <Card tint={perk.tint} glass padding="md" className="h-full">
+            <Card tint={perk.tint} padding="md" className="h-full">
               <perk.icon className={`w-8 h-8 mb-2 ${perk.iconClass}`} aria-hidden="true" />
               <h3 className="font-bold text-text-primary mb-2">{perk.title}</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">{perk.description}</p>
+              <p className="text-sm text-text-muted">{perk.description}</p>
             </Card>
           </RevealItem>
         ))}

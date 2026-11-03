@@ -80,7 +80,7 @@ export default function CustomerDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold font-display text-text-primary">Welcome Back! 👋</h2>
+        <h2 className="text-3xl font-display uppercase text-text-primary skew-display">Welcome Back!</h2>
         <p className="text-text-muted mt-2">Here&apos;s your pickleball booking dashboard</p>
       </div>
 
@@ -94,10 +94,10 @@ export default function CustomerDashboard() {
         <RevealGroup className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {stats.map((stat) => (
             <RevealItem key={stat.label}>
-              <Card tint={stat.tint} glass padding="md">
-                <p className="text-sage-700 dark:text-sage-300 font-semibold text-sm">{stat.label}</p>
-                <p className="text-4xl font-bold text-sage-600 dark:text-sage-400 mt-2">{stat.value}</p>
-                <p className="text-sage-700 dark:text-sage-300 text-xs mt-2">{stat.footnote}</p>
+              <Card tint={stat.tint} padding="md">
+                <p className="text-text-muted font-bold text-sm">{stat.label}</p>
+                <p className="font-mono text-4xl font-bold text-text-primary mt-2">{stat.value}</p>
+                <p className="text-text-muted text-xs mt-2">{stat.footnote}</p>
               </Card>
             </RevealItem>
           ))}
@@ -128,14 +128,14 @@ export default function CustomerDashboard() {
             <Skeleton className="h-20" />
           </div>
         ) : recentBookings.length === 0 ? (
-          <Card glass padding="md">
+          <Card padding="md">
             <p className="text-text-muted text-sm">No bookings yet - your first one will show up here.</p>
           </Card>
         ) : (
           <RevealGroup className="space-y-3">
             {recentBookings.map((booking) => (
               <RevealItem key={booking.id}>
-                <Card glass padding="md">
+                <Card padding="md">
                   <div className="flex justify-between items-start gap-4">
                     <div>
                       <p className="font-bold text-text-primary">
@@ -157,15 +157,15 @@ export default function CustomerDashboard() {
       </div>
 
       {/* Membership Info */}
-      <Card tint="warning" glass padding="md">
+      <Card tint="warning" padding="md">
         <h3 className="font-bold text-text-primary mb-3 flex items-center gap-2">
           <CreditCard className="w-5 h-5" aria-hidden="true" />
           Membership Status
         </h3>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
+        <p className="text-text-muted mb-4">
           You&apos;re not a member yet. Join to get discounts on every booking!
         </p>
-        <Button className="bg-orange-500! hover:bg-orange-600! shadow-orange-900/20!">
+        <Button href="/#pricing" variant="lime">
           Explore Memberships →
         </Button>
       </Card>
