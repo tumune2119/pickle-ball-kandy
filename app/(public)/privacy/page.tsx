@@ -15,7 +15,7 @@ export default function PrivacyPage() {
           qualified lawyer before {COURT_NAME} relies on it.
         </p>
       </Card>
-      <div className="space-y-6 font-editorial text-text-muted leading-relaxed">
+      <div className="space-y-6 text-text-muted leading-relaxed">
         <p>
           When you create an account or make a booking with {COURT_NAME}, we collect your name,
           email, phone number, and booking details so we can confirm and manage your court

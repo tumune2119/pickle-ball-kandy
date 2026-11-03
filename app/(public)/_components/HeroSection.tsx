@@ -68,7 +68,7 @@ export default function HeroSection({
         </motion.h1>
 
         <motion.p
-          className="font-editorial italic text-lg md:text-2xl mb-8 text-white/90 max-w-2xl"
+          className="text-lg md:text-2xl mb-8 text-white/90 max-w-2xl"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: EASE }}

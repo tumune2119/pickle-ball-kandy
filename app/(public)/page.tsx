@@ -263,10 +263,10 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-10 items-center">
             <Reveal className="border-2 border-ink rounded-lg bg-ink text-white p-10 flex flex-col items-center justify-center text-center shadow-[6px_6px_0_var(--color-action-lime)]">
               <span className="font-mono text-6xl md:text-7xl font-bold text-action-lime">1/3</span>
-              <p className="mt-3 text-white/80 font-editorial italic">the size of a tennis court</p>
+              <p className="mt-3 text-white/80">the size of a tennis court</p>
             </Reveal>
             <Reveal delay={0.1} className="space-y-4">
-              <p className="font-editorial text-lg leading-relaxed text-text-muted">
+              <p className="text-lg leading-relaxed text-text-muted">
                 Pickleball is a paddle sport that combines elements of tennis,
                 badminton, and table tennis. It&apos;s played on a court about 1/3 the
                 size of a tennis court with a lower net, using solid paddles and a
@@ -304,20 +304,20 @@ export default function Home() {
             </Reveal>
             <Reveal delay={0.1} className="space-y-6">
               <h3 className="text-3xl font-display uppercase">Our Story</h3>
-              <p className="font-editorial text-lg leading-relaxed text-text-muted">
+              <p className="text-lg leading-relaxed text-text-muted">
                 Pickle Rush was built with a mission to bring the
                 world&apos;s fastest-growing racquet sport to Sri Lanka. As pickleball gains
                 popularity worldwide, we recognized the need for a dedicated,
                 professional facility where players of all skill levels can enjoy
                 the game.
               </p>
-              <p className="font-editorial text-lg leading-relaxed text-text-muted">
+              <p className="text-lg leading-relaxed text-text-muted">
                 We&apos;re committed to creating a welcoming community where locals and
                 visitors can experience the joy, fitness, and social aspects of
                 pickleball. Whether you&apos;re a beginner or an experienced player,
                 we provide the perfect environment to play, learn, and compete.
               </p>
-              <p className="font-editorial text-lg leading-relaxed text-text-muted">
+              <p className="text-lg leading-relaxed text-text-muted">
                 Our court meets international standards and is managed by
                 experienced professionals dedicated to ensuring the best possible
                 experience for every player.
@@ -448,7 +448,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-5xl font-display uppercase mb-6 skew-display">Membership Packages</h2>
           </Reveal>
           <Reveal>
-            <p className="text-center text-white/70 mb-12 max-w-2xl mx-auto font-editorial italic text-lg">
+            <p className="text-center text-white/70 mb-12 max-w-2xl mx-auto text-lg">
               Save more with our flexible membership plans. Perfect for regular players looking for better rates and
               priority booking.
             </p>
@@ -572,7 +572,7 @@ export default function Home() {
             <RevealItem key={item.q}>
               <div className="py-6">
                 <h3 className="font-display uppercase text-lg mb-2 text-text-primary">{item.q}</h3>
-                <p className="font-editorial text-text-muted">{item.a}</p>
+                <p className="text-text-muted">{item.a}</p>
               </div>
             </RevealItem>
           ))}
@@ -794,7 +794,7 @@ export default function Home() {
             <RevealItem key={item.q}>
               <div className="py-6">
                 <h3 className="font-display uppercase text-lg mb-2 text-text-primary">{item.q}</h3>
-                <p className="font-editorial text-text-muted">{item.a}</p>
+                <p className="text-text-muted">{item.a}</p>
               </div>
             </RevealItem>
           ))}

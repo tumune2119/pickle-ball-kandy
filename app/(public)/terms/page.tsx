@@ -15,7 +15,7 @@ export default function TermsPage() {
           qualified lawyer before {COURT_NAME} relies on it.
         </p>
       </Card>
-      <div className="space-y-6 font-editorial text-text-muted leading-relaxed">
+      <div className="space-y-6 text-text-muted leading-relaxed">
         <p>
           By creating an account or booking a court with {COURT_NAME}, you agree to follow the
           booking, cancellation, and conduct rules shown to you at the time of booking and on
