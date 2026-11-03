@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Calendar, CheckCircle2 } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, ymdInVenueTimezone } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
+import { redirectToPayHereCheckout } from "@/lib/payhere-client";
 import { cn } from "@/lib/cn";
 import Button from "@/components/ui/Button";
 import { Input, Select, Radio } from "@/components/ui/Input";
-import DatePicker, { toYMD } from "@/components/ui/DatePicker";
+import DatePicker from "@/components/ui/DatePicker";
 import Skeleton from "@/components/ui/Skeleton";
 import PickleballBounce from "@/components/ui/PickleballBounce";
 
@@ -68,8 +69,8 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
   // Booking window: today through 30 days out. Computed once per mount
   // rather than inline in JSX, since JSX must render the same output for
   // the same props/state.
-  const [minDate] = useState(() => toYMD(new Date()));
-  const [maxDate] = useState(() => toYMD(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)));
+  const [minDate] = useState(() => ymdInVenueTimezone());
+  const [maxDate] = useState(() => ymdInVenueTimezone(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)));
 
   // Falls back to the same 6am-5pm/5pm-10pm split the server defaults to
   // (lib/pricing.ts) only for the brief window before `rates` has loaded -
@@ -95,23 +96,6 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
     } else {
       setSelectedSlots([...selectedSlots, slot]);
     }
-  };
-
-  // Builds and submits a hidden form to redirect the browser to PayHere's
-  // hosted checkout - required because PayHere expects a full page POST.
-  const redirectToPayHere = (checkoutUrl: string, fields: Record<string, string>) => {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = checkoutUrl;
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-    });
-    document.body.appendChild(form);
-    form.submit();
   };
 
   const canSubmit =
@@ -192,7 +176,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
           return;
         }
 
-        redirectToPayHere(paymentData.checkoutUrl, paymentData.fields);
+        redirectToPayHereCheckout(paymentData.checkoutUrl, paymentData.fields);
         return; // browser is navigating away
       }
 
@@ -222,8 +206,8 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
 
         <div className="bg-success-50 dark:bg-success-900/30 p-6 rounded-lg border border-success-300 dark:border-success-700/60">
           <p className="text-success-900 dark:text-success-100 mb-4">
-            Your court booking has been confirmed. A confirmation email has been sent to your registered email
-            address.
+            Your court booking has been confirmed.
+            {!userId && " Save your booking reference and phone number - you'll need both to manage this booking later."}
           </p>
 
           <div className="space-y-3 text-left">
@@ -246,8 +230,8 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
         </div>
 
         <div className="space-y-2">
-          <Button href="/my-bookings" size="lg">
-            View My Bookings
+          <Button href={userId ? "/my-bookings" : "/manage-booking"} size="lg">
+            {userId ? "View My Bookings" : "Manage This Booking"}
           </Button>
           <div>
             <Button href="/" variant="ghost" size="sm" className="hover:bg-transparent">

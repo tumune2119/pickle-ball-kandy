@@ -1,11 +1,10 @@
 import { db, isUniqueViolation } from "@/lib/db/db";
-import { bookings, users, settings } from "@/lib/db/schema";
+import { bookings, users } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/server-auth";
 import { calculateBookingAmountForCourt } from "@/lib/pricing";
-import { canCancelBooking } from "@/lib/utils";
-import { CANCELLATION_POLICY_HOURS } from "@/lib/constants";
+import { checkCancellationWindow } from "@/lib/cancellation";
 
 // A booking may be read/changed by the customer who made it, or by an
 // admin/staff member. Returns null (allowed) or the 403 response to return.
@@ -189,14 +188,12 @@ export async function DELETE(
     // phoned-in request). Uses the court's configured hours if set, else the
     // same default the UI has always advertised.
     if (auth.user.id === existing[0].userId) {
-      const policyRow = await db
-        .select()
-        .from(settings)
-        .where(and(eq(settings.courtId, existing[0].courtId), eq(settings.key, "cancellation_policy_hours")))
-        .limit(1);
-      const cancellationHours = policyRow[0] ? Number(policyRow[0].value) : CANCELLATION_POLICY_HOURS;
-      const bookingDateTime = new Date(`${existing[0].bookingDate}T${existing[0].startTime}`);
-      if (!canCancelBooking(bookingDateTime, cancellationHours)) {
+      const { allowed, cancellationHours } = await checkCancellationWindow(
+        existing[0].courtId,
+        existing[0].bookingDate,
+        existing[0].startTime
+      );
+      if (!allowed) {
         return NextResponse.json(
           { error: `Free cancellation requires at least ${cancellationHours} hours' notice` },
           { status: 400 }

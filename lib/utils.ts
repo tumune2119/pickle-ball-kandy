@@ -109,6 +109,14 @@ export function isValidPhoneNumber(phone: string): boolean {
   return pattern.test(phone.replace(/\s/g, ""));
 }
 
+// yyyy-mm-dd for a given instant, in the venue's timezone rather than the
+// visitor's browser timezone - a visitor browsing from a different timezone
+// around midnight in Colombo would otherwise see the wrong day as "today"
+// for booking purposes (see DatePicker.tsx / BookingForm.tsx).
+export function ymdInVenueTimezone(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: TIMEZONE }).format(date);
+}
+
 // Get day of week name
 export function getDayName(date: Date): string {
   return new Intl.DateTimeFormat("en-LK", {

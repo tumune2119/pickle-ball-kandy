@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Calendar, Users, RectangleHorizontal, Pencil, X, Receipt, RotateCcw } from "lucide-react";
+import { AlertCircle, Calendar, Users, RectangleHorizontal, Pencil, X, Receipt, RotateCcw, CreditCard } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
+import { redirectToPayHereCheckout } from "@/lib/payhere-client";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
@@ -41,6 +42,8 @@ export default function MyBookingsList() {
   const [loading, setLoading] = useState(true);
   const [signedOut, setSignedOut] = useState(false);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [retryingId, setRetryingId] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -70,18 +73,47 @@ export default function MyBookingsList() {
   const handleCancel = async (bookingId: string) => {
     const session = await getSession();
     if (!session) return;
+    setError("");
     setCancellingId(bookingId);
     try {
       const res = await fetch(`/api/bookings/${bookingId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setBookings((prev) => prev.map((b) => (b.id === bookingId ? data.booking : b)));
+      } else {
+        setError(data.error || "Failed to cancel booking");
       }
+    } catch {
+      setError("Something went wrong. Please try again.");
     } finally {
       setCancellingId(null);
+    }
+  };
+
+  const handleRetryPayment = async (bookingId: string) => {
+    const session = await getSession();
+    if (!session) return;
+    setError("");
+    setRetryingId(bookingId);
+    try {
+      const res = await fetch("/api/payments/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ bookingId }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        redirectToPayHereCheckout(data.checkoutUrl, data.fields);
+        return;
+      }
+      setError(data.error || "Failed to start payment");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setRetryingId(null);
     }
   };
 
@@ -120,6 +152,23 @@ export default function MyBookingsList() {
 
   return (
     <div className="space-y-6">
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="flex items-start gap-2 bg-danger-100 dark:bg-danger-900/40 border border-danger-300 dark:border-danger-800/60 text-danger-800 dark:text-danger-300 px-4 py-3 rounded-lg">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
+              <span>{error}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Filter Tabs */}
       <div className="flex gap-4 border-b border-gray-200 dark:border-white/10">
         {tabs.map((tab) => (
@@ -216,9 +265,34 @@ export default function MyBookingsList() {
                     </div>
 
                     {/* Actions */}
-                    {filter === "upcoming" && booking.status !== "cancelled" && (
+                    {filter === "upcoming" && booking.status === "pending_payment" && (
                       <div className="flex gap-2">
-                        <Button variant="soft" className="flex-1" size="sm">
+                        <Button
+                          variant="primary"
+                          className="flex-1"
+                          size="sm"
+                          loading={retryingId === booking.id}
+                          onClick={() => handleRetryPayment(booking.id)}
+                        >
+                          <CreditCard className="w-4 h-4" aria-hidden="true" />
+                          Retry Payment
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          className="flex-1"
+                          size="sm"
+                          loading={cancellingId === booking.id}
+                          onClick={() => handleCancel(booking.id)}
+                        >
+                          <X className="w-4 h-4" aria-hidden="true" />
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
+
+                    {filter === "upcoming" && booking.status === "confirmed" && (
+                      <div className="flex gap-2">
+                        <Button variant="soft" className="flex-1" size="sm" disabled title="Coming soon">
                           <Pencil className="w-4 h-4" aria-hidden="true" />
                           Reschedule
                         </Button>
@@ -239,13 +313,15 @@ export default function MyBookingsList() {
                       <div className="flex gap-2">
                         <Button
                           variant="soft"
-                          className="flex-1 bg-green-50! dark:bg-green-950/40! hover:bg-green-100! dark:hover:bg-green-900/40! text-green-600! dark:text-green-400!"
+                          className="flex-1 bg-success-100! dark:bg-success-900/40! hover:bg-success-200! dark:hover:bg-success-800/40! text-success-700! dark:text-success-300!"
                           size="sm"
+                          disabled
+                          title="Coming soon"
                         >
                           <Receipt className="w-4 h-4" aria-hidden="true" />
                           Receipt
                         </Button>
-                        <Button variant="soft" className="flex-1" size="sm">
+                        <Button href="/book" variant="soft" className="flex-1" size="sm">
                           <RotateCcw className="w-4 h-4" aria-hidden="true" />
                           Book Again
                         </Button>

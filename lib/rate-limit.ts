@@ -24,6 +24,12 @@ function cleanup(windowMs: number) {
   }
 }
 
+// Vercel/most proxies set x-forwarded-for; fall back to a constant so at
+// least per-identifier limiting still applies if it's ever missing.
+export function clientIp(request: Request): string {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
 export interface RateLimitResult {
   allowed: boolean;
   retryAfterSeconds: number;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 
 // signInWithPassword doesn't need the service-role key - the anon key (same
 // client lib/server-auth.ts uses for token validation) is sufficient and
@@ -12,12 +12,6 @@ const supabase = createClient(
 
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-
-function clientIp(request: NextRequest): string {
-  // Vercel/most proxies set x-forwarded-for; fall back to a constant so at
-  // least per-email limiting still applies if it's ever missing.
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-}
 
 // POST /api/auth/login - Login with email/password
 export async function POST(request: NextRequest) {
