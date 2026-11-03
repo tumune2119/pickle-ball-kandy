@@ -1,21 +1,32 @@
 import type { Metadata } from "next";
-import { Karla, DM_Mono, Fraunces } from "next/font/google";
+import { Anton, Space_Grotesk, Orbitron, Fraunces } from "next/font/google";
 import MotionProvider from "@/components/MotionProvider";
 import "./globals.css";
 
-// pickle-rush design system v1 (UI-CONFIG.md): Karla for body/UI text,
-// Fraunces for display headings, DM Mono for the rare code/numeric moment.
-// Used across the whole app, including admin - admin only differs in color.
-const karla = Karla({
-  variable: "--font-karla",
+// Graffiti x Y2K x editorial x pickleball redesign - four registers, not one:
+// Anton for heavy condensed display headlines (paired with a CSS skew for the
+// "forward-leaning" wordmark energy, since Anton has no italic face), Fraunces
+// kept from the previous design system as the editorial serif for body copy
+// and pull quotes (it already does that job well - no reason to replace a
+// good choice just for novelty), Space Grotesk for UI/forms/admin (legible,
+// subtly geometric - "same brand, toned down"), Orbitron used narrowly for
+// scoreboard-style price/time figures (the one deliberately Y2K-digital face).
+const anton = Anton({
+  variable: "--font-anton",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: "400",
 });
 
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "500", "700"],
+});
+
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
+  subsets: ["latin"],
+  weight: ["500", "700"],
 });
 
 const fraunces = Fraunces({
@@ -64,7 +75,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className={`${karla.variable} ${dmMono.variable} ${fraunces.variable} antialiased`}>
+      <body className={`${anton.variable} ${spaceGrotesk.variable} ${orbitron.variable} ${fraunces.variable} antialiased`}>
         <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
