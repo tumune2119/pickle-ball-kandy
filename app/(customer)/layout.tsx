@@ -26,8 +26,9 @@ export default function CustomerLayout({
   return (
     <div className="min-h-screen bg-page">
       <PageBackdrop />
-      {/* Header */}
-      <header className="border-b-2 border-border-default bg-surface/90 backdrop-blur-xl">
+      {/* Header - same bordered bar as every other header on the site now
+          (no more translucent/blurred glass). */}
+      <header className="border-b-2 border-ink bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link

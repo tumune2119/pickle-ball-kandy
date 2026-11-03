@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -21,26 +21,7 @@ const SECTIONS = [
   { id: "contact", label: "Contact" },
 ];
 
-const SCROLL_THRESHOLD = 24;
-
-function subscribeScroll(callback: () => void) {
-  window.addEventListener("scroll", callback, { passive: true });
-  return () => window.removeEventListener("scroll", callback);
-}
-
-// Tracks "has the page scrolled past the hero photo" so the header can ride
-// transparent over the hero at the top (matching its photo background) and
-// pick up the usual glass bar once the user scrolls into the plain page
-// content below - a plain scroll listener that reads the current value on
-// mount via useSyncExternalStore, rather than an effect that calls setState
-// directly (see DatePicker.tsx's useMounted for the same pattern).
-function useScrolled(): boolean {
-  return useSyncExternalStore(
-    subscribeScroll,
-    () => window.scrollY > SCROLL_THRESHOLD,
-    () => false
-  );
-}
+const linkColor = "text-text-muted hover:text-lime-600 dark:hover:text-lime-400";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,11 +30,6 @@ export default function Navigation() {
   const adminRole = useAdminRole();
   const isStaff = adminRole === "admin" || adminRole === "staff";
   const router = useRouter();
-  const scrolled = useScrolled();
-  // Transparent while still at the very top (riding over the hero's photo
-  // background), solid glass as soon as the user scrolls into the page
-  // content below - same header, two looks.
-  const transparent = !scrolled;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -82,24 +58,13 @@ export default function Navigation() {
     return () => observer.disconnect();
   }, []);
 
-  // Two looks, one header: transparent/white-text while riding over the
-  // hero's photo at the top of the page, solid glass once scrolled into the
-  // plain content below (see useScrolled above) - fixed (not sticky) so it
-  // has no layout footprint of its own and the hero photo can run full
-  // height behind it (HeroSection compensates with extra top padding).
-  const linkColor = transparent
-    ? "text-white/90 hover:text-white"
-    : "text-text-muted hover:text-lime-600 dark:hover:text-lime-400";
-
   return (
-    <header
-      className={cn(
-        "fixed top-0 inset-x-0 z-50 transition-colors duration-300",
-        transparent
-          ? "bg-transparent border-transparent"
-          : "bg-surface border-b-2 border-ink"
-      )}
-    >
+    // Always the same solid, bordered bar - no more riding transparent over
+    // the hero photo at the top of the page. That dual look (transparent at
+    // y=0, solid once scrolled) was the one surface in the whole site that
+    // never got the thick-ink-border treatment everywhere else now has;
+    // fixed (not sticky) so it still has no layout footprint of its own.
+    <header className="fixed top-0 inset-x-0 z-50 bg-surface border-b-2 border-ink">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
@@ -107,12 +72,7 @@ export default function Navigation() {
             <div className="w-10 h-10 rounded-md border-2 border-ink overflow-hidden transition-transform group-hover:scale-105 shrink-0 bg-white">
               <Image src="/brand/logo.jpg" alt="" width={40} height={40} className="w-full h-full object-cover" priority />
             </div>
-            <span
-              className={cn(
-                "hidden sm:inline font-display text-xl uppercase tracking-tight skew-display transition-colors",
-                transparent ? "text-white" : "text-text-primary"
-              )}
-            >
+            <span className="hidden sm:inline font-display text-xl uppercase tracking-tight skew-display text-text-primary">
               {COURT_NAME}
             </span>
           </Link>
@@ -125,7 +85,7 @@ export default function Navigation() {
                 <Link
                   key={item.id}
                   href={`#${item.id}`}
-                  className={cn("relative px-3 py-2 font-medium transition-colors", linkColor)}
+                  className={cn("relative px-3 py-2 font-bold transition-colors", linkColor)}
                 >
                   {item.label}
                   {active && (
@@ -142,29 +102,29 @@ export default function Navigation() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-2">
-            <ThemeToggle variant={transparent ? "on-color" : "neutral"} />
+            <ThemeToggle variant="neutral" />
             {user === undefined ? (
               <div className="w-16 h-5" aria-hidden="true" />
             ) : user ? (
               <>
                 {isStaff ? (
-                  <Link href="/admin/dashboard" className={cn("flex items-center gap-1.5 font-medium transition-colors px-3", linkColor)}>
+                  <Link href="/admin/dashboard" className={cn("flex items-center gap-1.5 font-bold transition-colors px-3", linkColor)}>
                     <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
                     Admin Dashboard
                   </Link>
                 ) : (
-                  <Link href="/dashboard" className={cn("flex items-center gap-1.5 font-medium transition-colors px-3", linkColor)}>
+                  <Link href="/dashboard" className={cn("flex items-center gap-1.5 font-bold transition-colors px-3", linkColor)}>
                     <CircleUserRound className="w-4 h-4" aria-hidden="true" />
                     My Account
                   </Link>
                 )}
-                <button onClick={handleLogout} className={cn("flex items-center gap-1.5 font-medium transition-colors px-3", linkColor)}>
+                <button onClick={handleLogout} className={cn("flex items-center gap-1.5 font-bold transition-colors px-3", linkColor)}>
                   <LogOut className="w-4 h-4" aria-hidden="true" />
                   Logout
                 </button>
               </>
             ) : (
-              <Link href="/login" className={cn("font-medium transition-colors px-3", linkColor)}>
+              <Link href="/login" className={cn("font-bold transition-colors px-3", linkColor)}>
                 Login
               </Link>
             )}
@@ -175,7 +135,7 @@ export default function Navigation() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-1 md:hidden">
-            <ThemeToggle variant={transparent ? "on-color" : "neutral"} />
+            <ThemeToggle variant="neutral" />
             <button
               onClick={() => setIsOpen(!isOpen)}
               aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -198,9 +158,7 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* Mobile Menu - its own solid glass card regardless of header
-            transparency, so its contents stay legible even when opened
-            right at the top of the page, over the photo. */}
+        {/* Mobile Menu */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -215,19 +173,19 @@ export default function Navigation() {
                   <Link
                     key={item.id}
                     href={`#${item.id}`}
-                    className="block px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
+                    className="block px-4 py-3 font-bold text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
                     {item.label}
                   </Link>
                 ))}
-                <div className="pt-2 space-y-1 border-t border-border-default">
+                <div className="pt-2 space-y-1 border-t-2 border-border-default">
                   {user ? (
                     <>
                       {isStaff ? (
                         <Link
                           href="/admin/dashboard"
-                          className="flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
+                          className="flex items-center gap-2 px-4 py-3 font-bold text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                           onClick={() => setIsOpen(false)}
                         >
                           <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
@@ -236,7 +194,7 @@ export default function Navigation() {
                       ) : (
                         <Link
                           href="/dashboard"
-                          className="flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
+                          className="flex items-center gap-2 px-4 py-3 font-bold text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                           onClick={() => setIsOpen(false)}
                         >
                           <CircleUserRound className="w-4 h-4" aria-hidden="true" />
@@ -245,7 +203,7 @@ export default function Navigation() {
                       )}
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-3 font-bold text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                       >
                         <LogOut className="w-4 h-4" aria-hidden="true" />
                         Logout
@@ -254,7 +212,7 @@ export default function Navigation() {
                   ) : (
                     <Link
                       href="/login"
-                      className="block px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
+                      className="block px-4 py-3 font-bold text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
                       Login
