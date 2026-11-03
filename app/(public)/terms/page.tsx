@@ -8,14 +8,14 @@ export const metadata = {
 export default function TermsPage() {
   return (
     <section className="max-w-3xl mx-auto px-4 py-16 md:py-20">
-      <h1 className="text-3xl md:text-4xl font-bold font-display mb-4">Terms of Service</h1>
-      <Card glass padding="md" tint="warning" className="mb-8">
-        <p className="text-sm text-gray-700 dark:text-gray-300">
+      <h1 className="text-3xl md:text-4xl font-display uppercase mb-4 skew-display">Terms of Service</h1>
+      <Card poster padding="md" tint="warning" className="mb-8">
+        <p className="text-sm text-text-primary">
           This is a placeholder draft, not a finished legal document. It needs review by a
           qualified lawyer before {COURT_NAME} relies on it.
         </p>
       </Card>
-      <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
+      <div className="space-y-6 font-editorial text-text-muted leading-relaxed">
         <p>
           By creating an account or booking a court with {COURT_NAME}, you agree to follow the
           booking, cancellation, and conduct rules shown to you at the time of booking and on

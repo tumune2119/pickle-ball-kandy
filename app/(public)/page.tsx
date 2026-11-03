@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   MapPin,
@@ -39,15 +40,15 @@ import { COURT_NAME, COURT_LOCATION, CANCELLATION_POLICY_HOURS } from "@/lib/con
 
 const quickStats = [
   { value: "3", label: "Dedicated Courts" },
-  { value: "6am-10pm", label: "Operating Hours" },
+  { value: "6AM-10PM", label: "Operating Hours" },
   { value: "4", label: "Players Per Session" },
 ];
 
 const values = [
-  { icon: Heart, title: "Community", description: "Building a welcoming community of players from all backgrounds" },
-  { icon: Star, title: "Excellence", description: "Maintaining highest standards in facilities and service" },
-  { icon: Handshake, title: "Inclusivity", description: "Welcoming players of all ages, skill levels, and backgrounds" },
-  { icon: Trophy, title: "Growth", description: "Fostering the development and advancement of pickleball" },
+  { icon: Heart, title: "Community", description: "A welcoming community of players from all backgrounds" },
+  { icon: Star, title: "Excellence", description: "Highest standards in facilities and service" },
+  { icon: Handshake, title: "Inclusivity", description: "Welcoming players of all ages and skill levels" },
+  { icon: Trophy, title: "Growth", description: "Fostering the development of pickleball" },
 ];
 
 const amenities = [
@@ -70,7 +71,7 @@ const membershipTiers = [
     priceLabel: "Per Session:",
     price: "LKR 1,500 - 2,500",
     footnote: null as string | null,
-    cta: { label: "Book Now", href: "/book" as string | undefined },
+    cta: { label: "Book Now", href: "/book" },
     highlighted: false,
   },
   {
@@ -80,7 +81,7 @@ const membershipTiers = [
     priceLabel: "Per Month:",
     price: "LKR 14,250",
     footnote: "~LKR 1,425 per session",
-    cta: { label: "Ask About This Plan", href: "#contact" as string | undefined },
+    cta: { label: "Ask About This Plan", href: "#contact" },
     highlighted: true,
   },
   {
@@ -200,6 +201,17 @@ const contactFaqs = [
   },
 ];
 
+// Small reusable section label - "editorial issue" tag, not a tiny tracked
+// eyebrow: bold, bordered, part of the graffiti/sticker vocabulary used
+// throughout the page (see the hero's "Vol. 01" tag).
+function SectionTag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-block bg-ink text-white text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full mb-4 -rotate-1">
+      {children}
+    </span>
+  );
+}
+
 export default function Home() {
   const [formData, setFormData] = useState({
     name: "",
@@ -242,25 +254,25 @@ export default function Home() {
       />
 
       {/* What is Pickleball? */}
-      <section className="bg-sage-50 dark:bg-sage-950/40 py-12 md:py-16">
-        <div className="max-w-4xl mx-auto px-4">
+      <section className="bg-page py-16 md:py-24">
+        <div className="max-w-5xl mx-auto px-4">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold font-display mb-6 text-center">What is Pickleball?</h2>
+            <SectionTag>The Sport</SectionTag>
+            <h2 className="text-3xl md:text-5xl font-display uppercase mb-10 skew-display">What is Pickleball?</h2>
           </Reveal>
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <Reveal>
-              <div className="bg-linear-to-br from-sage-300 to-sage-500 dark:from-sage-800 dark:to-sage-950 h-80 rounded-xl flex items-center justify-center">
-                <span className="text-8xl opacity-30">🏓</span>
-              </div>
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <Reveal className="border-2 border-ink rounded-lg bg-ink text-white p-10 flex flex-col items-center justify-center text-center shadow-[6px_6px_0_var(--color-action-lime)]">
+              <span className="font-mono text-6xl md:text-7xl font-bold text-action-lime">1/3</span>
+              <p className="mt-3 text-white/80 font-editorial italic">the size of a tennis court</p>
             </Reveal>
             <Reveal delay={0.1} className="space-y-4">
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              <p className="font-editorial text-lg leading-relaxed text-text-muted">
                 Pickleball is a paddle sport that combines elements of tennis,
                 badminton, and table tennis. It&apos;s played on a court about 1/3 the
                 size of a tennis court with a lower net, using solid paddles and a
                 perforated plastic ball.
               </p>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Why Pickleball?</h3>
+              <h3 className="text-xl font-display uppercase text-text-primary">Why Pickleball?</h3>
               <ul className="space-y-2">
                 {[
                   "Easy to learn, fun to play - perfect for all ages",
@@ -269,8 +281,8 @@ export default function Home() {
                   "Fastest growing racquet sport in the world",
                 ].map((text) => (
                   <li key={text} className="flex items-start">
-                    <Check className="w-5 h-5 text-sage-600 dark:text-sage-400 mr-3 shrink-0 mt-0.5" aria-hidden="true" />
-                    <span className="text-gray-700 dark:text-gray-300">{text}</span>
+                    <Check className="w-5 h-5 text-lime-600 dark:text-lime-400 mr-3 shrink-0 mt-0.5" aria-hidden="true" />
+                    <span className="text-text-muted">{text}</span>
                   </li>
                 ))}
               </ul>
@@ -280,49 +292,52 @@ export default function Home() {
       </section>
 
       {/* ===== About ===== */}
-      <section id="about" className="scroll-mt-16 max-w-4xl mx-auto px-4 py-12 md:py-16">
-        <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold font-display mb-12 text-center">About Us</h2>
-        </Reveal>
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <Reveal className="bg-linear-to-br from-sage-300 to-sage-500 dark:from-sage-800 dark:to-sage-950 h-96 rounded-xl flex items-center justify-center">
-            <span className="text-8xl opacity-30">🏓</span>
+      <section id="about" className="scroll-mt-16 bg-highlight py-16 md:py-24">
+        <div className="max-w-5xl mx-auto px-4">
+          <Reveal>
+            <SectionTag>02 — The Venue</SectionTag>
+            <h2 className="text-3xl md:text-5xl font-display uppercase mb-10 skew-display">About Us</h2>
           </Reveal>
-          <Reveal delay={0.1} className="space-y-6">
-            <h3 className="text-3xl font-bold font-display">Our Story</h3>
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              Pickle Rush was built with a mission to bring the
-              world&apos;s fastest-growing racquet sport to Sri Lanka. As pickleball gains
-              popularity worldwide, we recognized the need for a dedicated,
-              professional facility where players of all skill levels can enjoy
-              the game.
-            </p>
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              We&apos;re committed to creating a welcoming community where locals and
-              visitors can experience the joy, fitness, and social aspects of
-              pickleball. Whether you&apos;re a beginner or an experienced player,
-              we provide the perfect environment to play, learn, and compete.
-            </p>
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              Our court meets international standards and is managed by
-              experienced professionals dedicated to ensuring the best possible
-              experience for every player.
-            </p>
-          </Reveal>
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <Reveal className="relative rounded-lg border-2 border-ink overflow-hidden shadow-[6px_6px_0_var(--color-ink)] aspect-square bg-white">
+              <Image src="/brand/logo.jpg" alt="Pickle Rush logo" fill className="object-contain p-8" />
+            </Reveal>
+            <Reveal delay={0.1} className="space-y-6">
+              <h3 className="text-3xl font-display uppercase">Our Story</h3>
+              <p className="font-editorial text-lg leading-relaxed text-text-muted">
+                Pickle Rush was built with a mission to bring the
+                world&apos;s fastest-growing racquet sport to Sri Lanka. As pickleball gains
+                popularity worldwide, we recognized the need for a dedicated,
+                professional facility where players of all skill levels can enjoy
+                the game.
+              </p>
+              <p className="font-editorial text-lg leading-relaxed text-text-muted">
+                We&apos;re committed to creating a welcoming community where locals and
+                visitors can experience the joy, fitness, and social aspects of
+                pickleball. Whether you&apos;re a beginner or an experienced player,
+                we provide the perfect environment to play, learn, and compete.
+              </p>
+              <p className="font-editorial text-lg leading-relaxed text-text-muted">
+                Our court meets international standards and is managed by
+                experienced professionals dedicated to ensuring the best possible
+                experience for every player.
+              </p>
+            </Reveal>
+          </div>
         </div>
       </section>
 
       {/* Mission & Vision */}
-      <section className="bg-gray-50 dark:bg-gray-950 py-12 md:py-16">
+      <section className="bg-page py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4">
           <RevealGroup className="grid md:grid-cols-2 gap-8">
             <RevealItem>
-              <Card glass padding="lg" className="border-l-4 border-sage-600 h-full">
-                <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
-                  <Target className="w-7 h-7 text-sage-600 dark:text-sage-400" aria-hidden="true" />
+              <Card poster padding="lg" className="h-full">
+                <h3 className="text-2xl font-display uppercase mb-4 flex items-center gap-3">
+                  <Target className="w-7 h-7 text-rush-blue-600 dark:text-rush-blue-400" aria-hidden="true" />
                   Our Mission
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-text-muted">
                   To provide a world-class pickleball facility that promotes
                   health, community, and the growth of pickleball in Sri Lanka
                   while ensuring an enjoyable experience for all players.
@@ -330,12 +345,12 @@ export default function Home() {
               </Card>
             </RevealItem>
             <RevealItem>
-              <Card glass padding="lg" className="border-l-4 border-green-600 h-full">
-                <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
-                  <Eye className="w-7 h-7 text-green-600 dark:text-green-400" aria-hidden="true" />
+              <Card poster padding="lg" tint="brand" className="h-full">
+                <h3 className="text-2xl font-display uppercase mb-4 flex items-center gap-3">
+                  <Eye className="w-7 h-7 text-lime-700 dark:text-lime-400" aria-hidden="true" />
                   Our Vision
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-text-muted">
                   To become the leading pickleball destination in South Asia,
                   fostering a vibrant community of players and contributing to
                   the global growth of this amazing sport.
@@ -347,19 +362,20 @@ export default function Home() {
       </section>
 
       {/* Values */}
-      <section className="max-w-6xl mx-auto px-4 py-12 md:py-16">
+      <section className="max-w-6xl mx-auto px-4 py-16 md:py-24">
         <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Our Values</h2>
+          <SectionTag>What We Stand For</SectionTag>
+          <h2 className="text-3xl md:text-5xl font-display uppercase mb-12 skew-display">Our Values</h2>
         </Reveal>
-        <RevealGroup className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <RevealGroup className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {values.map((value) => (
             <RevealItem key={value.title}>
-              <Card hover glass padding="md" className="text-center h-full">
-                <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-sage-50 dark:bg-sage-950/40 flex items-center justify-center">
-                  <value.icon className="w-7 h-7 text-sage-600 dark:text-sage-400" aria-hidden="true" />
+              <Card poster hover padding="md" className="text-center h-full">
+                <div className="w-12 h-12 mx-auto mb-3 rounded-full border-2 border-ink bg-highlight flex items-center justify-center">
+                  <value.icon className="w-6 h-6 text-lime-800 dark:text-lime-300" aria-hidden="true" />
                 </div>
-                <h3 className="font-bold text-lg mb-2">{value.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{value.description}</p>
+                <h3 className="font-bold text-base mb-1">{value.title}</h3>
+                <p className="text-text-muted text-xs">{value.description}</p>
               </Card>
             </RevealItem>
           ))}
@@ -367,23 +383,27 @@ export default function Home() {
       </section>
 
       {/* Amenities */}
-      <section className="max-w-6xl mx-auto px-4 py-12 md:py-16">
-        <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Facilities & Amenities</h2>
-        </Reveal>
-        <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {amenities.map((amenity) => (
-            <RevealItem key={amenity.title}>
-              <AmenityCard {...amenity} />
-            </RevealItem>
-          ))}
-        </RevealGroup>
+      <section className="bg-page py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4">
+          <Reveal>
+            <SectionTag>On-Site</SectionTag>
+            <h2 className="text-3xl md:text-5xl font-display uppercase mb-10 skew-display">Facilities & Amenities</h2>
+          </Reveal>
+          <RevealGroup as="div" className="grid sm:grid-cols-2 gap-x-10">
+            {amenities.map((amenity) => (
+              <RevealItem key={amenity.title}>
+                <AmenityCard {...amenity} />
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        </div>
       </section>
 
       {/* ===== Pricing ===== */}
-      <section id="pricing" className="scroll-mt-16 max-w-6xl mx-auto px-4 py-12 md:py-16">
+      <section id="pricing" className="scroll-mt-16 max-w-6xl mx-auto px-4 py-16 md:py-24">
         <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Hourly Rates</h2>
+          <SectionTag>Rates</SectionTag>
+          <h2 className="text-3xl md:text-5xl font-display uppercase mb-12 skew-display">Hourly Rates</h2>
         </Reveal>
         <RevealGroup className="grid md:grid-cols-2 gap-8 mb-8">
           <RevealItem>
@@ -408,9 +428,9 @@ export default function Home() {
         </RevealGroup>
 
         <Reveal>
-          <Card tint="brand" glass padding="md">
-            <p className="text-gray-700 dark:text-gray-300 text-center flex items-center justify-center gap-2 flex-wrap">
-              <Lightbulb className="w-5 h-5 text-sage-600 dark:text-sage-400 shrink-0" aria-hidden="true" />
+          <Card tint="brand" poster padding="md">
+            <p className="text-text-primary text-center flex items-center justify-center gap-2 flex-wrap">
+              <Lightbulb className="w-5 h-5 text-lime-700 dark:text-lime-400 shrink-0" aria-hidden="true" />
               <span>
                 <strong>Tip:</strong> Off-peak hours offer great value and are perfect for beginners and casual
                 players. Peak hours provide the best lighting conditions and are ideal for competitive matches.
@@ -421,13 +441,14 @@ export default function Home() {
       </section>
 
       {/* Membership Packages */}
-      <section className="bg-gray-50 dark:bg-gray-950 py-12 md:py-16">
+      <section className="bg-ink text-white py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Membership Packages</h2>
+            <SectionTag>Save More</SectionTag>
+            <h2 className="text-3xl md:text-5xl font-display uppercase mb-6 skew-display">Membership Packages</h2>
           </Reveal>
           <Reveal>
-            <p className="text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+            <p className="text-center text-white/70 mb-12 max-w-2xl mx-auto font-editorial italic text-lg">
               Save more with our flexible membership plans. Perfect for regular players looking for better rates and
               priority booking.
             </p>
@@ -436,59 +457,43 @@ export default function Home() {
           <RevealGroup className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {membershipTiers.map((tier) => (
               <RevealItem key={tier.title}>
-                <Card
-                  glass
-                  hover={!tier.highlighted}
-                  padding="lg"
-                  tint={tier.highlighted ? "brand" : "neutral"}
-                  className={
-                    tier.highlighted
-                      ? "border-2 border-sage-600 shadow-lg shadow-sage-600/10 md:scale-105 h-full flex flex-col"
-                      : "border-2 h-full flex flex-col"
-                  }
+                <div
+                  className={`relative rounded-lg border-2 border-ink bg-surface text-text-primary h-full flex flex-col p-8 shadow-[4px_4px_0_var(--color-action-lime)] ${
+                    tier.highlighted ? "md:scale-105" : ""
+                  }`}
                 >
                   {tier.highlighted && (
-                    <div className="mb-4 inline-block bg-sage-600 text-white px-3 py-1 rounded-full text-sm font-semibold w-fit">
+                    <div className="absolute -top-3 -right-3 bg-action-lime text-text-on-lime border-2 border-ink rounded-full px-3 py-1 text-xs font-bold uppercase -rotate-6 shadow-[2px_2px_0_var(--color-ink)]">
                       Popular
                     </div>
                   )}
-                  <h3 className="text-2xl font-bold mb-2">{tier.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6">{tier.tagline}</p>
+                  <h3 className="text-2xl font-display uppercase mb-2">{tier.title}</h3>
+                  <p className="text-text-muted mb-6">{tier.tagline}</p>
 
                   <div className="mb-6">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Perfect for:</p>
+                    <p className="text-sm text-text-muted">Perfect for:</p>
                     <ul className="mt-2 space-y-2 text-sm">
                       {tier.perfectFor.map((item) => (
                         <li key={item} className="flex items-start">
-                          <Check className="w-4 h-4 text-green-500 dark:text-green-400 mr-2 mt-0.5 shrink-0" aria-hidden="true" />
+                          <Check className="w-4 h-4 text-lime-600 dark:text-lime-400 mr-2 mt-0.5 shrink-0" aria-hidden="true" />
                           <span>{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div
-                    className={`mb-6 p-4 rounded-lg ${
-                      tier.highlighted ? "bg-sage-100/60 dark:bg-sage-900/30" : "bg-gray-50 dark:bg-gray-950"
-                    }`}
-                  >
+                  <div className="mb-6 p-4 rounded-lg bg-surface-sunken border-2 border-border-subtle">
                     <p className="font-bold">{tier.priceLabel}</p>
-                    <p className="text-2xl font-bold text-sage-600 dark:text-sage-400">{tier.price}</p>
-                    {tier.footnote && <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">{tier.footnote}</p>}
+                    <p className="font-mono text-2xl font-bold tabular-nums">{tier.price}</p>
+                    {tier.footnote && <p className="text-xs text-text-muted mt-2">{tier.footnote}</p>}
                   </div>
 
                   <div className="mt-auto">
-                    {tier.cta.href ? (
-                      <Button href={tier.cta.href} variant={tier.highlighted ? "primary" : "secondary"} fullWidth>
-                        {tier.cta.label}
-                      </Button>
-                    ) : (
-                      <Button variant={tier.highlighted ? "primary" : "secondary"} fullWidth>
-                        {tier.cta.label}
-                      </Button>
-                    )}
+                    <Button href={tier.cta.href} variant={tier.highlighted ? "lime" : "secondary"} fullWidth>
+                      {tier.cta.label}
+                    </Button>
                   </div>
-                </Card>
+                </div>
               </RevealItem>
             ))}
           </RevealGroup>
@@ -496,19 +501,20 @@ export default function Home() {
       </section>
 
       {/* Special Offers */}
-      <section className="max-w-6xl mx-auto px-4 py-12 md:py-16">
+      <section className="max-w-6xl mx-auto px-4 py-16 md:py-24">
         <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Special Offers</h2>
+          <SectionTag>Deals</SectionTag>
+          <h2 className="text-3xl md:text-5xl font-display uppercase mb-12 skew-display">Special Offers</h2>
         </Reveal>
 
         <RevealGroup className="grid md:grid-cols-2 gap-8">
           {specialOffers.map((offer) => (
             <RevealItem key={offer.title}>
-              <Card tint={offer.tint} glass padding="lg" className="border-2 h-full">
-                <offer.icon className="w-10 h-10 mb-4 text-gray-700 dark:text-gray-300" aria-hidden="true" />
-                <h3 className="text-2xl font-bold mb-3">{offer.title}</h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-4">{offer.description}</p>
-                <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300 mb-6">
+              <Card tint={offer.tint} poster padding="lg" className="h-full">
+                <offer.icon className="w-10 h-10 mb-4 text-text-primary" aria-hidden="true" />
+                <h3 className="text-2xl font-display uppercase mb-3">{offer.title}</h3>
+                <p className="text-text-muted mb-4">{offer.description}</p>
+                <ul className="space-y-2 text-sm text-text-muted mb-6">
                   {offer.items.map((item) => (
                     <li key={item} className="flex items-start gap-2">
                       <Check className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
@@ -518,7 +524,7 @@ export default function Home() {
                 </ul>
                 <a
                   href="#contact"
-                  className="text-sage-600 dark:text-sage-400 font-semibold hover:text-sage-700 dark:hover:text-sage-300 transition-colors"
+                  className="text-rush-blue-700 dark:text-rush-blue-400 font-bold hover:text-rush-blue-800 dark:hover:text-rush-blue-300 transition-colors"
                 >
                   {offer.cta}
                 </a>
@@ -529,23 +535,24 @@ export default function Home() {
       </section>
 
       {/* Equipment Rental */}
-      <section className="bg-gray-50 dark:bg-gray-950 py-12 md:py-16">
+      <section className="bg-highlight py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Equipment Rental</h2>
+            <SectionTag>Gear</SectionTag>
+            <h2 className="text-3xl md:text-5xl font-display uppercase mb-12 skew-display">Equipment Rental</h2>
           </Reveal>
 
           <RevealGroup className="grid md:grid-cols-3 gap-8">
             {equipment.map((item) => (
               <RevealItem key={item.title}>
-                <Card glass padding="md" className="h-full">
-                  <div className="w-12 h-12 mb-4 rounded-lg bg-sage-50 dark:bg-sage-950/40 flex items-center justify-center">
-                    <item.icon className="w-6 h-6 text-sage-600 dark:text-sage-400" aria-hidden="true" />
+                <Card poster padding="md" className="h-full">
+                  <div className="w-12 h-12 mb-4 rounded-md border-2 border-ink bg-surface flex items-center justify-center">
+                    <item.icon className="w-6 h-6 text-rush-blue-600 dark:text-rush-blue-400" aria-hidden="true" />
                   </div>
                   <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">{item.description}</p>
-                  <p className="text-2xl font-bold text-sage-600 dark:text-sage-400">{item.price}</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">{item.footnote}</p>
+                  <p className="text-text-muted text-sm mb-4">{item.description}</p>
+                  <p className="font-mono text-2xl font-bold tabular-nums text-text-primary">{item.price}</p>
+                  <p className="text-xs text-text-muted mt-2">{item.footnote}</p>
                 </Card>
               </RevealItem>
             ))}
@@ -554,49 +561,51 @@ export default function Home() {
       </section>
 
       {/* Pricing FAQ */}
-      <section className="max-w-4xl mx-auto px-4 py-12 md:py-16">
+      <section className="max-w-4xl mx-auto px-4 py-16 md:py-24">
         <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Pricing FAQ</h2>
+          <SectionTag>Questions</SectionTag>
+          <h2 className="text-3xl md:text-5xl font-display uppercase mb-12 skew-display">Pricing FAQ</h2>
         </Reveal>
 
-        <RevealGroup className="space-y-6">
+        <RevealGroup className="divide-y-2 divide-border-subtle">
           {pricingFaqs.map((item) => (
             <RevealItem key={item.q}>
-              <Card glass padding="md">
-                <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">{item.q}</h3>
-                <p className="text-gray-700 dark:text-gray-300">{item.a}</p>
-              </Card>
+              <div className="py-6">
+                <h3 className="font-bold text-lg mb-2 text-text-primary">{item.q}</h3>
+                <p className="font-editorial text-text-muted">{item.a}</p>
+              </div>
             </RevealItem>
           ))}
         </RevealGroup>
       </section>
 
       {/* ===== Contact ===== */}
-      <section id="contact" className="scroll-mt-16 bg-gray-50 dark:bg-gray-950 px-4 py-12 md:py-16">
+      <section id="contact" className="scroll-mt-16 bg-ink text-white px-4 py-16 md:py-24">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Contact Us</h2>
+            <SectionTag>Get In Touch</SectionTag>
+            <h2 className="text-3xl md:text-5xl font-display uppercase mb-12 skew-display">Contact Us</h2>
           </Reveal>
 
           <RevealGroup className="grid md:grid-cols-3 gap-8 mb-16">
             {contactMethods.map((method) => (
               <RevealItem key={method.title}>
-                <Card hover glass padding="lg" className="text-center h-full">
-                  <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-sage-50 dark:bg-sage-950/40 flex items-center justify-center">
-                    <method.icon className="w-7 h-7 text-sage-600 dark:text-sage-400" aria-hidden="true" />
+                <div className="text-center h-full rounded-lg border-2 border-concrete-700 hover:border-action-lime transition-colors p-6">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-full border-2 border-concrete-600 bg-concrete-900 flex items-center justify-center">
+                    <method.icon className="w-7 h-7 text-action-lime" aria-hidden="true" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{method.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">{method.description}</p>
+                  <h3 className="text-xl font-display uppercase mb-2">{method.title}</h3>
+                  <p className="text-white/60 mb-4 text-sm">{method.description}</p>
                   <a
                     href={method.href}
                     target={method.external ? "_blank" : undefined}
                     rel={method.external ? "noopener noreferrer" : undefined}
-                    className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-bold text-lg break-all"
+                    className="text-action-lime hover:text-lime-300 font-bold text-lg break-all"
                   >
                     {method.label}
                   </a>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-3">{method.footnote}</p>
-                </Card>
+                  <p className="text-white/50 text-sm mt-3">{method.footnote}</p>
+                </div>
               </RevealItem>
             ))}
           </RevealGroup>
@@ -604,7 +613,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12">
             {/* Contact Form */}
             <Reveal>
-              <h3 className="text-3xl font-bold font-display mb-8">Send us a Message</h3>
+              <h3 className="text-3xl font-display uppercase mb-8">Send us a Message</h3>
 
               <AnimatePresence>
                 {submitted && (
@@ -615,7 +624,7 @@ export default function Home() {
                     transition={{ duration: 0.25 }}
                     className="overflow-hidden"
                   >
-                    <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/40 border border-green-400 dark:border-green-600/60 text-green-700 dark:text-green-300 rounded-lg flex items-center gap-2">
+                    <div className="mb-6 p-4 bg-success-100 dark:bg-success-900/40 border-2 border-ink text-success-800 dark:text-success-300 rounded-lg flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
                       Thank you for your message! We&apos;ll get back to you shortly.
                     </div>
@@ -680,7 +689,7 @@ export default function Home() {
                   placeholder="Tell us what you'd like to know..."
                 />
 
-                <Button type="submit" fullWidth size="lg">
+                <Button type="submit" variant="lime" fullWidth size="lg">
                   Send Message
                 </Button>
               </form>
@@ -688,9 +697,9 @@ export default function Home() {
 
             {/* Info & Location */}
             <Reveal delay={0.1}>
-              <h3 className="text-3xl font-bold font-display mb-8">Location & Hours</h3>
+              <h3 className="text-3xl font-display uppercase mb-8">Location & Hours</h3>
 
-              <div className="bg-gray-200 dark:bg-white/10 rounded-xl overflow-hidden mb-8 h-96">
+              <div className="border-2 border-concrete-700 rounded-lg overflow-hidden mb-8 h-96">
                 <iframe
                   title="Map showing the court's location in Kandy, Sri Lanka"
                   width="100%"
@@ -703,26 +712,26 @@ export default function Home() {
                 ></iframe>
               </div>
 
-              <Card glass padding="md" className="mb-6">
+              <div className="rounded-lg border-2 border-concrete-700 p-6 mb-6">
                 <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-sage-600 dark:text-sage-400" aria-hidden="true" />
+                  <MapPin className="w-5 h-5 text-action-lime" aria-hidden="true" />
                   Address
                 </h4>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-white/80">
                   {COURT_NAME} <br />
                   {COURT_LOCATION}
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
+                <p className="text-white/50 text-sm mt-2">
                   (Exact address provided upon booking confirmation)
                 </p>
-              </Card>
+              </div>
 
-              <Card glass padding="md" className="mb-6">
+              <div className="rounded-lg border-2 border-concrete-700 p-6 mb-6">
                 <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-sage-600 dark:text-sage-400" aria-hidden="true" />
+                  <Clock className="w-5 h-5 text-action-lime" aria-hidden="true" />
                   Hours
                 </h4>
-                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+                <ul className="space-y-2 text-white/80">
                   <li>
                     <strong>Monday - Friday:</strong> 6:00 AM - 10:00 PM
                   </li>
@@ -732,19 +741,19 @@ export default function Home() {
                   <li>
                     <strong>Sunday:</strong> 7:00 AM - 9:00 PM
                   </li>
-                  <li className="text-yellow-600 dark:text-yellow-400 font-semibold mt-3 flex items-center gap-2">
+                  <li className="text-warning-300 font-semibold mt-3 flex items-center gap-2">
                     <Trophy className="w-4 h-4 shrink-0" aria-hidden="true" />
                     Closed on public holidays
                   </li>
                 </ul>
-              </Card>
+              </div>
 
-              <Card glass padding="md">
+              <div className="rounded-lg border-2 border-concrete-700 p-6">
                 <h4 className="font-bold text-lg mb-4">Follow Us</h4>
                 <div className="flex space-x-4">
                   <a
                     href="#"
-                    className="w-12 h-12 bg-sage-600 hover:bg-sage-700 text-white rounded-lg flex items-center justify-center transition-colors font-bold"
+                    className="w-12 h-12 border-2 border-concrete-600 hover:border-action-lime hover:bg-action-lime hover:text-ink rounded-lg flex items-center justify-center transition-colors font-bold"
                     aria-label="Facebook"
                     title="Facebook"
                   >
@@ -752,7 +761,7 @@ export default function Home() {
                   </a>
                   <a
                     href="#"
-                    className="w-12 h-12 bg-pink-600 hover:bg-pink-700 text-white rounded-lg flex items-center justify-center transition-colors text-xs font-bold"
+                    className="w-12 h-12 border-2 border-concrete-600 hover:border-action-lime hover:bg-action-lime hover:text-ink rounded-lg flex items-center justify-center transition-colors text-xs font-bold"
                     aria-label="Instagram"
                     title="Instagram"
                   >
@@ -760,43 +769,44 @@ export default function Home() {
                   </a>
                   <a
                     href="#"
-                    className="w-12 h-12 bg-sky-400 hover:bg-sky-500 text-white rounded-lg flex items-center justify-center transition-colors font-bold"
+                    className="w-12 h-12 border-2 border-concrete-600 hover:border-action-lime hover:bg-action-lime hover:text-ink rounded-lg flex items-center justify-center transition-colors font-bold"
                     aria-label="Twitter"
                     title="Twitter"
                   >
                     𝕏
                   </a>
                 </div>
-              </Card>
+              </div>
             </Reveal>
           </div>
         </div>
       </section>
 
       {/* Contact FAQ */}
-      <section className="max-w-4xl mx-auto px-4 py-12 md:py-16">
+      <section className="max-w-4xl mx-auto px-4 py-16 md:py-24">
         <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Frequently Asked Questions</h2>
+          <SectionTag>FAQ</SectionTag>
+          <h2 className="text-3xl md:text-5xl font-display uppercase mb-12 skew-display">Frequently Asked Questions</h2>
         </Reveal>
 
-        <RevealGroup className="space-y-6">
+        <RevealGroup className="divide-y-2 divide-border-subtle">
           {contactFaqs.map((item) => (
             <RevealItem key={item.q}>
-              <Card glass padding="md">
-                <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">{item.q}</h3>
-                <p className="text-gray-700 dark:text-gray-300">{item.a}</p>
-              </Card>
+              <div className="py-6">
+                <h3 className="font-bold text-lg mb-2 text-text-primary">{item.q}</h3>
+                <p className="font-editorial text-text-muted">{item.a}</p>
+              </div>
             </RevealItem>
           ))}
         </RevealGroup>
       </section>
 
       {/* Final CTA */}
-      <section className="bg-linear-to-br from-sage-600 to-sage-800 dark:from-sage-800 dark:to-gray-950 text-white py-12 md:py-16">
+      <section className="bg-action-lime text-text-on-lime py-16 md:py-24 border-t-4 border-ink">
         <Reveal className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">Ready to Play?</h2>
-          <p className="text-lg mb-8 text-sage-100">Join Kandy&apos;s fastest-growing pickleball community</p>
-          <Button href="/book" size="lg" className="bg-white! text-sage-700! hover:bg-sage-50!">
+          <h2 className="text-4xl md:text-6xl font-display uppercase mb-4 skew-display">Ready to Play?</h2>
+          <p className="text-lg mb-8">Join Kandy&apos;s fastest-growing pickleball community</p>
+          <Button href="/book" variant="secondary" size="lg">
             Book Your Court Now
           </Button>
         </Reveal>
