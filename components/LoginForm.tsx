@@ -57,7 +57,7 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-3xl font-bold font-display text-text-primary mb-2">Welcome Back</h1>
+      <h1 className="text-3xl font-display uppercase text-text-primary mb-2 skew-display">Welcome Back</h1>
       <p className="text-text-muted mb-8">Login to your account to access bookings</p>
 
       <AnimatePresence>
@@ -96,7 +96,7 @@ export default function LoginForm() {
           required
         />
 
-        <Button type="submit" loading={loading} fullWidth size="lg">
+        <Button type="submit" variant="lime" loading={loading} fullWidth size="lg">
           {loading ? "Logging in..." : "Login"}
         </Button>
       </form>
@@ -113,7 +113,7 @@ export default function LoginForm() {
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-bold"
+          className="text-rush-blue-600 dark:text-rush-blue-400 hover:text-rush-blue-700 dark:hover:text-rush-blue-300 font-bold"
         >
           Sign up here
         </Link>

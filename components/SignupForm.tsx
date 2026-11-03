@@ -83,11 +83,11 @@ export default function SignupForm() {
         >
           <CheckCircle2 className="w-12 h-12 text-success-700 dark:text-success-300" aria-hidden="true" />
         </motion.div>
-        <h1 className="text-3xl font-bold font-display text-success-700 dark:text-success-300 mb-2">Account Created!</h1>
+        <h1 className="text-3xl font-display uppercase text-success-700 dark:text-success-300 mb-2 skew-display">Account Created!</h1>
         <p className="text-text-muted mb-6">
           Welcome to Pickle Rush! You can now login with your credentials.
         </p>
-        <Button href="/login" variant="primary" className="bg-success-700! hover:bg-success-800! shadow-success-900/20!">
+        <Button href="/login" variant="lime">
           Go to Login →
         </Button>
       </motion.div>
@@ -96,7 +96,7 @@ export default function SignupForm() {
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-3xl font-bold font-display text-text-primary mb-2">Create Account</h1>
+      <h1 className="text-3xl font-display uppercase text-text-primary mb-2 skew-display">Create Account</h1>
       <p className="text-text-muted mb-8">Join us and book your first court session</p>
 
       <AnimatePresence>
@@ -172,13 +172,13 @@ export default function SignupForm() {
           <Checkbox required />
           <span className="ml-2 text-sm text-text-muted">
             I agree to the{" "}
-            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-bold">
+            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-rush-blue-600 dark:text-rush-blue-400 hover:text-rush-blue-700 dark:hover:text-rush-blue-300 font-bold">
               Terms of Service
             </a>
           </span>
         </label>
 
-        <Button type="submit" loading={loading} fullWidth size="lg">
+        <Button type="submit" variant="lime" loading={loading} fullWidth size="lg">
           {loading ? "Creating account..." : "Create Account"}
         </Button>
       </form>
@@ -195,7 +195,7 @@ export default function SignupForm() {
         Already have an account?{" "}
         <Link
           href="/login"
-          className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-bold"
+          className="text-rush-blue-600 dark:text-rush-blue-400 hover:text-rush-blue-700 dark:hover:text-rush-blue-300 font-bold"
         >
           Login here
         </Link>

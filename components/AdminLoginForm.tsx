@@ -69,10 +69,10 @@ export default function AdminLoginForm() {
   return (
     <div className="w-full max-w-md">
       <div className="flex items-center gap-2 mb-2">
-        <ShieldCheck className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Staff Login</h1>
+        <ShieldCheck className="w-6 h-6 text-admin-action" aria-hidden="true" />
+        <h1 className="text-3xl font-bold text-admin-text">Staff Login</h1>
       </div>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">Sign in to manage bookings, customers, and settings</p>
+      <p className="text-admin-text-muted mb-8">Sign in to manage bookings, customers, and settings</p>
 
       <AnimatePresence>
         {error && (
@@ -83,7 +83,7 @@ export default function AdminLoginForm() {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
+            <div className="flex items-start gap-2 bg-danger-100 dark:bg-danger-900/40 border border-danger-300 dark:border-danger-800/60 text-danger-800 dark:text-danger-300 px-4 py-3 rounded-lg mb-6">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
               <span>{error}</span>
             </div>
@@ -99,7 +99,7 @@ export default function AdminLoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
           required
-          className="focus:ring-blue-600 dark:focus:ring-blue-500"
+          className="focus:ring-admin-action"
         />
 
         <Input
@@ -109,7 +109,7 @@ export default function AdminLoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
           required
-          className="focus:ring-blue-600 dark:focus:ring-blue-500"
+          className="focus:ring-admin-action"
         />
 
         <Button type="submit" tone="admin" loading={loading} fullWidth size="lg">
@@ -117,9 +117,9 @@ export default function AdminLoginForm() {
         </Button>
       </form>
 
-      <p className="text-gray-600 dark:text-gray-400 text-center mt-6">
+      <p className="text-admin-text-muted text-center mt-6">
         Not staff?{" "}
-        <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-bold">
+        <Link href="/login" className="text-admin-action hover:underline font-bold">
           Customer login
         </Link>
       </p>
