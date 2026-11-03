@@ -4,6 +4,7 @@ import { and, gte, lte } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/server-auth";
 import { TIMEZONE } from "@/lib/constants";
+import { venueDateTime } from "@/lib/utils";
 
 // Self-service bookings record their payment mode as a suffix on `notes`
 // (see app/api/bookings/route.ts) - there's no dedicated payment-method
@@ -21,7 +22,7 @@ function computePeakPaymentDay(confirmedBookings: (typeof bookings.$inferSelect)
   const counts = new Map<string, number>();
   for (const b of confirmedBookings) {
     const day = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone: TIMEZONE }).format(
-      new Date(`${b.bookingDate}T00:00:00`)
+      venueDateTime(b.bookingDate, "00:00")
     );
     counts.set(day, (counts.get(day) ?? 0) + 1);
   }
@@ -69,9 +70,6 @@ export async function GET(request: NextRequest) {
     const confirmedBookings = allBookings.filter(
       (b) => b.status === "confirmed"
     );
-    const paidBookings = allBookings.filter(
-      (b) => b.paymentStatus === "paid"
-    );
     const cancelledBookings = allBookings.filter(
       (b) => b.status === "cancelled"
     );
@@ -90,16 +88,21 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       period: { startDate, endDate },
+      // paid/pending both scope to the same nonCancelledBookings set as
+      // total (not allBookings/confirmedBookings separately, as before) -
+      // every non-cancelled booking is paid or not-yet-paid, nothing else,
+      // so paid + pending always equals total instead of silently drifting
+      // apart (a cancelled-but-still-marked-paid booking no longer inflates
+      // "paid" past "total", and a pending_payment booking is no longer
+      // dropped from both buckets).
       revenue: {
         total: totalRevenue,
-        paid: paidBookings.reduce((sum, b) => {
-          return sum + (b.amountLkr ? parseFloat(b.amountLkr as string) : 0);
-        }, 0),
-        pending: confirmedBookings
-          .filter((b) => b.paymentStatus === "unpaid")
-          .reduce((sum, b) => {
-            return sum + (b.amountLkr ? parseFloat(b.amountLkr as string) : 0);
-          }, 0),
+        paid: nonCancelledBookings
+          .filter((b) => b.paymentStatus === "paid")
+          .reduce((sum, b) => sum + (b.amountLkr ? parseFloat(b.amountLkr as string) : 0), 0),
+        pending: nonCancelledBookings
+          .filter((b) => b.paymentStatus !== "paid")
+          .reduce((sum, b) => sum + (b.amountLkr ? parseFloat(b.amountLkr as string) : 0), 0),
       },
       bookings: {
         total: allBookings.length,

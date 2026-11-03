@@ -10,18 +10,21 @@ const MAX_ATTEMPTS = 10;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
 // DELETE /api/bookings/manage/[id] - Guest self-service cancellation.
-// Re-verifies the phone number on every call instead of trusting a prior
-// lookup response - same reasoning as requiring a password on every
-// privileged action rather than caching "they proved it once."
+// Re-verifies BOTH the code and the phone number on every call instead of
+// trusting a prior lookup response (which already proved the pair once) -
+// same reasoning as requiring a password on every privileged action rather
+// than caching "they proved it once." The booking id in the URL is only
+// ever learned by passing the lookup's own code+phone check, but this
+// endpoint doesn't trust that indirectly - it checks both again itself.
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const { phone } = await request.json();
-    if (!phone) {
-      return NextResponse.json({ error: "Phone number is required" }, { status: 400 });
+    const { phone, code } = await request.json();
+    if (!phone || !code) {
+      return NextResponse.json({ error: "Booking reference and phone number are required" }, { status: 400 });
     }
 
     const rateLimit = checkRateLimit(`booking-cancel:${clientIp(request)}`, MAX_ATTEMPTS, WINDOW_MS);
@@ -32,13 +35,24 @@ export async function DELETE(
       );
     }
 
+    const normalizedCode = String(code).replace(/^BK#?/i, "").trim().toLowerCase();
+    if (!/^[0-9a-f]{8}$/.test(normalizedCode)) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
     const existing = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
     const booking = existing[0];
 
-    // Same 404 whether the booking doesn't exist, isn't a guest booking, or
-    // the phone doesn't match - don't reveal which, so a wrong guess can't
-    // be used to probe for a valid booking id.
-    if (!booking || booking.userId || !booking.guestPhone || formatPhoneNumber(booking.guestPhone) !== formatPhoneNumber(phone)) {
+    // Same 404 whether the booking doesn't exist, isn't a guest booking, the
+    // code doesn't match, or the phone doesn't match - don't reveal which,
+    // so a wrong guess can't be used to probe for a valid booking id.
+    if (
+      !booking ||
+      booking.userId ||
+      !booking.id.toLowerCase().startsWith(normalizedCode) ||
+      !booking.guestPhone ||
+      formatPhoneNumber(booking.guestPhone) !== formatPhoneNumber(phone)
+    ) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 

@@ -13,6 +13,20 @@ const supabase = createClient(
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
+// `clientIp` trusts the X-Forwarded-For header, which is only accurate
+// behind a reverse proxy that sets it itself (true on Vercel; NOT
+// guaranteed on the Docker path - docker-compose.yml exposes :3000
+// directly with no proxy in front). An attacker who can set that header
+// gets a fresh per-IP budget on every request, defeating the limiter
+// above. This second check is keyed on the email alone, deliberately with
+// a much looser budget (generous enough that a real user retrying their
+// own password a few times, even from several devices, never hits it) -
+// it exists only to put a ceiling on total guesses across every spoofed
+// IP, not to replace the per-IP limiter's tighter, legitimate-user-safe
+// budget.
+const MAX_LOGIN_ATTEMPTS_PER_EMAIL = 20;
+const LOGIN_EMAIL_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 // POST /api/auth/login - Login with email/password
 export async function POST(request: NextRequest) {
   try {
@@ -33,10 +47,16 @@ export async function POST(request: NextRequest) {
     // every customer's data.
     const rateLimitKey = `login:${clientIp(request)}:${email.toLowerCase()}`;
     const rateLimit = checkRateLimit(rateLimitKey, MAX_LOGIN_ATTEMPTS, LOGIN_WINDOW_MS);
-    if (!rateLimit.allowed) {
+    const emailRateLimit = checkRateLimit(
+      `login-email:${email.toLowerCase()}`,
+      MAX_LOGIN_ATTEMPTS_PER_EMAIL,
+      LOGIN_EMAIL_WINDOW_MS
+    );
+    if (!rateLimit.allowed || !emailRateLimit.allowed) {
+      const retryAfterSeconds = Math.max(rateLimit.retryAfterSeconds, emailRateLimit.retryAfterSeconds);
       return NextResponse.json(
         { error: "Too many login attempts. Please try again later." },
-        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+        { status: 429, headers: { "Retry-After": String(retryAfterSeconds) } }
       );
     }
 

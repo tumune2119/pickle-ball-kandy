@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, Wallet, Target, Users, ClipboardEdit, Clock, FileDown } from "lucide-react";
 import { getSession } from "@/lib/auth";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, venueDateTime } from "@/lib/utils";
 import Card, { type CardTint } from "@/components/ui/Card";
 import Badge, { bookingStatusTone } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -62,10 +62,10 @@ async function fetchDashboardData(accessToken: string): Promise<DashboardData> {
     const data = await bookingsRes.json();
     const now = new Date();
     result.upcoming = (data.bookings ?? [])
-      .filter((b: UpcomingBooking) => b.status !== "cancelled" && new Date(`${b.bookingDate}T${b.startTime}`) > now)
+      .filter((b: UpcomingBooking) => b.status !== "cancelled" && venueDateTime(b.bookingDate, b.startTime) > now)
       .sort(
         (a: UpcomingBooking, b: UpcomingBooking) =>
-          new Date(`${a.bookingDate}T${a.startTime}`).getTime() - new Date(`${b.bookingDate}T${b.startTime}`).getTime()
+          venueDateTime(a.bookingDate, a.startTime).getTime() - venueDateTime(b.bookingDate, b.startTime).getTime()
       )
       .slice(0, 5);
   }

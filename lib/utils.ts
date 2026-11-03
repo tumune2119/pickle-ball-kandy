@@ -83,6 +83,40 @@ export function ymdInVenueTimezone(date: Date = new Date()): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: TIMEZONE }).format(date);
 }
 
+// The real UTC instant for a wall-clock bookingDate/startTime pair, which
+// are always in the venue's timezone (Asia/Colombo) - NOT the server
+// process's own timezone. `new Date(\`${date}T${time}\`)` is parsed in
+// whatever timezone the running process defaults to, which is wrong
+// whenever that isn't Asia/Colombo (e.g. a Docker container with no TZ set,
+// which defaults to UTC - a ~5.5 hour error). Used anywhere a booking's
+// wall-clock time needs to be compared against "now" as a real instant,
+// such as the cancellation-window check.
+export function venueDateTime(dateStr: string, timeStr: string): Date {
+  const asUtc = new Date(`${dateStr}T${timeStr.length === 5 ? timeStr : timeStr.slice(0, 5)}:00Z`);
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).formatToParts(asUtc);
+  const get = (type: string) => parts.find((p) => p.type === type)!.value;
+  const hour24 = get("hour") === "24" ? 0 : Number(get("hour"));
+  const venueAsUtc = Date.UTC(
+    Number(get("year")),
+    Number(get("month")) - 1,
+    Number(get("day")),
+    hour24,
+    Number(get("minute")),
+    Number(get("second"))
+  );
+  const offsetMs = asUtc.getTime() - venueAsUtc;
+  return new Date(asUtc.getTime() + offsetMs);
+}
+
 // Check if booking can be cancelled
 export function canCancelBooking(
   bookingDateTime: Date,

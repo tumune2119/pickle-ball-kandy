@@ -22,6 +22,12 @@ RUN npm run build
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+# The app computes wall-clock booking times via lib/utils.ts's venueDateTime
+# regardless of server timezone, so this isn't load-bearing - but setting it
+# explicitly removes a whole class of latent risk for any future code that
+# constructs a bare `new Date(...)` from a booking date/time without going
+# through that helper.
+ENV TZ=Asia/Colombo
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { User, BarChart3, Settings, Lock, KeyRound, LogOut, Trash2, MessageCircle, Pencil, Check } from "lucide-react";
 import { getSession, supabase } from "@/lib/auth";
+import { venueDateTime } from "@/lib/utils";
 import Card, { type CardTint } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
@@ -78,10 +79,10 @@ export default function CustomerProfile() {
 
   const now = new Date();
   const completed = bookings.filter(
-    (b) => b.status !== "cancelled" && new Date(`${b.bookingDate}T${b.startTime}`) < now
+    (b) => b.status !== "cancelled" && venueDateTime(b.bookingDate, b.startTime) < now
   ).length;
   const upcoming = bookings.filter(
-    (b) => b.status !== "cancelled" && new Date(`${b.bookingDate}T${b.startTime}`) >= now
+    (b) => b.status !== "cancelled" && venueDateTime(b.bookingDate, b.startTime) >= now
   ).length;
   const cancelled = bookings.filter((b) => b.status === "cancelled").length;
 

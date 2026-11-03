@@ -79,7 +79,7 @@ export default function ManageBookingForm() {
       const res = await fetch(`/api/bookings/manage/${booking.id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone, code }),
       });
       const data = await res.json();
       if (!res.ok) {

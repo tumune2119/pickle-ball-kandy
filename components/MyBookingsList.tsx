@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Calendar, Users, RectangleHorizontal, Pencil, X, Receipt, RotateCcw, CreditCard } from "lucide-react";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, venueDateTime } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
 import { redirectToPayHereCheckout } from "@/lib/payhere-client";
 import Card from "@/components/ui/Card";
@@ -119,12 +119,12 @@ export default function MyBookingsList() {
 
   const now = new Date();
   const filteredBookings = bookings.filter((booking) => {
-    const bookingDateTime = new Date(`${booking.bookingDate}T${booking.startTime}`);
+    const bookingDateTime = venueDateTime(booking.bookingDate, booking.startTime);
     return filter === "upcoming" ? bookingDateTime > now : bookingDateTime < now;
   });
 
-  const upcomingCount = bookings.filter((b) => new Date(`${b.bookingDate}T${b.startTime}`) > now).length;
-  const pastCount = bookings.filter((b) => new Date(`${b.bookingDate}T${b.startTime}`) < now).length;
+  const upcomingCount = bookings.filter((b) => venueDateTime(b.bookingDate, b.startTime) > now).length;
+  const pastCount = bookings.filter((b) => venueDateTime(b.bookingDate, b.startTime) < now).length;
 
   const tabs = [
     { key: "upcoming" as const, label: "Upcoming", count: upcomingCount },
