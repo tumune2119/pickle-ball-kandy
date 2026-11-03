@@ -132,8 +132,8 @@ export default function WeeklySchedulePage() {
               className={cn(
                 "px-4 py-2 rounded-lg font-semibold text-sm transition-colors",
                 selectedCourtId === c.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 dark:bg-white/10 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700"
+                  ? "bg-admin-action text-admin-text-on-action"
+                  : "bg-admin-surface text-admin-text hover:bg-admin-border"
               )}
             >
               {c.name}
@@ -146,7 +146,7 @@ export default function WeeklySchedulePage() {
         <div className="flex items-center justify-between gap-4">
           <button
             onClick={() => setWeekStart((d) => new Date(d.getFullYear(), d.getMonth(), d.getDate() - 7))}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300"
+            className="p-2 rounded-lg hover:bg-admin-border/50 text-admin-text-muted"
             aria-label="Previous week"
           >
             <ChevronLeft className="w-5 h-5" aria-hidden="true" />
@@ -154,7 +154,7 @@ export default function WeeklySchedulePage() {
           <p className="font-semibold text-text-primary">{weekRangeLabel}</p>
           <button
             onClick={() => setWeekStart((d) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7))}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300"
+            className="p-2 rounded-lg hover:bg-admin-border/50 text-admin-text-muted"
             aria-label="Next week"
           >
             <ChevronRight className="w-5 h-5" aria-hidden="true" />
@@ -175,28 +175,28 @@ export default function WeeklySchedulePage() {
         {loading ? (
           <Skeleton className="h-96 w-full" />
         ) : (
-          <div className="bg-surface print:bg-white rounded-xl border border-gray-200 dark:border-white/10 print:border-gray-400 overflow-x-auto">
+          <div className="bg-admin-surface print:bg-white rounded-xl border border-admin-border print:border-gray-400 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="bg-surface-sunken print:bg-white">
-                  <th className="px-3 py-2 text-left font-bold text-gray-700 dark:text-gray-300 print:text-black border-b border-gray-200 dark:border-white/10 print:border-gray-400">
+                <tr className="bg-admin-bg print:bg-white">
+                  <th className="px-3 py-2 text-left font-bold text-admin-text print:text-black border-b border-admin-border print:border-gray-400">
                     Time
                   </th>
                   {weekDays.map((d, i) => (
                     <th
                       key={i}
-                      className="px-3 py-2 text-left font-bold text-gray-700 dark:text-gray-300 print:text-black border-b border-gray-200 dark:border-white/10 print:border-gray-400"
+                      className="px-3 py-2 text-left font-bold text-admin-text print:text-black border-b border-admin-border print:border-gray-400"
                     >
                       {DAY_LABELS[i]}
-                      <div className="font-normal text-xs text-gray-500">{d.toLocaleDateString("en-LK", { month: "short", day: "numeric" })}</div>
+                      <div className="font-normal text-xs text-admin-text-muted">{d.toLocaleDateString("en-LK", { month: "short", day: "numeric" })}</div>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-white/10 print:divide-gray-300">
+              <tbody className="divide-y divide-admin-border print:divide-gray-300">
                 {slots.map((slot) => (
                   <tr key={slot}>
-                    <td className="px-3 py-2 font-mono text-text-primary print:text-black whitespace-nowrap">{slot}</td>
+                    <td className="px-3 py-2 font-mono text-admin-text print:text-black whitespace-nowrap">{slot}</td>
                     {weekDays.map((d, i) => {
                       const booking = bookingFor(toDateKey(d), slot);
                       return (
@@ -204,8 +204,8 @@ export default function WeeklySchedulePage() {
                           key={i}
                           className={
                             booking
-                              ? "px-3 py-2 bg-blue-50 dark:bg-blue-950/40 print:bg-gray-100 text-blue-900 dark:text-blue-200 print:text-black"
-                              : "px-3 py-2 text-gray-300 dark:text-gray-700 print:text-gray-300"
+                              ? "px-3 py-2 bg-admin-action/10 print:bg-gray-100 text-admin-action print:text-black"
+                              : "px-3 py-2 text-admin-text-muted/50 print:text-gray-300"
                           }
                         >
                           {booking ? (

@@ -112,21 +112,21 @@ export default function AdminReportsPage() {
       value: formatCurrency(reportData.revenue.total),
       footnote: "For selected period",
       tint: "success",
-      accent: "text-green-600 dark:text-green-400",
+      accent: "text-success-700 dark:text-success-400",
     },
     {
       label: "Bookings Count",
       value: String(reportData.bookings.total),
       footnote: "Total bookings completed",
       tint: "admin",
-      accent: "text-blue-600 dark:text-blue-400",
+      accent: "text-admin-action",
     },
     {
       label: "Avg per Booking",
       value: formatCurrency(parseInt(reportData.payments.averageValue)),
       footnote: "Average booking value",
       tint: "success",
-      accent: "text-green-600 dark:text-green-400",
+      accent: "text-success-700 dark:text-success-400",
     },
   ];
 
@@ -136,7 +136,7 @@ export default function AdminReportsPage() {
       value: `${reportData.occupancy.rate}%`,
       footnote: "Court utilization",
       tint: "warning",
-      accent: "text-orange-600 dark:text-orange-400",
+      accent: "text-warning-700 dark:text-warning-400",
     },
     {
       label: "Peak Hours %",
@@ -149,7 +149,7 @@ export default function AdminReportsPage() {
       }%`,
       footnote: "Peak vs off-peak ratio",
       tint: "warning",
-      accent: "text-orange-600 dark:text-orange-400",
+      accent: "text-warning-700 dark:text-warning-400",
     },
     {
       label: "Cancellation Rate",
@@ -160,7 +160,7 @@ export default function AdminReportsPage() {
       }%`,
       footnote: "Cancelled bookings",
       tint: "danger",
-      accent: "text-red-600 dark:text-red-400",
+      accent: "text-danger-700 dark:text-danger-400",
     },
   ];
 
@@ -172,7 +172,7 @@ export default function AdminReportsPage() {
         {/* Date Range Filter */}
         <Card padding="md">
           <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+            <BarChart3 className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Report Filter
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -181,14 +181,14 @@ export default function AdminReportsPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="focus:ring-blue-600 dark:focus:ring-blue-500"
+              className="focus:ring-admin-action"
             />
             <Input
               label="End Date"
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="focus:ring-blue-600 dark:focus:ring-blue-500"
+              className="focus:ring-admin-action"
             />
             <div className="flex items-end">
               <Button tone="admin" fullWidth onClick={handleGenerateReport} loading={loading}>
@@ -196,7 +196,7 @@ export default function AdminReportsPage() {
               </Button>
             </div>
             <div className="flex items-end">
-              <Button className="bg-green-600! hover:bg-green-700! shadow-green-900/20!" fullWidth>
+              <Button className="bg-success-700! hover:bg-success-800! shadow-success-900/20!" fullWidth>
                 <Download className="w-4 h-4" aria-hidden="true" />
                 Export CSV
               </Button>
@@ -207,7 +207,7 @@ export default function AdminReportsPage() {
         {/* Revenue Report */}
         <Card padding="md">
           <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+            <Wallet className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Revenue Summary
           </h3>
           {loading ? (
@@ -234,7 +234,7 @@ export default function AdminReportsPage() {
         {/* Occupancy Report */}
         <Card padding="md">
           <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
-            <Percent className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+            <Percent className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Occupancy Analysis
           </h3>
           {loading ? (
@@ -261,19 +261,19 @@ export default function AdminReportsPage() {
         {/* Customer Insights */}
         <Card padding="md">
           <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+            <Users className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Customer Insights
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-gray-600 dark:text-gray-400 font-semibold mb-3">Total Players</p>
+              <p className="text-admin-text-muted font-semibold mb-3">Total Players</p>
               <p className="text-2xl font-bold text-text-primary">{reportData.customers.totalPlayers}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Across all bookings</p>
+              <p className="text-admin-text-muted text-sm">Across all bookings</p>
             </div>
             <div>
-              <p className="text-gray-600 dark:text-gray-400 font-semibold mb-3">Avg Players/Booking</p>
+              <p className="text-admin-text-muted font-semibold mb-3">Avg Players/Booking</p>
               <p className="text-2xl font-bold text-text-primary">{reportData.customers.averagePerBooking}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Average per booking</p>
+              <p className="text-admin-text-muted text-sm">Average per booking</p>
             </div>
           </div>
         </Card>
@@ -281,37 +281,37 @@ export default function AdminReportsPage() {
         {/* Payment Status */}
         <Card padding="md">
           <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+            <CreditCard className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Payment Status
           </h3>
           <RevealGroup className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <RevealItem>
               <Card padding="md">
-                <p className="text-gray-700 dark:text-gray-300 font-semibold mb-2">Paid</p>
-                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                <p className="text-admin-text font-semibold mb-2">Paid</p>
+                <p className="text-2xl font-bold text-success-700 dark:text-success-400">
                   {reportData.payments.paymentMethods.atVenue + reportData.payments.paymentMethods.online}
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{formatCurrency(reportData.revenue.paid)}</p>
+                <p className="text-admin-text-muted text-sm">{formatCurrency(reportData.revenue.paid)}</p>
               </Card>
             </RevealItem>
             <RevealItem>
               <Card padding="md">
-                <p className="text-gray-700 dark:text-gray-300 font-semibold mb-2">Pending</p>
-                <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                <p className="text-admin-text font-semibold mb-2">Pending</p>
+                <p className="text-2xl font-bold text-warning-700 dark:text-warning-400">
                   {reportData.bookings.pending}
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-admin-text-muted text-sm">
                   {formatCurrency(reportData.revenue.pending)}
                 </p>
               </Card>
             </RevealItem>
             <RevealItem>
               <Card padding="md">
-                <p className="text-gray-700 dark:text-gray-300 font-semibold mb-2">At Venue</p>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                <p className="text-admin-text font-semibold mb-2">At Venue</p>
+                <p className="text-2xl font-bold text-admin-action">
                   {reportData.payments.paymentMethods.atVenue}
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-admin-text-muted text-sm">
                   {reportData.payments.paymentMethods.atVenue + reportData.payments.paymentMethods.online > 0
                     ? Math.round(
                         (reportData.payments.paymentMethods.atVenue /

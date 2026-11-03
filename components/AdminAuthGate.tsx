@@ -54,9 +54,9 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
 
   if (!allowed) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-page text-blue-600 dark:text-blue-400">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-admin-bg text-admin-action">
         <Spinner size="lg" />
-        <p className="text-gray-600 dark:text-gray-400">Checking access…</p>
+        <p className="text-admin-text-muted">Checking access…</p>
       </div>
     );
   }

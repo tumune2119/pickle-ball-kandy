@@ -185,7 +185,7 @@ export default function AdminSettingsPage() {
           {/* Operating Hours */}
           <Card padding="md">
             <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+              <Clock className="w-5 h-5 text-admin-action" aria-hidden="true" />
               Operating Hours
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -195,7 +195,7 @@ export default function AdminSettingsPage() {
                 name="openingTime"
                 value={formData.openingTime}
                 onChange={handleChange}
-                className="focus:ring-blue-600 dark:focus:ring-blue-500"
+                className="focus:ring-admin-action"
               />
               <Input
                 label="Closing Time"
@@ -203,7 +203,7 @@ export default function AdminSettingsPage() {
                 name="closingTime"
                 value={formData.closingTime}
                 onChange={handleChange}
-                className="focus:ring-blue-600 dark:focus:ring-blue-500"
+                className="focus:ring-admin-action"
               />
             </div>
           </Card>
@@ -211,7 +211,7 @@ export default function AdminSettingsPage() {
           {/* Slot Configuration */}
           <Card padding="md">
             <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+              <Target className="w-5 h-5 text-admin-action" aria-hidden="true" />
               Slot Configuration
             </h3>
             <Select
@@ -219,7 +219,7 @@ export default function AdminSettingsPage() {
               name="slotDuration"
               value={formData.slotDuration}
               onChange={handleChange}
-              className="focus:ring-blue-600 dark:focus:ring-blue-500"
+              className="focus:ring-admin-action"
             >
               <option value={30}>30 minutes</option>
               <option value={60}>1 hour</option>
@@ -231,7 +231,7 @@ export default function AdminSettingsPage() {
           {/* Pricing */}
           <Card padding="md">
             <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+              <Wallet className="w-5 h-5 text-admin-action" aria-hidden="true" />
               Pricing
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -241,7 +241,7 @@ export default function AdminSettingsPage() {
                 name="offPeakRate"
                 value={formData.offPeakRate}
                 onChange={handleChange}
-                className="focus:ring-blue-600 dark:focus:ring-blue-500"
+                className="focus:ring-admin-action"
               />
               <Input
                 label="Peak Rate (5 PM - 10 PM) LKR/hour"
@@ -249,7 +249,7 @@ export default function AdminSettingsPage() {
                 name="peakRate"
                 value={formData.peakRate}
                 onChange={handleChange}
-                className="focus:ring-blue-600 dark:focus:ring-blue-500"
+                className="focus:ring-admin-action"
               />
             </div>
           </Card>
@@ -257,7 +257,7 @@ export default function AdminSettingsPage() {
           {/* Cancellation Policy */}
           <Card padding="md">
             <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+              <XCircle className="w-5 h-5 text-admin-action" aria-hidden="true" />
               Cancellation Policy
             </h3>
             <Input
@@ -267,12 +267,12 @@ export default function AdminSettingsPage() {
               value={formData.cancellationHours}
               onChange={handleChange}
               hint="Customers can cancel free if they cancel this many hours before booking"
-              className="focus:ring-blue-600 dark:focus:ring-blue-500"
+              className="focus:ring-admin-action"
             />
           </Card>
 
           {error && (
-            <div className="flex items-center gap-2 text-red-700 dark:text-red-300 text-sm">
+            <div className="flex items-center gap-2 text-danger-700 dark:text-danger-300 text-sm">
               <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
               {error}
             </div>
@@ -291,7 +291,7 @@ export default function AdminSettingsPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -8 }}
                   transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold"
+                  className="flex items-center gap-2 text-success-700 dark:text-success-400 font-semibold"
                 >
                   <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
                   Settings saved successfully!

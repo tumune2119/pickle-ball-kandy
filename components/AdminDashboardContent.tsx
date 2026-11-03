@@ -111,7 +111,7 @@ export default function AdminDashboardContent() {
       footnote: "Booked slots today",
       icon: CalendarDays,
       tint: "admin",
-      accent: "text-blue-600 dark:text-blue-400",
+      accent: "text-admin-action",
     },
     {
       label: "Revenue (Today)",
@@ -119,7 +119,7 @@ export default function AdminDashboardContent() {
       footnote: "From confirmed bookings",
       icon: Wallet,
       tint: "success",
-      accent: "text-green-600 dark:text-green-400",
+      accent: "text-success-700 dark:text-success-400",
     },
     {
       label: "Occupancy Rate",
@@ -127,7 +127,7 @@ export default function AdminDashboardContent() {
       footnote: "Court utilization today",
       icon: Target,
       tint: "warning",
-      accent: "text-orange-600 dark:text-orange-400",
+      accent: "text-warning-700 dark:text-warning-400",
     },
     {
       label: "Active Members",
@@ -135,7 +135,7 @@ export default function AdminDashboardContent() {
       footnote: "Registered players",
       icon: Users,
       tint: "admin",
-      accent: "text-blue-600 dark:text-blue-400",
+      accent: "text-admin-action",
     },
   ];
 
@@ -156,13 +156,13 @@ export default function AdminDashboardContent() {
             <RevealItem key={stat.label}>
               <Card padding="md" className="h-full">
                 <div className="flex items-start justify-between">
-                  <div className="text-gray-600 dark:text-gray-400 text-sm font-medium">{stat.label}</div>
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center bg-blue-50 dark:bg-blue-950/40 ${stat.accent}`}>
+                  <div className="text-admin-text-muted text-sm font-medium">{stat.label}</div>
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center bg-admin-bg ${stat.accent}`}>
                     <stat.icon className="w-4 h-4" aria-hidden="true" />
                   </div>
                 </div>
                 <div className={`text-4xl font-bold mt-2 ${stat.accent}`}>{stat.value}</div>
-                <p className="text-gray-600 dark:text-gray-400 text-xs mt-2">{stat.footnote}</p>
+                <p className="text-admin-text-muted text-xs mt-2">{stat.footnote}</p>
               </Card>
             </RevealItem>
           ))}
@@ -194,20 +194,20 @@ export default function AdminDashboardContent() {
           <h3 className="font-bold text-lg mb-4 text-text-primary">Today&apos;s Activity</h3>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Bookings Made:</span>
+              <span className="text-admin-text-muted">Bookings Made:</span>
               <span className="font-bold text-text-primary">{report?.bookings.total ?? 0}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Cancellations:</span>
+              <span className="text-admin-text-muted">Cancellations:</span>
               <span className="font-bold text-text-primary">{report?.bookings.cancelled ?? 0}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Total Revenue:</span>
-              <span className="font-bold text-green-600 dark:text-green-400">{formatCurrency(report?.revenue.total ?? 0)}</span>
+              <span className="text-admin-text-muted">Total Revenue:</span>
+              <span className="font-bold text-success-700 dark:text-success-400">{formatCurrency(report?.revenue.total ?? 0)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Pending Payments:</span>
-              <span className="font-bold text-orange-600 dark:text-orange-400">{report?.bookings.pending ?? 0}</span>
+              <span className="text-admin-text-muted">Pending Payments:</span>
+              <span className="font-bold text-warning-700 dark:text-warning-400">{report?.bookings.pending ?? 0}</span>
             </div>
           </div>
         </Card>
@@ -219,7 +219,7 @@ export default function AdminDashboardContent() {
         {loading ? (
           <Skeleton className="h-24 w-full" />
         ) : upcoming.length === 0 ? (
-          <p className="text-gray-600 dark:text-gray-400 text-sm">No upcoming bookings yet.</p>
+          <p className="text-admin-text-muted text-sm">No upcoming bookings yet.</p>
         ) : (
           <div className="space-y-2">
             {upcoming.map((b) => (
@@ -231,7 +231,7 @@ export default function AdminDashboardContent() {
                   <p className="font-semibold text-text-primary text-sm">
                     {formatDate(b.bookingDate)} · {b.startTime} - {b.endTime}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                  <p className="text-xs text-admin-text-muted">
                     {b.customerName}
                     {b.isGuest && " (Guest)"}
                   </p>
