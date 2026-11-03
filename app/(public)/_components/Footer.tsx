@@ -70,9 +70,14 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-sage-400 transition-colors">
+                <Link href="/terms" className="hover:text-sage-400 transition-colors">
                   Terms of Service
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-sage-400 transition-colors">
+                  Privacy Policy
+                </Link>
               </li>
             </ul>
           </div>

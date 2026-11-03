@@ -22,7 +22,6 @@ import {
   Users,
   Wifi,
   GraduationCap,
-  User,
   PartyPopper,
   School,
   Circle,
@@ -52,7 +51,6 @@ const quickStats = [
   { value: "3", label: "Dedicated Courts" },
   { value: "6am-10pm", label: "Operating Hours" },
   { value: "4", label: "Players Per Session" },
-  { value: "30+", label: "Active Members" },
 ];
 
 const values = [
@@ -60,12 +58,6 @@ const values = [
   { icon: Star, title: "Excellence", description: "Maintaining highest standards in facilities and service" },
   { icon: Handshake, title: "Inclusivity", description: "Welcoming players of all ages, skill levels, and backgrounds" },
   { icon: Trophy, title: "Growth", description: "Fostering the development and advancement of pickleball" },
-];
-
-const team = [
-  { role: "Court Manager", name: "Roshan Silva", bio: "Experienced sports facility manager with passion for pickleball" },
-  { role: "Head Coach", name: "Anita Perera", bio: "Professional pickleball instructor certified internationally" },
-  { role: "Community Coordinator", name: "Chathura Jayawardena", bio: "Dedicated to building and nurturing our pickleball community" },
 ];
 
 const amenities = [
@@ -252,11 +244,11 @@ export default function Home() {
       <HeroSection
         id="home"
         title={COURT_NAME}
-        subtitle="Sri Lanka's First Dedicated Pickleball Court 🏓"
+        subtitle="Sri Lanka's First Dedicated Pickleball Court"
         cta={{ text: "Book Your Slot Now", href: "/book" }}
         backgroundImage="/images/hero-court-bg.png"
         stats={quickStats}
-        statsNote="Founded in 2024 · Book anytime with 24/7 online booking"
+        statsNote="Book anytime with 24/7 online booking"
       />
 
       {/* What is Pickleball? */}
@@ -309,7 +301,7 @@ export default function Home() {
           <Reveal delay={0.1} className="space-y-6">
             <h3 className="text-3xl font-bold font-display">Our Story</h3>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              Founded in 2024, Pickle Rush was built with a mission to bring the
+              Pickle Rush was built with a mission to bring the
               world&apos;s fastest-growing racquet sport to Sri Lanka. As pickleball gains
               popularity worldwide, we recognized the need for a dedicated,
               professional facility where players of all skill levels can enjoy
@@ -382,31 +374,6 @@ export default function Home() {
             </RevealItem>
           ))}
         </RevealGroup>
-      </section>
-
-      {/* Team */}
-      <section className="bg-gray-50 dark:bg-gray-950 py-12 md:py-16">
-        <div className="max-w-6xl mx-auto px-4">
-          <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Our Team</h2>
-          </Reveal>
-          <RevealGroup className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {team.map((member) => (
-              <RevealItem key={member.name}>
-                <Card hover glass padding="none" className="overflow-hidden h-full">
-                  <div className="bg-linear-to-br from-sage-300 to-sage-500 dark:from-sage-800 dark:to-sage-950 h-48 flex items-center justify-center">
-                    <User className="w-16 h-16 text-white/50" aria-hidden="true" />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-bold text-lg">{member.name}</h3>
-                    <p className="text-sage-600 dark:text-sage-400 font-semibold text-sm mb-3">{member.role}</p>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">{member.bio}</p>
-                  </div>
-                </Card>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </div>
       </section>
 
       {/* Amenities */}

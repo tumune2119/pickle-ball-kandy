@@ -137,6 +137,17 @@ Finished migrating raw Tailwind colors (H7, M6) to the semantic design tokens al
 
 **Verified:** grepped all four files for `gray-[0-9]|white/[0-9]|green-[0-9]|red-[0-9]|orange-[0-9]|blue-[0-9]` — zero matches. `tsc --noEmit` clean, `npm run build` succeeds (32 routes), lint still exactly the 6 pre-existing warnings (none new). Viewed `/login` and `/signup` live at 390/768/1440px — glass card, inputs, and the OR-divider all render correctly with real tokens. Did **not** get a working dark-mode screenshot: the dark toggle here is class-based (persisted via the UI toggle), not pure `prefers-color-scheme`, so Playwright's `emulateMedia` didn't flip it — not a regression from this slice, just a verification gap; a real click-the-toggle check would be needed to see dark mode live.
 
+### Slice 5 — done, 2026-11-03
+Per your answers to the Phase 2 questions — removed the fabricated "30+ Active Members" stat and the entire "Our Team" section (three invented names/roles, C6/H4) from `app/(public)/page.tsx`, and removed the unverifiable "Founded in 2024" claim from both the hero stats note and the "Our Story" paragraph (C6). `HeroSection.tsx`'s stat grid now sizes itself to 3 columns instead of a hardcoded 4, so the layout doesn't leave a gap where the removed stat used to be — the only other caller is this same page, so no other page is affected. Left "Sri Lanka's First Dedicated Pickleball Court" as-is (not in the audit's Business-Fact table, unlike the removed items), but dropped the decorative 🏓 emoji from that hero subtitle per M7 (the project's own anti-slop style rules ban decorative emoji).
+
+Drafted real (if clearly-marked-draft) `/terms` and `/privacy` pages (C5) instead of leaving them as dead `href="#"` links — each is flagged up top as a placeholder needing legal review before launch. Wired the signup form's "Terms of Service" checkbox link and the footer's "Terms of Service"/new "Privacy Policy" links to the real pages instead of `#`.
+
+Fixed H6: `/signup`'s "Back to Home" link overlapping the glass card at 390px. The auth layout was vertically centering the card with `overflow-hidden`, so on signup's taller form the card's clipped top edge landed right under the link. Switched to `items-start` with top padding and let the page scroll (`overflow-x-hidden` instead of `overflow-hidden`) — the link now always has dedicated space above the card regardless of form height or viewport height; login (shorter form) still reads as comfortably centered-ish, just anchored near the top instead of mathematically centered.
+
+**Not done this slice:** didn't touch the footer's still-dead "FAQ"/"Booking Policy"/"Cancellation Policy" links or the nonexistent `/faq` route — out of scope for what was asked (ToS/Privacy specifically), flagging so it's not mistaken for finished.
+
+**Verified:** `tsc --noEmit` clean, lint unchanged (6 pre-existing warnings), `npm run build` succeeds (34 routes, `/terms` and `/privacy` both present and static). Viewed homepage hero at 390px (3 even stats, no emoji, no founding-date claim), confirmed via `playwright-cli find "Our Team"` that the section is gone, viewed `/terms` at 390px and `/privacy` at 1440px (both render with the placeholder-draft banner and correct footer links), and viewed `/signup` at 390px confirming the "Back to Home" link no longer overlaps the card.
+
 ---
 
 ## Questions — only what I can't work out myself

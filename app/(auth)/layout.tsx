@@ -12,7 +12,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4">
+    <div className="relative min-h-screen overflow-x-hidden flex items-start justify-center px-4 pt-20 pb-8">
       <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
         <Image
           src="/images/hero-court-bg.png"
