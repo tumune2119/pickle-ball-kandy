@@ -126,7 +126,7 @@ export default function CustomerProfile() {
               <p className="px-4 py-2 bg-surface-sunken rounded-lg text-text-primary">{me?.phoneNumber}</p>
             )}
           </div>
-          <Button variant="ghost" size="sm" className="px-0 justify-start text-rush-blue-600 dark:text-rush-blue-400 hover:bg-transparent hover:text-rush-blue-700 dark:hover:text-rush-blue-300">
+          <Button variant="ghost" size="sm" className="px-0 justify-start text-lime-600 dark:text-lime-400 hover:bg-transparent hover:text-lime-700 dark:hover:text-lime-300">
             <Pencil className="w-4 h-4" aria-hidden="true" />
             Edit Profile
           </Button>
@@ -176,7 +176,7 @@ export default function CustomerProfile() {
             <Checkbox />
             <span className="ml-3 text-text-muted">Subscribe to special offers and promotions</span>
           </label>
-          <Button variant="ghost" size="sm" className="px-0 justify-start mt-4 text-rush-blue-600 dark:text-rush-blue-400 hover:bg-transparent hover:text-rush-blue-700 dark:hover:text-rush-blue-300">
+          <Button variant="ghost" size="sm" className="px-0 justify-start mt-4 text-lime-600 dark:text-lime-400 hover:bg-transparent hover:text-lime-700 dark:hover:text-lime-300">
             <Check className="w-4 h-4" aria-hidden="true" />
             Save Preferences
           </Button>
@@ -190,14 +190,14 @@ export default function CustomerProfile() {
           Account
         </h3>
         <div className="space-y-3">
-          <button className="w-full flex items-center gap-3 text-left px-4 py-3 bg-surface-sunken hover:bg-rush-blue-50 dark:hover:bg-rush-blue-950/40 rounded-lg text-rush-blue-700 dark:text-rush-blue-400 font-bold transition-colors">
+          <button className="w-full flex items-center gap-3 text-left px-4 py-3 bg-surface-sunken hover:bg-lime-50 dark:hover:bg-lime-950/40 rounded-lg text-lime-700 dark:text-lime-400 font-bold transition-colors">
             <KeyRound className="w-4 h-4" aria-hidden="true" />
             Change Password
           </button>
           <button
             onClick={() => handleLogout("global")}
             disabled={loggingOut}
-            className="w-full flex items-center gap-3 text-left px-4 py-3 bg-surface-sunken hover:bg-rush-blue-50 dark:hover:bg-rush-blue-950/40 rounded-lg text-rush-blue-700 dark:text-rush-blue-400 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center gap-3 text-left px-4 py-3 bg-surface-sunken hover:bg-lime-50 dark:hover:bg-lime-950/40 rounded-lg text-lime-700 dark:text-lime-400 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <LogOut className="w-4 h-4" aria-hidden="true" />
             {loggingOut ? "Logging out..." : "Logout from All Devices"}

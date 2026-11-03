@@ -161,8 +161,8 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
         aria-expanded={open}
         className={cn(
           "w-full flex items-center justify-between gap-2 px-4 py-3 rounded-lg border-2 border-border-default bg-surface text-left",
-          "hover:border-rush-blue-400",
-          "focus:outline-none focus:ring-2 focus:ring-rush-blue-500 focus:border-ink transition-colors"
+          "hover:border-lime-400",
+          "focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-ink transition-colors"
         )}
       >
         <span className={cn("text-lg", selected ? "text-text-primary" : "text-text-faint")}>
@@ -170,7 +170,7 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
             ? selected.toLocaleDateString("en-LK", { weekday: "short", year: "numeric", month: "long", day: "numeric" })
             : "Pick a date to play"}
         </span>
-        <CalendarIcon className="w-5 h-5 text-rush-blue-500 shrink-0" aria-hidden="true" />
+        <CalendarIcon className="w-5 h-5 text-lime-500 shrink-0" aria-hidden="true" />
       </button>
 
       {hint && <p className="text-xs text-text-muted mt-1">{hint}</p>}
@@ -196,7 +196,7 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
                     onClick={() => canGoPrev && setViewDate(new Date(year, month - 1, 1))}
                     disabled={!canGoPrev}
                     aria-label="Previous month"
-                    className="p-1 rounded-lg hover:bg-rush-blue-50 dark:hover:bg-rush-blue-900/40 disabled:opacity-30 disabled:cursor-not-allowed text-text-muted"
+                    className="p-1 rounded-lg hover:bg-lime-50 dark:hover:bg-lime-900/40 disabled:opacity-30 disabled:cursor-not-allowed text-text-muted"
                   >
                     <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                   </button>
@@ -208,7 +208,7 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
                     onClick={() => canGoNext && setViewDate(new Date(year, month + 1, 1))}
                     disabled={!canGoNext}
                     aria-label="Next month"
-                    className="p-1 rounded-lg hover:bg-rush-blue-50 dark:hover:bg-rush-blue-900/40 disabled:opacity-30 disabled:cursor-not-allowed text-text-muted"
+                    className="p-1 rounded-lg hover:bg-lime-50 dark:hover:bg-lime-900/40 disabled:opacity-30 disabled:cursor-not-allowed text-text-muted"
                   >
                     <ChevronRight className="w-4 h-4" aria-hidden="true" />
                   </button>

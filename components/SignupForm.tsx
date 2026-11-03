@@ -172,7 +172,7 @@ export default function SignupForm() {
           <Checkbox required />
           <span className="ml-2 text-sm text-text-muted">
             I agree to the{" "}
-            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-rush-blue-600 dark:text-rush-blue-400 hover:text-rush-blue-700 dark:hover:text-rush-blue-300 font-bold">
+            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 font-bold">
               Terms of Service
             </a>
           </span>
@@ -195,7 +195,7 @@ export default function SignupForm() {
         Already have an account?{" "}
         <Link
           href="/login"
-          className="text-rush-blue-600 dark:text-rush-blue-400 hover:text-rush-blue-700 dark:hover:text-rush-blue-300 font-bold"
+          className="text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 font-bold"
         >
           Login here
         </Link>

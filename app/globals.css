@@ -28,16 +28,16 @@
   --text-primary: var(--color-ink);
   --text-muted: var(--color-concrete-600);
   --text-faint: var(--color-concrete-400);
-  --text-on-action: #ffffff;
+  --text-on-action: var(--color-ink);
   --text-on-lime: var(--color-ink);
-  --action-primary: var(--color-rush-blue-500);
-  --action-primary-hover: var(--color-rush-blue-600);
-  --action-primary-active: var(--color-rush-blue-700);
+  --action-primary: var(--color-lime-500);
+  --action-primary-hover: var(--color-lime-600);
+  --action-primary-active: var(--color-lime-700);
   --action-secondary: var(--color-concrete-200);
   --action-secondary-hover: var(--color-concrete-300);
   --action-lime: var(--color-lime-500);
   --action-lime-hover: var(--color-lime-600);
-  --focus-ring: var(--color-rush-blue-500);
+  --focus-ring: var(--color-lime-600);
   --shadow-color: 220 60% 10%;
   color-scheme: light;
 
@@ -56,26 +56,26 @@
 
 .dark {
   --bg-page: var(--color-ink);
-  --bg-surface: var(--color-rush-blue-900);
-  --bg-surface-sunken: var(--color-rush-blue-950);
+  --bg-surface: var(--color-concrete-900);
+  --bg-surface-sunken: var(--color-concrete-950);
   --bg-highlight: var(--color-lime-950);
   --bg-ink: #ffffff;
-  --border-default: var(--color-rush-blue-700);
+  --border-default: var(--color-concrete-700);
   --border-strong: var(--color-concrete-100);
-  --border-subtle: var(--color-rush-blue-800);
+  --border-subtle: var(--color-concrete-800);
   --text-primary: var(--color-concrete-50);
   --text-muted: var(--color-concrete-300);
   --text-faint: var(--color-concrete-500);
-  --text-on-action: #ffffff;
+  --text-on-action: var(--color-ink);
   --text-on-lime: var(--color-ink);
-  --action-primary: var(--color-rush-blue-400);
-  --action-primary-hover: var(--color-rush-blue-300);
-  --action-primary-active: var(--color-rush-blue-200);
-  --action-secondary: var(--color-rush-blue-800);
-  --action-secondary-hover: var(--color-rush-blue-700);
+  --action-primary: var(--color-lime-400);
+  --action-primary-hover: var(--color-lime-300);
+  --action-primary-active: var(--color-lime-200);
+  --action-secondary: var(--color-concrete-800);
+  --action-secondary-hover: var(--color-concrete-700);
   --action-lime: var(--color-lime-400);
   --action-lime-hover: var(--color-lime-300);
-  --focus-ring: var(--color-rush-blue-300);
+  --focus-ring: var(--color-lime-300);
   --shadow-color: 0 0% 0%;
   color-scheme: dark;
 

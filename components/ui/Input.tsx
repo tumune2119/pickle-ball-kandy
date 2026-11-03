@@ -129,7 +129,7 @@ export function Checkbox({ className, ...props }: React.InputHTMLAttributes<HTML
   return (
     <input
       type="checkbox"
-      className={cn("w-4 h-4 rounded accent-rush-blue-500 cursor-pointer", className)}
+      className={cn("w-4 h-4 rounded accent-lime-500 cursor-pointer", className)}
       {...props}
     />
   );
@@ -139,7 +139,7 @@ export function Radio({ className, ...props }: React.InputHTMLAttributes<HTMLInp
   return (
     <input
       type="radio"
-      className={cn("w-4 h-4 accent-rush-blue-500 cursor-pointer", className)}
+      className={cn("w-4 h-4 accent-lime-500 cursor-pointer", className)}
       {...props}
     />
   );

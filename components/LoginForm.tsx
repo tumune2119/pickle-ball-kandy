@@ -113,7 +113,7 @@ export default function LoginForm() {
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="text-rush-blue-600 dark:text-rush-blue-400 hover:text-rush-blue-700 dark:hover:text-rush-blue-300 font-bold"
+          className="text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 font-bold"
         >
           Sign up here
         </Link>

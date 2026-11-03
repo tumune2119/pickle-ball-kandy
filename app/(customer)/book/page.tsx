@@ -13,22 +13,19 @@ import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 const perks = [
   {
     icon: CalendarCheck,
-    tint: "brand" as const,
-    iconClass: "text-rush-blue-600 dark:text-rush-blue-400",
+    iconClass: "text-lime-600 dark:text-lime-400",
     title: "Easy Booking",
     description: "One simple form to book your preferred date and time",
   },
   {
     icon: Wallet,
-    tint: "success" as const,
-    iconClass: "text-success-700 dark:text-success-400",
+    iconClass: "text-rush-blue-600 dark:text-rush-blue-400",
     title: "Flexible Payment",
     description: "Pay at venue or online. Instant confirmation either way.",
   },
   {
     icon: Clock3,
-    tint: "brand" as const,
-    iconClass: "text-rush-blue-600 dark:text-rush-blue-400",
+    iconClass: "text-lime-600 dark:text-lime-400",
     title: "Free Cancellation",
     description: "Cancel free up to 4 hours before your booking",
   },
@@ -104,7 +101,7 @@ export default function BookPage() {
                         "px-4 py-2 rounded-lg font-bold text-sm transition-colors border-2",
                         selectedCourtId === court.id
                           ? "bg-action-primary border-ink text-text-on-action"
-                          : "bg-surface-sunken border-border-default text-text-muted hover:border-rush-blue-400"
+                          : "bg-surface-sunken border-border-default text-text-muted hover:border-lime-400"
                       )}
                     >
                       {court.name}
@@ -126,7 +123,7 @@ export default function BookPage() {
       <RevealGroup className="mt-8 grid md:grid-cols-3 gap-6">
         {perks.map((perk) => (
           <RevealItem key={perk.title}>
-            <Card tint={perk.tint} padding="md" className="h-full">
+            <Card padding="md" className="h-full">
               <perk.icon className={`w-8 h-8 mb-2 ${perk.iconClass}`} aria-hidden="true" />
               <h3 className="font-display uppercase text-text-primary mb-2">{perk.title}</h3>
               <p className="text-sm text-text-muted">{perk.description}</p>

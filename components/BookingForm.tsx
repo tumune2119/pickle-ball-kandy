@@ -425,7 +425,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               "flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors",
               paymentMode === "pay_at_venue"
                 ? "border-ink bg-highlight"
-                : "border-border-default hover:border-rush-blue-300"
+                : "border-border-default hover:border-lime-300"
             )}
           >
             <Radio
@@ -447,7 +447,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               "flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors",
               paymentMode === "payhere"
                 ? "border-ink bg-highlight"
-                : "border-border-default hover:border-rush-blue-300"
+                : "border-border-default hover:border-lime-300"
             )}
           >
             <Radio
@@ -512,7 +512,7 @@ export default function BookingForm({ courtId, userId, onBooked }: BookingFormPr
               <strong>{numPlayers}</strong>
             </div>
             <div className="my-2 border-t border-border-subtle" />
-            <div className="flex justify-between text-lg font-bold text-rush-blue-700 dark:text-rush-blue-400">
+            <div className="flex justify-between text-lg font-bold text-lime-700 dark:text-lime-400">
               <span>Total:</span>
               <span className="font-mono">{formatCurrency(calculatePrice())}</span>
             </div>

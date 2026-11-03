@@ -524,7 +524,7 @@ export default function Home() {
                 </ul>
                 <a
                   href="#contact"
-                  className="text-rush-blue-700 dark:text-rush-blue-400 font-bold hover:text-rush-blue-800 dark:hover:text-rush-blue-300 transition-colors"
+                  className="text-lime-700 dark:text-lime-400 font-bold hover:text-lime-800 dark:hover:text-lime-300 transition-colors"
                 >
                   {offer.cta}
                 </a>
@@ -547,7 +547,7 @@ export default function Home() {
               <RevealItem key={item.title}>
                 <Card poster padding="md" className="h-full">
                   <div className="w-12 h-12 mb-4 rounded-md border-2 border-ink bg-surface flex items-center justify-center">
-                    <item.icon className="w-6 h-6 text-rush-blue-600 dark:text-rush-blue-400" aria-hidden="true" />
+                    <item.icon className="w-6 h-6 text-lime-600 dark:text-lime-400" aria-hidden="true" />
                   </div>
                   <h3 className="font-display uppercase text-lg mb-2">{item.title}</h3>
                   <p className="text-text-muted text-sm mb-4">{item.description}</p>

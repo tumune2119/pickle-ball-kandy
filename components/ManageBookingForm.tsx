@@ -176,13 +176,13 @@ export default function ManageBookingForm() {
                 Date & Time
               </p>
               <p className="text-lg font-bold text-text-primary">{formatDate(booking.bookingDate)}</p>
-              <p className="text-rush-blue-700 dark:text-rush-blue-400 font-bold font-mono">
+              <p className="text-lime-700 dark:text-lime-400 font-bold font-mono">
                 {booking.startTime} - {booking.endTime}
               </p>
             </div>
             <div className="text-right">
               <p className="text-sm text-text-muted mb-1">Amount</p>
-              <p className="font-mono text-2xl font-bold text-rush-blue-700 dark:text-rush-blue-400">
+              <p className="font-mono text-2xl font-bold text-lime-700 dark:text-lime-400">
                 {formatCurrency(booking.amountLkr)}
               </p>
             </div>
