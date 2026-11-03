@@ -94,7 +94,7 @@ export default function TillCheckInLookup() {
       ) : (
         <div className="space-y-2">
           {filtered.map((b) => (
-            <Card key={b.id} padding="md" className="flex items-center justify-between gap-4">
+            <Card key={b.id} poster padding="md" className="flex items-center justify-between gap-4">
               <div>
                 <div className="font-bold text-admin-text">{b.customerName}</div>
                 <div className="text-sm text-admin-text-muted">
@@ -111,7 +111,7 @@ export default function TillCheckInLookup() {
               ) : (
                 <Button
                   tone="admin"
-                  size="sm"
+                  variant="lime"
                   onClick={() => checkIn(b.id)}
                   loading={checkingInId === b.id}
                 >

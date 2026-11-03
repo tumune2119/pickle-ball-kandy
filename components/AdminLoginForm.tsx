@@ -70,7 +70,7 @@ export default function AdminLoginForm() {
     <div className="w-full max-w-md">
       <div className="flex items-center gap-2 mb-2">
         <ShieldCheck className="w-6 h-6 text-admin-action" aria-hidden="true" />
-        <h1 className="text-3xl font-bold text-admin-text">Staff Login</h1>
+        <h1 className="text-3xl font-display uppercase text-admin-text skew-display">Staff Login</h1>
       </div>
       <p className="text-admin-text-muted mb-8">Sign in to manage bookings, customers, and settings</p>
 

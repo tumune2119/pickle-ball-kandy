@@ -10,12 +10,15 @@ export default function AdminLayout({
   return (
     <AdminAuthGate>
       <div className="min-h-screen bg-admin-bg print:bg-white">
-        {/* Admin Header */}
-        <header className="bg-admin-action text-admin-text-on-action print:hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+        {/* Admin Header - same bordered/display-font signature as the main
+            site nav, not a full-bleed color fill (keeps lime as an accent,
+            not a background, per the brand's "less color used to fill
+            backgrounds" rule). */}
+        <header className="bg-admin-surface border-b-2 border-ink print:hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
-              <p className="text-info-200 mt-1 text-sm sm:text-base">Court Management System</p>
+              <h1 className="text-2xl sm:text-3xl font-display uppercase text-admin-text skew-display">Admin Dashboard</h1>
+              <p className="text-admin-text-muted mt-1 text-sm sm:text-base">Court Management System</p>
             </div>
             <ThemeToggle />
           </div>

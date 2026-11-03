@@ -56,10 +56,9 @@ export default function TillBookingForm() {
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
-        const rates: { startTime: string; ratePerHour: number }[] = data.rates ?? [];
-        const rateByTime = new Map(rates.map((r) => [r.startTime, r.ratePerHour]));
+        const rates: Record<string, { rate: number; peak: boolean }> = data.rates ?? {};
         setSelectedSlot("");
-        setSlots((data.availableSlots ?? []).map((t: string) => ({ time: t, rate: rateByTime.get(t) ?? 0 })));
+        setSlots((data.availableSlots ?? []).map((t: string) => ({ time: t, rate: rates[t]?.rate ?? 0 })));
       });
     return () => {
       cancelled = true;
@@ -173,16 +172,16 @@ export default function TillBookingForm() {
       </div>
 
       <div>
-        <p className="text-sm font-medium text-admin-text mb-2">Time slot</p>
+        <p className="text-sm font-bold text-admin-text mb-2">Time slot</p>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
           {slots.map((s) => (
             <button
               key={s.time}
               onClick={() => setSelectedSlot(s.time)}
-              className={`p-2 rounded-lg border text-sm font-mono ${
+              className={`p-3 rounded-lg border-2 border-ink text-base font-mono font-bold transition-[transform,box-shadow,background-color,color] ${
                 selectedSlot === s.time
-                  ? "bg-admin-action text-admin-text-on-action border-admin-action"
-                  : "border-admin-border text-admin-text"
+                  ? "bg-admin-action text-admin-text-on-action shadow-[2px_2px_0_var(--color-ink)] dark:shadow-[2px_2px_0_var(--color-concrete-100)]"
+                  : "bg-admin-surface text-admin-text hover:bg-admin-bg"
               }`}
             >
               {s.time}
@@ -210,10 +209,10 @@ export default function TillBookingForm() {
           <button
             key={m}
             onClick={() => setPaymentMethod(m)}
-            className={`flex-1 py-2 rounded-lg border text-sm font-medium capitalize ${
+            className={`flex-1 py-3 rounded-lg border-2 border-ink text-base font-bold capitalize transition-[transform,box-shadow,background-color,color] ${
               paymentMethod === m
-                ? "bg-admin-action text-admin-text-on-action border-admin-action"
-                : "border-admin-border text-admin-text-muted"
+                ? "bg-admin-action text-admin-text-on-action shadow-[2px_2px_0_var(--color-ink)] dark:shadow-[2px_2px_0_var(--color-concrete-100)]"
+                : "bg-admin-surface text-admin-text-muted"
             }`}
           >
             {m}

@@ -21,13 +21,13 @@ export default function PosHeader() {
   };
 
   return (
-    <header className="bg-admin-surface border-b border-admin-border px-4 md:px-6 py-3 flex items-center justify-between gap-4">
-      <div className="flex items-center gap-3">
-        <span className="font-bold text-lg text-admin-text">{COURT_NAME} — Till</span>
+    <header className="bg-admin-surface border-b-2 border-ink px-4 md:px-6 py-4 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
+        <span className="font-display uppercase text-xl text-admin-text skew-display">{COURT_NAME} — Till</span>
         {role === "admin" && (
           <Link
             href="/admin/dashboard"
-            className="hidden sm:flex items-center gap-1 text-sm text-admin-text-muted hover:text-admin-action"
+            className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-admin-text-muted hover:text-admin-action px-3 py-2 rounded-lg hover:bg-admin-bg transition-colors"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             Dashboard
@@ -39,7 +39,7 @@ export default function PosHeader() {
         <button
           onClick={handleLogout}
           disabled={loggingOut}
-          className="flex items-center gap-1.5 text-sm text-admin-text-muted hover:text-admin-action font-medium"
+          className="flex items-center gap-1.5 text-sm font-bold text-admin-text-muted hover:text-admin-action px-3 py-2 rounded-lg hover:bg-admin-bg transition-colors"
         >
           <LogOut className="w-4 h-4" aria-hidden="true" />
           Logout

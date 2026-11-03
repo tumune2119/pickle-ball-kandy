@@ -6,8 +6,10 @@ import { cn } from "@/lib/cn";
 import Spinner from "./Spinner";
 
 export type ButtonVariant = "primary" | "lime" | "secondary" | "soft" | "ghost" | "destructive";
-// "brand" = rush-blue/lime sticker-button system (public/customer surfaces),
-// "admin" = clean flat blue, no thick border/offset shadow ("toned down").
+// "brand" and "admin" both use the same sticker-button system now (admin/POS
+// follow the main site theme per explicit request) - "admin" only exists as
+// a separate tone because it still points at the admin-* token aliases
+// (globals.css), not because it looks different anymore.
 export type ButtonTone = "brand" | "admin";
 export type ButtonSize = "sm" | "md" | "lg";
 
@@ -35,16 +37,16 @@ function variantClasses(variant: ButtonVariant, tone: ButtonTone): string {
   if (tone === "admin") {
     switch (variant) {
       case "primary":
-        return "rounded-lg bg-admin-action hover:bg-admin-action-hover text-admin-text-on-action shadow-sm";
       case "lime":
+        return cn(STICKER, "bg-admin-action hover:bg-admin-action-hover text-admin-text-on-action");
       case "secondary":
-        return "rounded-lg bg-admin-surface hover:bg-admin-bg text-admin-text border border-admin-border";
+        return cn(STICKER, "bg-admin-surface text-admin-text");
       case "soft":
-        return "rounded-lg bg-admin-bg hover:bg-admin-border/40 text-admin-action";
+        return "rounded-md bg-admin-bg hover:bg-admin-border/40 text-admin-action border-2 border-transparent";
       case "ghost":
-        return "rounded-lg bg-transparent hover:bg-admin-bg text-admin-text-muted";
+        return "rounded-md bg-transparent hover:bg-admin-bg text-admin-text-muted border-2 border-transparent";
       case "destructive":
-        return "rounded-lg bg-danger-100 hover:bg-danger-300/60 text-danger-800 dark:text-danger-300";
+        return cn(STICKER, "bg-danger-100 hover:bg-danger-300/60 text-danger-800 dark:text-danger-300");
     }
   }
   switch (variant) {
@@ -110,9 +112,8 @@ export default function Button({
 }: ButtonProps) {
   // The sticker press effect is driven by CSS active:/hover: (see STICKER)
   // so it works identically on <button> and <Link>; framer-motion only adds
-  // a small scale on top, and admin skips both the sticker shadow and this
-  // scale nudge entirely to stay visually quiet.
-  const scaleAmount = tone === "admin" || variant === "soft" || variant === "ghost" ? 1 : 1.015;
+  // a small scale on top. soft/ghost skip both (no border/shadow to animate).
+  const scaleAmount = variant === "soft" || variant === "ghost" ? 1 : 1.015;
   const classes = cn(
     BASE,
     SIZES[size],

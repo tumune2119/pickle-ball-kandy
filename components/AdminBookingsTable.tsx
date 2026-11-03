@@ -140,10 +140,10 @@ export default function AdminBookingsTable() {
               key={status}
               onClick={() => setFilterStatus(status)}
               className={cn(
-                "px-4 py-2 rounded-lg font-semibold transition-colors",
+                "px-5 py-2.5 rounded-lg font-bold border-2 border-ink transition-[transform,box-shadow,background-color,color]",
                 filterStatus === status
-                  ? "bg-admin-action text-admin-text-on-action"
-                  : "bg-admin-surface text-admin-text-muted hover:bg-admin-bg border border-admin-border"
+                  ? "bg-admin-action text-admin-text-on-action shadow-[2px_2px_0_var(--color-ink)] dark:shadow-[2px_2px_0_var(--color-concrete-100)]"
+                  : "bg-admin-surface text-admin-text-muted hover:bg-admin-bg"
               )}
             >
               {filterLabel[status]} ({bookings.filter((b) => status === "all" || b.status === status).length})

@@ -141,7 +141,7 @@ export default function AdminDashboardContent() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-8 text-text-primary">Dashboard</h2>
+      <h2 className="text-2xl font-display uppercase mb-8 text-text-primary skew-display">Dashboard</h2>
 
       {/* Stats Cards */}
       {loading ? (
@@ -154,7 +154,7 @@ export default function AdminDashboardContent() {
         <RevealGroup className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat) => (
             <RevealItem key={stat.label}>
-              <Card padding="md" className="h-full">
+              <Card poster padding="md" className="h-full">
                 <div className="flex items-start justify-between">
                   <div className="text-admin-text-muted text-sm font-medium">{stat.label}</div>
                   <div className={`w-9 h-9 rounded-lg flex items-center justify-center bg-admin-bg ${stat.accent}`}>
@@ -171,8 +171,8 @@ export default function AdminDashboardContent() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card padding="md">
-          <h3 className="font-bold text-lg mb-4 text-text-primary">Quick Actions</h3>
+        <Card poster padding="md">
+          <h3 className="font-display uppercase text-lg mb-4 text-text-primary">Quick Actions</h3>
           <div className="space-y-2">
             {quickActions.map((action) => (
               <Button
@@ -190,8 +190,8 @@ export default function AdminDashboardContent() {
           </div>
         </Card>
 
-        <Card padding="md">
-          <h3 className="font-bold text-lg mb-4 text-text-primary">Today&apos;s Activity</h3>
+        <Card poster padding="md">
+          <h3 className="font-display uppercase text-lg mb-4 text-text-primary">Today&apos;s Activity</h3>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-admin-text-muted">Bookings Made:</span>
@@ -214,8 +214,8 @@ export default function AdminDashboardContent() {
       </div>
 
       {/* Upcoming Bookings Preview */}
-      <Card padding="md">
-        <h3 className="font-bold text-lg mb-4 text-text-primary">Upcoming Bookings</h3>
+      <Card poster padding="md">
+        <h3 className="font-display uppercase text-lg mb-4 text-text-primary">Upcoming Bookings</h3>
         {loading ? (
           <Skeleton className="h-24 w-full" />
         ) : upcoming.length === 0 ? (

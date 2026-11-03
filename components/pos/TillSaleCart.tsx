@@ -126,16 +126,16 @@ export default function TillSaleCart() {
         )}
         {Object.entries(byCategory).map(([category, items]) => (
           <div key={category}>
-            <h3 className="font-bold text-admin-text mb-2 capitalize">{category}</h3>
+            <h3 className="font-display uppercase text-admin-text mb-2">{category}</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {items.map((p) => (
                 <button
                   key={p.id}
                   onClick={() => addToCart(p.id)}
-                  className="text-left p-3 rounded-lg border border-admin-border bg-admin-surface hover:border-admin-action transition-colors"
+                  className="text-left p-4 rounded-lg border-2 border-ink bg-admin-surface hover:bg-admin-bg active:translate-x-[1px] active:translate-y-[1px] transition-[transform,background-color]"
                 >
-                  <div className="font-medium text-admin-text text-sm">{p.name}</div>
-                  <div className="text-admin-action font-bold">{formatCurrency(Number(p.priceLkr))}</div>
+                  <div className="font-bold text-admin-text">{p.name}</div>
+                  <div className="text-admin-action font-bold font-mono text-lg">{formatCurrency(Number(p.priceLkr))}</div>
                 </button>
               ))}
             </div>
@@ -143,9 +143,9 @@ export default function TillSaleCart() {
         ))}
       </div>
 
-      <Card padding="md" className="h-fit sticky top-4">
-        <h3 className="font-bold text-admin-text mb-3 flex items-center gap-2">
-          <ShoppingCart className="w-4 h-4" aria-hidden="true" />
+      <Card poster padding="md" className="h-fit sticky top-4">
+        <h3 className="font-display uppercase text-admin-text mb-3 flex items-center gap-2">
+          <ShoppingCart className="w-5 h-5" aria-hidden="true" />
           Cart
         </h3>
         {lines.length === 0 ? (
@@ -155,13 +155,13 @@ export default function TillSaleCart() {
             {lines.map((l) => (
               <div key={l.product.id} className="flex items-center justify-between gap-2 text-sm">
                 <span className="flex-1 text-admin-text">{l.product.name}</span>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => removeFromCart(l.product.id)} className="p-1 rounded border border-admin-border" aria-label={`Remove one ${l.product.name}`}>
-                    <Minus className="w-3 h-3" aria-hidden="true" />
+                <div className="flex items-center gap-1.5">
+                  <button onClick={() => removeFromCart(l.product.id)} className="p-2 rounded-lg border-2 border-ink hover:bg-admin-bg" aria-label={`Remove one ${l.product.name}`}>
+                    <Minus className="w-4 h-4" aria-hidden="true" />
                   </button>
-                  <span className="w-5 text-center">{l.quantity}</span>
-                  <button onClick={() => addToCart(l.product.id)} className="p-1 rounded border border-admin-border" aria-label={`Add one ${l.product.name}`}>
-                    <Plus className="w-3 h-3" aria-hidden="true" />
+                  <span className="w-6 text-center font-bold">{l.quantity}</span>
+                  <button onClick={() => addToCart(l.product.id)} className="p-2 rounded-lg border-2 border-ink hover:bg-admin-bg" aria-label={`Add one ${l.product.name}`}>
+                    <Plus className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
                 <span className="w-20 text-right font-mono text-admin-text">
@@ -182,10 +182,10 @@ export default function TillSaleCart() {
             <button
               key={m}
               onClick={() => setPaymentMethod(m)}
-              className={`flex-1 py-2 rounded-lg border text-sm font-medium capitalize ${
+              className={`flex-1 py-3 rounded-lg border-2 border-ink text-base font-bold capitalize transition-[transform,box-shadow,background-color,color] ${
                 paymentMethod === m
-                  ? "bg-admin-action text-admin-text-on-action border-admin-action"
-                  : "border-admin-border text-admin-text-muted"
+                  ? "bg-admin-action text-admin-text-on-action shadow-[2px_2px_0_var(--color-ink)] dark:shadow-[2px_2px_0_var(--color-concrete-100)]"
+                  : "bg-admin-surface text-admin-text-muted"
               }`}
             >
               {m}
@@ -195,7 +195,7 @@ export default function TillSaleCart() {
 
         {error && <p className="text-sm text-danger-700 dark:text-danger-300 mb-3">{error}</p>}
 
-        <Button tone="admin" fullWidth onClick={checkout} loading={checkingOut} disabled={lines.length === 0}>
+        <Button tone="admin" variant="lime" fullWidth size="lg" onClick={checkout} loading={checkingOut} disabled={lines.length === 0}>
           Checkout
         </Button>
       </Card>

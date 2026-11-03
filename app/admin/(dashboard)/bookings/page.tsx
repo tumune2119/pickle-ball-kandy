@@ -10,7 +10,7 @@ export default function AdminBookingsPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-text-primary">Manage Bookings</h2>
+        <h2 className="text-2xl font-display uppercase text-text-primary skew-display">Manage Bookings</h2>
         <Button tone="admin">
           <Plus className="w-4 h-4" aria-hidden="true" />
           Create Booking

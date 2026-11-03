@@ -177,12 +177,12 @@ export default function AdminReportsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-8 text-text-primary">Reports & Analytics</h2>
+      <h2 className="text-2xl font-display uppercase mb-8 text-text-primary skew-display">Reports & Analytics</h2>
 
       <div className="space-y-6">
         {/* Date Range Filter */}
         <Card padding="md">
-          <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
+          <h3 className="font-display uppercase text-lg mb-4 text-text-primary flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Report Filter
           </h3>
@@ -217,7 +217,7 @@ export default function AdminReportsPage() {
 
         {/* Revenue Report */}
         <Card padding="md">
-          <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
+          <h3 className="font-display uppercase text-lg mb-4 text-text-primary flex items-center gap-2">
             <Wallet className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Revenue Summary
           </h3>
@@ -244,7 +244,7 @@ export default function AdminReportsPage() {
 
         {/* Occupancy Report */}
         <Card padding="md">
-          <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
+          <h3 className="font-display uppercase text-lg mb-4 text-text-primary flex items-center gap-2">
             <Percent className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Occupancy Analysis
           </h3>
@@ -271,7 +271,7 @@ export default function AdminReportsPage() {
 
         {/* Customer Insights */}
         <Card padding="md">
-          <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
+          <h3 className="font-display uppercase text-lg mb-4 text-text-primary flex items-center gap-2">
             <Users className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Customer Insights
           </h3>
@@ -291,7 +291,7 @@ export default function AdminReportsPage() {
 
         {/* Payment Status */}
         <Card padding="md">
-          <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
+          <h3 className="font-display uppercase text-lg mb-4 text-text-primary flex items-center gap-2">
             <CreditCard className="w-5 h-5 text-admin-action" aria-hidden="true" />
             Payment Status
           </h3>

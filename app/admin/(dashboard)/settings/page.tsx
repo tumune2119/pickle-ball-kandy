@@ -163,7 +163,7 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="max-w-3xl">
-      <h2 className="text-2xl font-bold mb-2 text-text-primary">Court Settings</h2>
+      <h2 className="text-2xl font-display uppercase mb-2 text-text-primary skew-display">Court Settings</h2>
 
       {courts.length > 1 && (
         <div className="flex gap-2 flex-wrap mb-6">
@@ -173,10 +173,10 @@ export default function AdminSettingsPage() {
               type="button"
               onClick={() => setSelectedCourtId(court.id)}
               className={cn(
-                "px-4 py-2 rounded-lg font-semibold text-sm transition-colors",
+                "px-5 py-2.5 rounded-lg font-bold text-sm border-2 border-ink transition-[transform,box-shadow,background-color,color]",
                 selectedCourtId === court.id
-                  ? "bg-admin-action text-admin-text-on-action"
-                  : "bg-admin-surface text-admin-text-muted hover:bg-admin-bg border border-admin-border"
+                  ? "bg-admin-action text-admin-text-on-action shadow-[2px_2px_0_var(--color-ink)] dark:shadow-[2px_2px_0_var(--color-concrete-100)]"
+                  : "bg-admin-surface text-admin-text-muted hover:bg-admin-bg"
               )}
             >
               {court.name}
@@ -195,7 +195,7 @@ export default function AdminSettingsPage() {
         <div className="space-y-6">
           {/* Operating Hours */}
           <Card padding="md">
-            <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-admin-action" aria-hidden="true" />
               Operating Hours
             </h3>
@@ -221,7 +221,7 @@ export default function AdminSettingsPage() {
 
           {/* Slot Configuration */}
           <Card padding="md">
-            <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
               <Target className="w-5 h-5 text-admin-action" aria-hidden="true" />
               Slot Configuration
             </h3>
@@ -241,7 +241,7 @@ export default function AdminSettingsPage() {
 
           {/* Pricing */}
           <Card padding="md">
-            <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
               <Wallet className="w-5 h-5 text-admin-action" aria-hidden="true" />
               Pricing
             </h3>
@@ -267,7 +267,7 @@ export default function AdminSettingsPage() {
 
           {/* Cancellation Policy */}
           <Card padding="md">
-            <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
               <XCircle className="w-5 h-5 text-admin-action" aria-hidden="true" />
               Cancellation Policy
             </h3>

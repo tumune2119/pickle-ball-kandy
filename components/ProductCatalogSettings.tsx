@@ -129,7 +129,7 @@ export default function ProductCatalogSettings() {
 
   return (
     <div>
-      <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+      <h3 className="text-lg font-display uppercase text-text-primary mb-4 flex items-center gap-2">
         <Package className="w-5 h-5 text-admin-action" aria-hidden="true" />
         Point of Sale — Products
       </h3>

@@ -41,17 +41,18 @@
   --shadow-color: 220 60% 10%;
   color-scheme: light;
 
-  /* Admin: same brand (rush-blue + concrete), toned down - no lime, no
-     skew/spray, light by default regardless of the global toggle, matching
-     the previous system's "light by default" admin convention. */
-  --admin-bg: var(--color-concrete-100);
-  --admin-surface: var(--color-concrete-50);
-  --admin-text: var(--color-ink);
-  --admin-text-muted: var(--color-concrete-600);
-  --admin-border: var(--color-concrete-300);
-  --admin-action: var(--color-rush-blue-600);
-  --admin-action-hover: var(--color-rush-blue-700);
-  --admin-text-on-action: #ffffff;
+  /* Admin/POS now follows the same theme as the rest of the site (per
+     explicit request) rather than a separate toned-down palette - these
+     alias the main tokens directly so admin surfaces stay in lockstep with
+     any future brand change instead of drifting as a second system. */
+  --admin-bg: var(--bg-page);
+  --admin-surface: var(--bg-surface);
+  --admin-text: var(--text-primary);
+  --admin-text-muted: var(--text-muted);
+  --admin-border: var(--border-default);
+  --admin-action: var(--action-primary);
+  --admin-action-hover: var(--action-primary-hover);
+  --admin-text-on-action: var(--text-on-action);
 }
 
 .dark {
@@ -79,14 +80,14 @@
   --shadow-color: 0 0% 0%;
   color-scheme: dark;
 
-  --admin-bg: var(--color-concrete-900);
-  --admin-surface: var(--color-concrete-800);
-  --admin-text: var(--color-concrete-50);
-  --admin-text-muted: var(--color-concrete-300);
-  --admin-border: var(--color-concrete-600);
-  --admin-action: var(--color-rush-blue-400);
-  --admin-action-hover: var(--color-rush-blue-300);
-  --admin-text-on-action: var(--color-ink);
+  --admin-bg: var(--bg-page);
+  --admin-surface: var(--bg-surface);
+  --admin-text: var(--text-primary);
+  --admin-text-muted: var(--text-muted);
+  --admin-border: var(--border-default);
+  --admin-action: var(--action-primary);
+  --admin-action-hover: var(--action-primary-hover);
+  --admin-text-on-action: var(--text-on-action);
 }
 
 @theme inline {

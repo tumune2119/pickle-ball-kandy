@@ -7,7 +7,7 @@ export const metadata = {
 export default function AdminCustomersPage() {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-8 text-text-primary">Manage Customers</h2>
+      <h2 className="text-2xl font-display uppercase mb-8 text-text-primary skew-display">Manage Customers</h2>
       <AdminCustomersTable />
     </div>
   );

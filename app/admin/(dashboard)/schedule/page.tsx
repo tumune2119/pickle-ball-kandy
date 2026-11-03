@@ -116,7 +116,7 @@ export default function WeeklySchedulePage() {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6 print:hidden">
-        <h2 className="text-2xl font-bold text-text-primary">Weekly Schedule</h2>
+        <h2 className="text-2xl font-display uppercase text-text-primary skew-display">Weekly Schedule</h2>
         <Button onClick={() => window.print()} tone="admin">
           <Printer className="w-4 h-4" aria-hidden="true" />
           Print
@@ -130,10 +130,10 @@ export default function WeeklySchedulePage() {
               key={c.id}
               onClick={() => setSelectedCourtId(c.id)}
               className={cn(
-                "px-4 py-2 rounded-lg font-semibold text-sm transition-colors",
+                "px-5 py-2.5 rounded-lg font-bold text-sm border-2 border-ink transition-[transform,box-shadow,background-color,color]",
                 selectedCourtId === c.id
-                  ? "bg-admin-action text-admin-text-on-action"
-                  : "bg-admin-surface text-admin-text hover:bg-admin-border"
+                  ? "bg-admin-action text-admin-text-on-action shadow-[2px_2px_0_var(--color-ink)] dark:shadow-[2px_2px_0_var(--color-concrete-100)]"
+                  : "bg-admin-surface text-admin-text hover:bg-admin-bg"
               )}
             >
               {c.name}

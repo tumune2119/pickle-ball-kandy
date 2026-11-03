@@ -64,7 +64,7 @@ export default function PosSalesReport({ startDate, endDate }: { startDate: stri
 
   return (
     <Card padding="md">
-      <h3 className="font-bold text-lg mb-4 text-text-primary flex items-center gap-2">
+      <h3 className="font-display uppercase text-lg mb-4 text-text-primary flex items-center gap-2">
         <ShoppingCart className="w-5 h-5 text-admin-action" aria-hidden="true" />
         POS Sales
       </h3>
