@@ -94,7 +94,7 @@ Each slice is independently testable and can ship/be reviewed on its own, per yo
 |---|---|---|---|
 | 1 | ✅ **Security & data-integrity fixes** | H2 (rate limit), M2 (friendly 409 on race), M3 (signup transaction), M1's amount cross-check half | Nothing else depends on these; they're pure hardening with no visual/content dependency |
 | 2 | ✅ **Settings/pricing wiring** | C2, H3 | Unblocks admin trust in their own tools; needed before slice 6 (admin) is meaningfully "done" |
-| 3 | **Cancellation policy enforcement** | C3 | Needed before slice 5 can honestly rewrite the Booking Policy box |
+| 3 | ✅ **Cancellation policy enforcement** | C3 | Needed before slice 5 can honestly rewrite the Booking Policy box |
 | 4 | **Design-system finishing pass** | H7, M6 | Pure visual migration, no logic change, easy to review in isolation |
 | 5 | **Public page content & structure** | H4, C6, M7, H6, new `/terms`/`/privacy` | Depends on your answers to Questions 2-3 below |
 | 6 | **Booking flow additions** | M1 (retry payment), H1 (guest lookup), M4 (timezone fix) | Depends on your answer to Question 1 |
@@ -124,6 +124,13 @@ This turned out larger than "wire the Save button": the settings form had 8 fiel
 - `app/api/admin/settings/route.ts`: `GET` now also returns real pricing (via the same `lib/pricing.ts` lookup) and `courtInfo`; `PATCH` now writes `courtHours` to `courts`, `pricing` to `pricing`, and free-form keys to `settings` - three real destinations instead of one that nothing read.
 - `app/admin/(dashboard)/settings/page.tsx`: rewritten - added a court selector (the venue has 3 courts now; the old form had no way to pick one), loads real current values on open instead of hardcoded `useState` defaults, removed the two unbacked fields, `handleSave` now actually calls the API and shows a real error on failure instead of just a fake success toast either way.
 - **Verified:** `tsc --noEmit` clean, lint unchanged, `npm run build` succeeds. Viewed live at 390/768/1440px on `/book` with a real date selected - slot grid, legend, and running total all correctly show LKR 1,500/2,500 sourced from the real `pricing` table for Court 1 (matches today, as expected - that's what's actually in the DB). Did **not** log into `/admin/settings` and click Save to verify the write path live - that would write real configuration for the real Court 1, which crosses into "changing data" under the current safety rules even though it's legitimate config rather than test junk. The write path is verified by code review and the clean build only. Let me know if you want me to verify it live (I'd need you to either confirm that's acceptable, or give me a way to log in as admin without creating a new account).
+
+### Slice 3 — done, 2026-11-03
+Wired the already-existing (previously dead) `canCancelBooking` into `DELETE /api/bookings/[id]`: reads the court's `settings.cancellation_policy_hours` (falls back to the `CANCELLATION_POLICY_HOURS` constant if unset), blocks a customer's own cancellation with a 400 if it's inside the window, returns `Free cancellation requires at least N hours' notice`. Staff/admin cancelling on a customer's behalf still bypass the window (goodwill/phoned-in requests) - only self-service cancellation is time-gated. No new file, no new abstraction - one existing pure function, one query, inline in the route that needed it (nothing else reads this setting yet).
+
+Guest bookings aren't affected by this change since guests can't call this endpoint at all yet (H1, still slice 6) - when the guest "manage my booking" lookup is built, it'll need the same check re-applied there.
+
+**Verified:** `tsc --noEmit` clean, lint unchanged, `npm run build` succeeds. Self-checked `canCancelBooking`'s date-math boundary directly (5h-ahead allowed, 3h-ahead blocked, just-over-4h allowed) since it's a pure function and didn't need the DB. No UI changed in this slice (pure backend behavior), so nothing new to view at the three widths.
 
 ---
 
