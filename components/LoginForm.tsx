@@ -57,8 +57,8 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-3xl font-bold font-display text-gray-900 dark:text-white mb-2">Welcome Back</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">Login to your account to access bookings</p>
+      <h1 className="text-3xl font-bold font-display text-text-primary mb-2">Welcome Back</h1>
+      <p className="text-text-muted mb-8">Login to your account to access bookings</p>
 
       <AnimatePresence>
         {error && (
@@ -69,7 +69,7 @@ export default function LoginForm() {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
+            <div className="flex items-start gap-2 bg-danger-100 dark:bg-danger-900/40 border border-danger-300 dark:border-danger-800/60 text-danger-800 dark:text-danger-300 px-4 py-3 rounded-lg mb-6">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
               <span>{error}</span>
             </div>
@@ -102,14 +102,14 @@ export default function LoginForm() {
       </form>
 
       <div className="flex items-center gap-3 my-6">
-        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
-        <span className="text-xs text-gray-500 dark:text-gray-400">OR</span>
-        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+        <div className="h-px flex-1 bg-border-subtle" />
+        <span className="text-xs text-text-faint">OR</span>
+        <div className="h-px flex-1 bg-border-subtle" />
       </div>
 
       <GoogleButton label="Continue with Google" />
 
-      <p className="text-gray-600 dark:text-gray-400 text-center mt-6">
+      <p className="text-text-muted text-center mt-6">
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
@@ -118,8 +118,8 @@ export default function LoginForm() {
           Sign up here
         </Link>
       </p>
-      <p className="text-gray-500 dark:text-gray-500 text-center text-sm mt-2">
-        <Link href="/admin/login" className="hover:text-gray-700 dark:hover:text-gray-300">
+      <p className="text-text-faint text-center text-sm mt-2">
+        <Link href="/admin/login" className="hover:text-text-muted">
           Staff login →
         </Link>
       </p>

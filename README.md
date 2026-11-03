@@ -5,21 +5,19 @@ A full-stack booking system for Sri Lanka's first dedicated pickleball court in 
 ## 🎯 Features
 
 ### Public Marketing Site
-- Home page with hero section, gallery, and call-to-action
-- About page with court amenities and features
+- Home page with hero section, amenities, pricing, and call-to-action
 - Pricing page with hourly rates and peak/off-peak options
 - Contact page with WhatsApp, phone, and inquiry form
 - Mobile-first responsive design (local users primarily on phones)
 - Google Maps integration for court location
 
 ### Customer Booking System
-- Phone number + email authentication (OTP-based for MVP)
-- Court availability calendar with hourly slots
-- Booking flow: date → time → players → confirmation
-- Real-time availability (prevents double-booking at DB level)
-- My Bookings page with cancel/reschedule options
-- Payment integration ready (PayHere sandbox for LKR)
-- Booking confirmation via email/SMS
+- Email + password authentication (Supabase Auth)
+- Court availability calendar with hourly slots, real pricing per slot
+- Booking flow: court → date → time → players → confirmation, signed-in or as a guest
+- Real-time availability (prevents double-booking at the DB level via a unique constraint)
+- My Bookings page with self-service cancellation (account holders); guests manage/cancel via `/manage-booking` using their confirmation code + phone
+- Payment integration: "Pay at Venue" or PayHere online checkout (LKR, sandbox only so far)
 
 ### Admin Portal
 - Dashboard with today's bookings, revenue, occupancy stats
@@ -40,7 +38,7 @@ A full-stack booking system for Sri Lanka's first dedicated pickleball court in 
 | **Language** | TypeScript | Type safety and dev experience |
 | **Database** | PostgreSQL (Supabase) | Reliable, affordable, production-ready |
 | **ORM** | Drizzle ORM | Type-safe, zero-overhead, migrations |
-| **Auth** | Supabase Auth | OTP support, email-based, free tier |
+| **Auth** | Supabase Auth | Email + password, free tier |
 | **Payments** | PayHere | Sri Lankan cards/LKR, minimal setup |
 | **Hosting** | Vercel | Seamless Next.js deployment, cheap |
 
@@ -119,7 +117,7 @@ Open [http://localhost:3000](http://localhost:3000)
 ```
 app/
 ├── (public)/           # Marketing site (home, about, pricing, contact)
-├── (auth)/             # Sign up, login, OTP verification
+├── (auth)/             # Sign up, login
 ├── (customer)/         # Booking system, my bookings
 ├── admin/              # Admin dashboard, bookings, customers, settings
 └── api/                # API routes
@@ -127,7 +125,6 @@ app/
 lib/
 ├── db/                 # Database schema, client, seed
 ├── auth.ts             # Supabase auth utilities
-├── hooks.ts            # React custom hooks
 ├── utils.ts            # Helpers (formatting, validation)
 └── constants.ts        # App constants
 
@@ -139,8 +136,8 @@ public/               # Images, logos
 
 ## 🔐 Authentication
 
-**Customer:** OTP-based via phone (SMS)
-**Admin:** Email + password
+**Customer:** Email + password (or booking as a guest, no account)
+**Admin/Staff:** Email + password, separate login at `/admin/login`
 
 ---
 
@@ -153,15 +150,18 @@ Two modes: **"Pay at Venue"** (booking confirmed immediately, marked unpaid) and
 ## 📱 Key API Routes
 
 ```
-POST   /api/auth/signup              # Sign up with phone
-POST   /api/auth/verify-otp          # Verify OTP
-GET    /api/bookings                 # My bookings
-POST   /api/bookings                 # Create booking
-GET    /api/bookings/availability    # Available slots
-PATCH  /api/bookings/[id]            # Reschedule
-DELETE /api/bookings/[id]            # Cancel
+POST   /api/auth/signup              # Create an account
+POST   /api/auth/login               # Email + password login
+GET    /api/bookings                 # My bookings (account holder)
+POST   /api/bookings                 # Create booking (signed-in or guest)
+GET    /api/bookings/availability    # Available slots + real pricing
+DELETE /api/bookings/[id]            # Cancel (account holder, self-service)
+POST   /api/bookings/manage          # Guest booking lookup (code + phone)
+DELETE /api/bookings/manage/[id]     # Guest cancel (code + phone)
+POST   /api/payments/initiate        # Start/retry a PayHere checkout
 GET    /api/admin/bookings           # All bookings (admin)
 GET    /api/admin/customers          # Customers list (admin)
+GET    /api/admin/reports            # Revenue/occupancy analytics (admin)
 ```
 
 ---

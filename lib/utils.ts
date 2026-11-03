@@ -1,4 +1,4 @@
-import { TIMEZONE, SAMPLE_PRICING } from "./constants";
+import { TIMEZONE } from "./constants";
 
 // Format currency (LKR)
 export function formatCurrency(amount: number | string): string {
@@ -54,51 +54,6 @@ export function getTimeSlots(
   return slots;
 }
 
-// Check if slot is within booking hours
-export function isSlotAvailable(
-  slotStart: string,
-  slotEnd: string,
-  openingTime: string,
-  closingTime: string
-): boolean {
-  const [startHour, startMin] = slotStart.split(":").map(Number);
-  const [endHour, endMin] = slotEnd.split(":").map(Number);
-  const [openHour, openMin] = openingTime.split(":").map(Number);
-  const [closeHour, closeMin] = closingTime.split(":").map(Number);
-
-  const slotStartMin = startHour * 60 + startMin;
-  const slotEndMin = endHour * 60 + endMin;
-  const openTotalMin = openHour * 60 + openMin;
-  const closeTotalMin = closeHour * 60 + closeMin;
-
-  return slotStartMin >= openTotalMin && slotEndMin <= closeTotalMin;
-}
-
-// Calculate booking hours and duration
-export function calculateBookingHours(
-  startTime: string,
-  endTime: string
-): number {
-  const [startHour, startMin] = startTime.split(":").map(Number);
-  const [endHour, endMin] = endTime.split(":").map(Number);
-
-  const startTotalMin = startHour * 60 + startMin;
-  const endTotalMin = endHour * 60 + endMin;
-
-  return (endTotalMin - startTotalMin) / 60;
-}
-
-// Authoritative price for a booking spanning startTime-endTime, one hour at
-// a time (off-peak before 5pm, peak from 5pm) - the server's own source of
-// truth for what a booking costs, since a client-supplied amount can't be
-// trusted (see app/api/bookings/route.ts).
-export function calculateBookingAmount(startTime: string, endTime: string): number {
-  return getTimeSlots(startTime, endTime, 60).reduce((total, slot) => {
-    const hour = parseInt(slot.split(":")[0], 10);
-    return total + (hour < 17 ? SAMPLE_PRICING.offPeakRate : SAMPLE_PRICING.peakRate);
-  }, 0);
-}
-
 // Format phone number (Sri Lankan)
 export function formatPhoneNumber(phone: string): string {
   // Remove all non-digits
@@ -120,23 +75,46 @@ export function isValidPhoneNumber(phone: string): boolean {
   return pattern.test(phone.replace(/\s/g, ""));
 }
 
-// Get day of week name
-export function getDayName(date: Date): string {
-  return new Intl.DateTimeFormat("en-LK", {
-    weekday: "long",
-    timeZone: TIMEZONE,
-  }).format(date);
+// yyyy-mm-dd for a given instant, in the venue's timezone rather than the
+// visitor's browser timezone - a visitor browsing from a different timezone
+// around midnight in Colombo would otherwise see the wrong day as "today"
+// for booking purposes (see DatePicker.tsx / BookingForm.tsx).
+export function ymdInVenueTimezone(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: TIMEZONE }).format(date);
 }
 
-// Check if date is today
-export function isToday(date: Date | string): boolean {
-  const d = new Date(date);
-  const today = new Date();
-  return (
-    d.getFullYear() === today.getFullYear() &&
-    d.getMonth() === today.getMonth() &&
-    d.getDate() === today.getDate()
+// The real UTC instant for a wall-clock bookingDate/startTime pair, which
+// are always in the venue's timezone (Asia/Colombo) - NOT the server
+// process's own timezone. `new Date(\`${date}T${time}\`)` is parsed in
+// whatever timezone the running process defaults to, which is wrong
+// whenever that isn't Asia/Colombo (e.g. a Docker container with no TZ set,
+// which defaults to UTC - a ~5.5 hour error). Used anywhere a booking's
+// wall-clock time needs to be compared against "now" as a real instant,
+// such as the cancellation-window check.
+export function venueDateTime(dateStr: string, timeStr: string): Date {
+  const asUtc = new Date(`${dateStr}T${timeStr.length === 5 ? timeStr : timeStr.slice(0, 5)}:00Z`);
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).formatToParts(asUtc);
+  const get = (type: string) => parts.find((p) => p.type === type)!.value;
+  const hour24 = get("hour") === "24" ? 0 : Number(get("hour"));
+  const venueAsUtc = Date.UTC(
+    Number(get("year")),
+    Number(get("month")) - 1,
+    Number(get("day")),
+    hour24,
+    Number(get("minute")),
+    Number(get("second"))
   );
+  const offsetMs = asUtc.getTime() - venueAsUtc;
+  return new Date(asUtc.getTime() + offsetMs);
 }
 
 // Check if booking can be cancelled
@@ -148,9 +126,4 @@ export function canCancelBooking(
   const timeDiff = bookingDateTime.getTime() - now.getTime();
   const hoursDiff = timeDiff / (1000 * 60 * 60);
   return hoursDiff >= cancellationHours;
-}
-
-// Generate booking reference
-export function generateBookingReference(): string {
-  return `BK${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 }

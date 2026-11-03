@@ -1,9 +1,9 @@
-import { db } from "@/lib/db/db";
+import { db, isUniqueViolation } from "@/lib/db/db";
 import { bookings } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, getOptionalAuth } from "@/lib/server-auth";
-import { calculateBookingAmount } from "@/lib/utils";
+import { calculateBookingAmountForCourt } from "@/lib/pricing";
 
 // GET /api/bookings - Get the authenticated user's bookings
 export async function GET(request: NextRequest) {
@@ -68,10 +68,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // The server computes the price itself from startTime/endTime - a
-    // client-supplied amount would let anyone book at whatever price they
-    // send, including through the online PayHere flow.
-    const amountLkr = calculateBookingAmount(startTime, endTime);
+    // The server computes the price itself from startTime/endTime and this
+    // court's real rates - a client-supplied amount would let anyone book at
+    // whatever price they send, including through the online PayHere flow.
+    const amountLkr = await calculateBookingAmountForCourt(courtId, startTime, endTime);
 
     if (!userId && (!guestName || !guestPhone || !guestEmail)) {
       return NextResponse.json(
@@ -134,6 +134,17 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+    // The pre-check SELECT above closes the common case, but two requests
+    // for the same slot can still race each other between that SELECT and
+    // this INSERT - the unique index (schema.ts) stops the actual double
+    // booking either way, this just gives the loser the same friendly
+    // message as the pre-check instead of a generic 500.
+    if (isUniqueViolation(error)) {
+      return NextResponse.json(
+        { error: "Slot already booked" },
+        { status: 409 }
+      );
+    }
     console.error("Create booking error:", error);
     return NextResponse.json(
       { error: "Failed to create booking" },

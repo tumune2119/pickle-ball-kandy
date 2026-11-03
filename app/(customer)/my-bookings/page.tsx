@@ -1,17 +1,19 @@
 import { ClipboardList, Check } from "lucide-react";
 import MyBookingsList from "@/components/MyBookingsList";
 import Card from "@/components/ui/Card";
+import { CANCELLATION_POLICY_HOURS } from "@/lib/constants";
 
 export const metadata = {
   title: "My Bookings - Pickle Rush",
 };
 
+// Only states what the booking flow actually enforces (see the cancellation
+// check in app/api/bookings/[id]/route.ts) - no no-show penalty, group
+// discount, or membership tier exists anywhere in this app, so none of
+// those are claimed here.
 const policies = [
-  "Free cancellation up to 4 hours before your booking",
-  "Reschedule to any available date/time for free",
-  "No-show forfeits the full amount (non-refundable)",
-  "Group discount available for 3+ consecutive bookings",
-  "Membership discounts applied automatically at checkout",
+  `Free cancellation up to ${CANCELLATION_POLICY_HOURS} hours before your booking`,
+  "Need to reschedule, or have a question about a booking? Contact us directly",
 ];
 
 export default function MyBookingsPage() {

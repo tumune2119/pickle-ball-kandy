@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, Wallet, Target, Users, ClipboardEdit, Clock, FileDown } from "lucide-react";
 import { getSession } from "@/lib/auth";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, venueDateTime } from "@/lib/utils";
 import Card, { type CardTint } from "@/components/ui/Card";
 import Badge, { bookingStatusTone } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
-import AdminResetPanel from "@/components/AdminResetPanel";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
 interface ReportData {
@@ -38,10 +37,9 @@ interface DashboardData {
   upcoming: UpcomingBooking[];
 }
 
-// Pure fetch, no setState - called from both the mount effect and the
-// manual refresh-after-reset path below, each of which handles its own
-// setState calls inline (setState reachable through a named helper, rather
-// than directly in the caller, trips the react-hooks/set-state-in-effect
+// Pure fetch, no setState - called from the mount effect, which handles its
+// own setState calls inline (setState reachable through a named helper,
+// rather than directly in the caller, trips the react-hooks/set-state-in-effect
 // rule for the effect call site).
 async function fetchDashboardData(accessToken: string): Promise<DashboardData> {
   const authHeaders = { Authorization: `Bearer ${accessToken}` };
@@ -64,10 +62,10 @@ async function fetchDashboardData(accessToken: string): Promise<DashboardData> {
     const data = await bookingsRes.json();
     const now = new Date();
     result.upcoming = (data.bookings ?? [])
-      .filter((b: UpcomingBooking) => b.status !== "cancelled" && new Date(`${b.bookingDate}T${b.startTime}`) > now)
+      .filter((b: UpcomingBooking) => b.status !== "cancelled" && venueDateTime(b.bookingDate, b.startTime) > now)
       .sort(
         (a: UpcomingBooking, b: UpcomingBooking) =>
-          new Date(`${a.bookingDate}T${a.startTime}`).getTime() - new Date(`${b.bookingDate}T${b.startTime}`).getTime()
+          venueDateTime(a.bookingDate, a.startTime).getTime() - venueDateTime(b.bookingDate, b.startTime).getTime()
       )
       .slice(0, 5);
   }
@@ -100,20 +98,6 @@ export default function AdminDashboardContent() {
       cancelled = true;
     };
   }, []);
-
-  const refresh = async () => {
-    setLoading(true);
-    const session = await getSession();
-    if (!session) {
-      setLoading(false);
-      return;
-    }
-    const data = await fetchDashboardData(session.access_token);
-    setReport(data.report);
-    setMemberCount(data.memberCount);
-    setUpcoming(data.upcoming);
-    setLoading(false);
-  };
 
   const occupancyRate =
     report && report.bookings.total > 0
@@ -158,8 +142,6 @@ export default function AdminDashboardContent() {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-8 text-text-primary">Dashboard</h2>
-
-      <AdminResetPanel onReset={refresh} />
 
       {/* Stats Cards */}
       {loading ? (

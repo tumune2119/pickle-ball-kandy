@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Calendar, ClipboardList, CreditCard } from "lucide-react";
 import { getSession } from "@/lib/auth";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, venueDateTime } from "@/lib/utils";
 import Card from "@/components/ui/Card";
 import Badge, { bookingStatusTone } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -54,11 +54,11 @@ export default function CustomerDashboard() {
 
   const now = new Date();
   const upcoming = bookings
-    .filter((b) => b.status !== "cancelled" && new Date(`${b.bookingDate}T${b.startTime}`) > now)
+    .filter((b) => b.status !== "cancelled" && venueDateTime(b.bookingDate, b.startTime) > now)
     .sort(
       (a, b) =>
-        new Date(`${a.bookingDate}T${a.startTime}`).getTime() -
-        new Date(`${b.bookingDate}T${b.startTime}`).getTime()
+        venueDateTime(a.bookingDate, a.startTime).getTime() -
+        venueDateTime(b.bookingDate, b.startTime).getTime()
     );
   const totalSpent = bookings.reduce((sum, b) => sum + (b.amountLkr || 0), 0);
 

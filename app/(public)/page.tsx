@@ -22,7 +22,6 @@ import {
   Users,
   Wifi,
   GraduationCap,
-  User,
   PartyPopper,
   School,
   Circle,
@@ -30,29 +29,18 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import HeroSection from "./_components/HeroSection";
-import ImageGallery from "./_components/ImageGallery";
 import PricingCard from "./_components/PricingCard";
 import AmenityCard from "./_components/AmenityCard";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Input, Select, Textarea } from "@/components/ui/Input";
 import Reveal, { RevealGroup, RevealItem } from "@/components/ui/Reveal";
-import { COURT_NAME, COURT_LOCATION } from "@/lib/constants";
-
-const galleryImages = [
-  { id: "1", src: "/images/court-1.jpg", alt: "Professional court setup", caption: "Professional Court Setup" },
-  { id: "2", src: "/images/court-2.jpg", alt: "Players in an evening match", caption: "Evening Matches" },
-  { id: "3", src: "/images/court-3.jpg", alt: "Tournament-ready court", caption: "Tournament Ready" },
-  { id: "4", src: "/images/court-4.jpg", alt: "Social games in progress", caption: "Social Games" },
-  { id: "5", src: "/images/court-5.jpg", alt: "Equipment and rental gear", caption: "Equipment & Rentals" },
-  { id: "6", src: "/images/court-6.jpg", alt: "Spectator seating area", caption: "Spectator Area" },
-];
+import { COURT_NAME, COURT_LOCATION, CANCELLATION_POLICY_HOURS } from "@/lib/constants";
 
 const quickStats = [
   { value: "3", label: "Dedicated Courts" },
   { value: "6am-10pm", label: "Operating Hours" },
   { value: "4", label: "Players Per Session" },
-  { value: "30+", label: "Active Members" },
 ];
 
 const values = [
@@ -60,12 +48,6 @@ const values = [
   { icon: Star, title: "Excellence", description: "Maintaining highest standards in facilities and service" },
   { icon: Handshake, title: "Inclusivity", description: "Welcoming players of all ages, skill levels, and backgrounds" },
   { icon: Trophy, title: "Growth", description: "Fostering the development and advancement of pickleball" },
-];
-
-const team = [
-  { role: "Court Manager", name: "Roshan Silva", bio: "Experienced sports facility manager with passion for pickleball" },
-  { role: "Head Coach", name: "Anita Perera", bio: "Professional pickleball instructor certified internationally" },
-  { role: "Community Coordinator", name: "Chathura Jayawardena", bio: "Dedicated to building and nurturing our pickleball community" },
 ];
 
 const amenities = [
@@ -98,7 +80,7 @@ const membershipTiers = [
     priceLabel: "Per Month:",
     price: "LKR 14,250",
     footnote: "~LKR 1,425 per session",
-    cta: { label: "Subscribe Now", href: undefined },
+    cta: { label: "Ask About This Plan", href: "#contact" as string | undefined },
     highlighted: true,
   },
   {
@@ -108,7 +90,7 @@ const membershipTiers = [
     priceLabel: "Per Month:",
     price: "LKR 28,125",
     footnote: "~LKR 1,125 per session",
-    cta: { label: "Subscribe Now", href: undefined },
+    cta: { label: "Ask About This Plan", href: "#contact" },
     highlighted: false,
   },
 ];
@@ -162,8 +144,8 @@ const pricingFaqs = [
     a: "Each booking includes 1 hour of court access, professional pickleballs, and free parking. Equipment rental is available separately.",
   },
   {
-    q: "Can I cancel or reschedule my booking?",
-    a: "Yes, you can cancel free of charge up to 4 hours before your booking. Reschedules are also free if made 4+ hours in advance.",
+    q: "Can I cancel my booking?",
+    a: `Yes, you can cancel free of charge up to ${CANCELLATION_POLICY_HOURS} hours before your booking from your account (or via the Manage Booking page if you booked as a guest). Need to reschedule instead? Contact us directly for now.`,
   },
   {
     q: "Do memberships expire?",
@@ -252,11 +234,11 @@ export default function Home() {
       <HeroSection
         id="home"
         title={COURT_NAME}
-        subtitle="Sri Lanka's First Dedicated Pickleball Court 🏓"
+        subtitle="Sri Lanka's First Dedicated Pickleball Court"
         cta={{ text: "Book Your Slot Now", href: "/book" }}
-        backgroundImage="/images/hero-court-bg.png"
+        backgroundImage="/images/hero-court-bg.jpg"
         stats={quickStats}
-        statsNote="Founded in 2024 · Book anytime with 24/7 online booking"
+        statsNote="Book anytime with 24/7 online booking"
       />
 
       {/* What is Pickleball? */}
@@ -309,7 +291,7 @@ export default function Home() {
           <Reveal delay={0.1} className="space-y-6">
             <h3 className="text-3xl font-bold font-display">Our Story</h3>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              Founded in 2024, Pickle Rush was built with a mission to bring the
+              Pickle Rush was built with a mission to bring the
               world&apos;s fastest-growing racquet sport to Sri Lanka. As pickleball gains
               popularity worldwide, we recognized the need for a dedicated,
               professional facility where players of all skill levels can enjoy
@@ -384,31 +366,6 @@ export default function Home() {
         </RevealGroup>
       </section>
 
-      {/* Team */}
-      <section className="bg-gray-50 dark:bg-gray-950 py-12 md:py-16">
-        <div className="max-w-6xl mx-auto px-4">
-          <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Our Team</h2>
-          </Reveal>
-          <RevealGroup className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {team.map((member) => (
-              <RevealItem key={member.name}>
-                <Card hover glass padding="none" className="overflow-hidden h-full">
-                  <div className="bg-linear-to-br from-sage-300 to-sage-500 dark:from-sage-800 dark:to-sage-950 h-48 flex items-center justify-center">
-                    <User className="w-16 h-16 text-white/50" aria-hidden="true" />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-bold text-lg">{member.name}</h3>
-                    <p className="text-sage-600 dark:text-sage-400 font-semibold text-sm mb-3">{member.role}</p>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">{member.bio}</p>
-                  </div>
-                </Card>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </div>
-      </section>
-
       {/* Amenities */}
       <section className="max-w-6xl mx-auto px-4 py-12 md:py-16">
         <Reveal>
@@ -421,13 +378,6 @@ export default function Home() {
             </RevealItem>
           ))}
         </RevealGroup>
-      </section>
-
-      {/* Gallery */}
-      <section className="bg-gray-50 dark:bg-gray-950 px-4 py-12 md:py-16">
-        <div className="max-w-6xl mx-auto">
-          <ImageGallery images={galleryImages} />
-        </div>
       </section>
 
       {/* ===== Pricing ===== */}
@@ -566,9 +516,12 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <button className="text-sage-600 dark:text-sage-400 font-semibold hover:text-sage-700 dark:hover:text-sage-300 transition-colors">
+                <a
+                  href="#contact"
+                  className="text-sage-600 dark:text-sage-400 font-semibold hover:text-sage-700 dark:hover:text-sage-300 transition-colors"
+                >
                   {offer.cta}
-                </button>
+                </a>
               </Card>
             </RevealItem>
           ))}

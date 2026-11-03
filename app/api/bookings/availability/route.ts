@@ -2,6 +2,7 @@ import { db } from "@/lib/db/db";
 import { bookings, courts } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { getRatesForSlots } from "@/lib/pricing";
 
 // GET /api/bookings/availability - Get available slots for a date
 export async function GET(request: NextRequest) {
@@ -68,6 +69,12 @@ export async function GET(request: NextRequest) {
       currentMinutes += courtData.slotDuration;
     }
 
+    // Real per-slot pricing (court-configured rates, or the hardcoded
+    // defaults if this court has none yet) - so the price shown while
+    // picking a slot always matches what POST /api/bookings will actually
+    // charge, instead of the client guessing with its own copy of the logic.
+    const rates = await getRatesForSlots(courtData.id, allSlots);
+
     return NextResponse.json({
       date,
       court: {
@@ -80,6 +87,7 @@ export async function GET(request: NextRequest) {
       availableSlots: allSlots.filter((slot) => !bookedSlots.includes(slot)),
       bookedSlots,
       totalSlots: allSlots,
+      rates,
     });
   } catch (error) {
     console.error("Availability error:", error);

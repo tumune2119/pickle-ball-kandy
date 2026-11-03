@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { ymdInVenueTimezone } from "@/lib/utils";
 
 interface DatePickerProps {
   label?: string;
@@ -131,8 +132,9 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
   const month = viewDate.getMonth();
   const firstWeekday = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // The venue's "today", not the visitor's browser-local today - see
+  // ymdInVenueTimezone.
+  const today = parseYMD(ymdInVenueTimezone())!;
 
   const cells: (Date | null)[] = [];
   for (let i = 0; i < firstWeekday; i++) cells.push(null);

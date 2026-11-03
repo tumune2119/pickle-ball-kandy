@@ -1,9 +1,10 @@
-import { db } from "@/lib/db/db";
+import { db, isUniqueViolation } from "@/lib/db/db";
 import { bookings, users } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/server-auth";
-import { calculateBookingAmount } from "@/lib/utils";
+import { calculateBookingAmountForCourt } from "@/lib/pricing";
+import { checkCancellationWindow } from "@/lib/cancellation";
 
 // A booking may be read/changed by the customer who made it, or by an
 // admin/staff member. Returns null (allowed) or the 403 response to return.
@@ -112,7 +113,8 @@ export async function PATCH(
     // amount.
     const newAmount =
       startTime || endTime
-        ? calculateBookingAmount(
+        ? await calculateBookingAmountForCourt(
+            existing[0].courtId,
             startTime || existing[0].startTime,
             endTime || existing[0].endTime
           )
@@ -140,6 +142,15 @@ export async function PATCH(
       },
     });
   } catch (error) {
+    // Same race as booking creation (see app/api/bookings/route.ts) - the
+    // pre-check above closes the common case, the unique index is the real
+    // guard, this just gives a losing reschedule the friendly message.
+    if (isUniqueViolation(error)) {
+      return NextResponse.json(
+        { error: "New slot already booked" },
+        { status: 409 }
+      );
+    }
     console.error("Update booking error:", error);
     return NextResponse.json(
       { error: "Failed to update booking" },
@@ -171,6 +182,24 @@ export async function DELETE(
 
     const forbidden = await checkOwnerOrAdmin(auth.user.id, existing[0].userId);
     if (forbidden) return forbidden;
+
+    // Free cancellation window applies to the customer cancelling their own
+    // booking - staff/admin can still cancel any time (e.g. goodwill, or a
+    // phoned-in request). Uses the court's configured hours if set, else the
+    // same default the UI has always advertised.
+    if (auth.user.id === existing[0].userId) {
+      const { allowed, cancellationHours } = await checkCancellationWindow(
+        existing[0].courtId,
+        existing[0].bookingDate,
+        existing[0].startTime
+      );
+      if (!allowed) {
+        return NextResponse.json(
+          { error: `Free cancellation requires at least ${cancellationHours} hours' notice` },
+          { status: 400 }
+        );
+      }
+    }
 
     const cancelled = await db
       .update(bookings)
