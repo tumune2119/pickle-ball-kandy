@@ -12,7 +12,7 @@
    docs/redesign for the sampling). Semantic tokens below swap value under
    .dark; component code should only ever reference the semantic layer
    (color-bg-*, color-text-*, color-action-*, ...), never the raw
-   rush-blue-*/lime-*/concrete-* primitives directly, except for one-off
+   rush-blue-*, lime-*, or concrete-* primitives directly, except for one-off
    accent/graffiti moments. Admin keeps its own admin-* tokens - same brand
    (built from rush-blue + concrete, not a separate hue), visibly toned down
    (no lime, no skew, no spray). */
