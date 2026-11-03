@@ -55,7 +55,7 @@
 }
 
 .dark {
-  --bg-page: var(--color-deep-blue);
+  --bg-page: var(--color-ink);
   --bg-surface: var(--color-rush-blue-900);
   --bg-surface-sunken: var(--color-rush-blue-950);
   --bg-highlight: var(--color-lime-950);

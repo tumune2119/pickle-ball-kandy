@@ -571,7 +571,7 @@ export default function Home() {
           {pricingFaqs.map((item) => (
             <RevealItem key={item.q}>
               <div className="py-6">
-                <h3 className="font-editorial font-semibold text-lg mb-2 text-text-primary">{item.q}</h3>
+                <h3 className="font-display uppercase text-lg mb-2 text-text-primary">{item.q}</h3>
                 <p className="font-editorial text-text-muted">{item.a}</p>
               </div>
             </RevealItem>
@@ -793,7 +793,7 @@ export default function Home() {
           {contactFaqs.map((item) => (
             <RevealItem key={item.q}>
               <div className="py-6">
-                <h3 className="font-editorial font-semibold text-lg mb-2 text-text-primary">{item.q}</h3>
+                <h3 className="font-display uppercase text-lg mb-2 text-text-primary">{item.q}</h3>
                 <p className="font-editorial text-text-muted">{item.a}</p>
               </div>
             </RevealItem>
