@@ -34,6 +34,17 @@ export async function POST(request: NextRequest) {
     }
 
     const normalizedCode = String(code).replace(/^BK#?/i, "").trim().toLowerCase();
+    // The code is always exactly 8 hex chars (see BookingForm.tsx's
+    // bookingId.slice(0, 8)) - reject anything else before it's used as a
+    // match, otherwise a code that strips down to "" would match every
+    // booking via String.startsWith("") === true, turning this into a
+    // phone-number-only lookup.
+    if (!/^[0-9a-f]{8}$/.test(normalizedCode)) {
+      return NextResponse.json(
+        { error: "No booking found with that reference and phone number" },
+        { status: 404 }
+      );
+    }
     const normalizedPhone = formatPhoneNumber(String(phone));
 
     const guestBookings = await db.select().from(bookings).where(isNull(bookings.userId));
