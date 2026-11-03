@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import { Input } from "@/components/ui/Input";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import PosSalesReport from "@/components/PosSalesReport";
 
 interface ReportData {
   revenue: {
@@ -335,6 +336,8 @@ export default function AdminReportsPage() {
             </RevealItem>
           </RevealGroup>
         </Card>
+
+        <PosSalesReport startDate={startDate} endDate={endDate} />
       </div>
     </div>
   );

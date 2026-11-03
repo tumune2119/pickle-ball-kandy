@@ -11,6 +11,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Input";
 import Skeleton from "@/components/ui/Skeleton";
+import ProductCatalogSettings from "@/components/ProductCatalogSettings";
 
 interface Court {
   id: string;
@@ -279,6 +280,11 @@ export default function AdminSettingsPage() {
               hint="Customers can cancel free if they cancel this many hours before booking"
               className="focus:ring-admin-action"
             />
+          </Card>
+
+          {/* Point of Sale - products */}
+          <Card padding="md">
+            <ProductCatalogSettings />
           </Card>
 
           {error && (
