@@ -15,7 +15,7 @@ export default function AuthLayout({
     <div className="relative min-h-screen overflow-x-hidden flex items-start justify-center px-4 pt-20 pb-8">
       <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
         <Image
-          src="/images/hero-court-bg.png"
+          src="/images/hero-court-bg.jpg"
           alt=""
           fill
           priority

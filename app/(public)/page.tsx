@@ -29,7 +29,6 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import HeroSection from "./_components/HeroSection";
-import ImageGallery from "./_components/ImageGallery";
 import PricingCard from "./_components/PricingCard";
 import AmenityCard from "./_components/AmenityCard";
 import Card from "@/components/ui/Card";
@@ -37,15 +36,6 @@ import Button from "@/components/ui/Button";
 import { Input, Select, Textarea } from "@/components/ui/Input";
 import Reveal, { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { COURT_NAME, COURT_LOCATION, CANCELLATION_POLICY_HOURS } from "@/lib/constants";
-
-const galleryImages = [
-  { id: "1", src: "/images/court-1.jpg", alt: "Professional court setup", caption: "Professional Court Setup" },
-  { id: "2", src: "/images/court-2.jpg", alt: "Players in an evening match", caption: "Evening Matches" },
-  { id: "3", src: "/images/court-3.jpg", alt: "Tournament-ready court", caption: "Tournament Ready" },
-  { id: "4", src: "/images/court-4.jpg", alt: "Social games in progress", caption: "Social Games" },
-  { id: "5", src: "/images/court-5.jpg", alt: "Equipment and rental gear", caption: "Equipment & Rentals" },
-  { id: "6", src: "/images/court-6.jpg", alt: "Spectator seating area", caption: "Spectator Area" },
-];
 
 const quickStats = [
   { value: "3", label: "Dedicated Courts" },
@@ -246,7 +236,7 @@ export default function Home() {
         title={COURT_NAME}
         subtitle="Sri Lanka's First Dedicated Pickleball Court"
         cta={{ text: "Book Your Slot Now", href: "/book" }}
-        backgroundImage="/images/hero-court-bg.png"
+        backgroundImage="/images/hero-court-bg.jpg"
         stats={quickStats}
         statsNote="Book anytime with 24/7 online booking"
       />
@@ -388,13 +378,6 @@ export default function Home() {
             </RevealItem>
           ))}
         </RevealGroup>
-      </section>
-
-      {/* Gallery */}
-      <section className="bg-gray-50 dark:bg-gray-950 px-4 py-12 md:py-16">
-        <div className="max-w-6xl mx-auto">
-          <ImageGallery images={galleryImages} />
-        </div>
       </section>
 
       {/* ===== Pricing ===== */}

@@ -54,40 +54,6 @@ export function getTimeSlots(
   return slots;
 }
 
-// Check if slot is within booking hours
-export function isSlotAvailable(
-  slotStart: string,
-  slotEnd: string,
-  openingTime: string,
-  closingTime: string
-): boolean {
-  const [startHour, startMin] = slotStart.split(":").map(Number);
-  const [endHour, endMin] = slotEnd.split(":").map(Number);
-  const [openHour, openMin] = openingTime.split(":").map(Number);
-  const [closeHour, closeMin] = closingTime.split(":").map(Number);
-
-  const slotStartMin = startHour * 60 + startMin;
-  const slotEndMin = endHour * 60 + endMin;
-  const openTotalMin = openHour * 60 + openMin;
-  const closeTotalMin = closeHour * 60 + closeMin;
-
-  return slotStartMin >= openTotalMin && slotEndMin <= closeTotalMin;
-}
-
-// Calculate booking hours and duration
-export function calculateBookingHours(
-  startTime: string,
-  endTime: string
-): number {
-  const [startHour, startMin] = startTime.split(":").map(Number);
-  const [endHour, endMin] = endTime.split(":").map(Number);
-
-  const startTotalMin = startHour * 60 + startMin;
-  const endTotalMin = endHour * 60 + endMin;
-
-  return (endTotalMin - startTotalMin) / 60;
-}
-
 // Format phone number (Sri Lankan)
 export function formatPhoneNumber(phone: string): string {
   // Remove all non-digits
@@ -117,25 +83,6 @@ export function ymdInVenueTimezone(date: Date = new Date()): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: TIMEZONE }).format(date);
 }
 
-// Get day of week name
-export function getDayName(date: Date): string {
-  return new Intl.DateTimeFormat("en-LK", {
-    weekday: "long",
-    timeZone: TIMEZONE,
-  }).format(date);
-}
-
-// Check if date is today
-export function isToday(date: Date | string): boolean {
-  const d = new Date(date);
-  const today = new Date();
-  return (
-    d.getFullYear() === today.getFullYear() &&
-    d.getMonth() === today.getMonth() &&
-    d.getDate() === today.getDate()
-  );
-}
-
 // Check if booking can be cancelled
 export function canCancelBooking(
   bookingDateTime: Date,
@@ -145,9 +92,4 @@ export function canCancelBooking(
   const timeDiff = bookingDateTime.getTime() - now.getTime();
   const hoursDiff = timeDiff / (1000 * 60 * 60);
   return hoursDiff >= cancellationHours;
-}
-
-// Generate booking reference
-export function generateBookingReference(): string {
-  return `BK${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 }
