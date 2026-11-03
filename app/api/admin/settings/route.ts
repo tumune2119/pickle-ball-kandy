@@ -75,6 +75,22 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Missing courtId" }, { status: 400 });
     }
 
+    // Validate everything before writing anything - this handler isn't
+    // wrapped in a DB transaction, so rejecting bad input up front (instead
+    // of partway through) avoids silently applying the settings/courtHours
+    // sections while rejecting pricing.
+    if (courtHours?.slotDuration !== undefined && !Number.isFinite(Number(courtHours.slotDuration))) {
+      return NextResponse.json({ error: "slotDuration must be a number" }, { status: 400 });
+    }
+    if (newPricing) {
+      if (!Number.isFinite(Number(newPricing.offPeakRate)) || Number(newPricing.offPeakRate) <= 0) {
+        return NextResponse.json({ error: "offPeakRate must be a positive number" }, { status: 400 });
+      }
+      if (!Number.isFinite(Number(newPricing.peakRate)) || Number(newPricing.peakRate) <= 0) {
+        return NextResponse.json({ error: "peakRate must be a positive number" }, { status: 400 });
+      }
+    }
+
     if (newSettings) {
       for (const key of Object.keys(newSettings)) {
         const existing = await db

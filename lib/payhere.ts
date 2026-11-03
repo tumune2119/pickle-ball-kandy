@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import { timingSafeEqual } from "crypto";
 
 // PayHere requires amounts formatted with exactly 2 decimal places, no thousands separators.
 export function formatPayHereAmount(amount: number): string {
@@ -50,7 +51,15 @@ export function verifyNotifySignature(params: {
     statusCode +
     merchantSecretHash();
   const localSig = CryptoJS.MD5(raw).toString().toUpperCase();
-  return localSig === md5sig.toUpperCase();
+  const remoteSig = md5sig.toUpperCase();
+  // Constant-time comparison - a plain `===` short-circuits on the first
+  // mismatched character, which in principle leaks timing information
+  // about how much of a forged signature is correct. timingSafeEqual
+  // requires equal-length buffers, so the length check (not itself
+  // secret - MD5 hex digests are always 32 chars) has to happen first.
+  const localBuf = Buffer.from(localSig, "utf8");
+  const remoteBuf = Buffer.from(remoteSig, "utf8");
+  return localBuf.length === remoteBuf.length && timingSafeEqual(localBuf, remoteBuf);
 }
 
 // PayHere status codes sent to notify_url.

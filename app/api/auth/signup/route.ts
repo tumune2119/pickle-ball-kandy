@@ -26,7 +26,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { email, phone, fullName, password } = body;
+    const { phone, fullName, password } = body;
+    // Normalized once, used everywhere below - the pre-check, the Supabase
+    // Auth call, and the users row - so "Foo@x.com" and "foo@x.com" can't
+    // pass the duplicate check as two different identities.
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : body.email;
 
     if (!email || !phone || !fullName || !password) {
       return NextResponse.json(
