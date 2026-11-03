@@ -174,6 +174,15 @@ While in this territory, fixed the matching issue on the public homepage: the pr
 
 **Verified:** `tsc --noEmit` clean, lint unchanged (6 warnings), `npm run build` succeeds (36 routes). Viewed `/my-bookings` live at 390px, confirmed the policy box now shows exactly the two true statements.
 
+### Slice 8 — done, 2026-11-03
+Fixed all three H5 bugs in `app/api/admin/reports/route.ts`: (1) `totalRevenue` now excludes cancelled bookings - confirmed against the real DB that 3 of the 6 bookings currently in it are cancelled, so this wasn't a theoretical bug. (2) the online/at-venue split now matches on the exact `"- payhere"` suffix instead of a bare `"online"` substring - the old check misread every "Pay at Venue" self-service booking as online, since both payment modes share the same notes template (`"Booked via online system - ${paymentMode}"`) and both therefore contain the word "online"; confirmed the real notes rows match this format exactly. (3) `peakPaymentDay` is now actually computed (most common day-of-week among confirmed bookings, in Asia/Colombo time) instead of a hardcoded `"Saturday"`, returning `null` rather than a fake value when there's nothing to compute it from.
+
+Fixed the N+1 query and ordering bug in `app/api/admin/customers/route.ts`: booking stats were fetched with one query per customer inside a `Promise.all` (N+1); now one `inArray` query for every matched customer's bookings, grouped in JS - same pattern already used in `app/api/admin/bookings/route.ts`. Separately, "last booking" picked `userBookings[length - 1]`, which assumes the DB returns rows in chronological order - Postgres makes no such guarantee without `ORDER BY`, so this could have shown a stale date as "most recent." Now computed as an actual max over `bookingDate` strings (which compare correctly as plain strings in `yyyy-mm-dd` form).
+
+A real payment-method column would be a more robust fix than string-matching `notes` for (2) above, but that's a schema change, which needs your sign-off under the safety rules - flagging it here rather than making it unprompted. The current fix is correct against the actual notes format in use today, just still fragile if that template ever changes without updating this regex too.
+
+**Verified:** `tsc --noEmit` clean, lint unchanged (6 warnings), `npm run build` succeeds (36 routes). Self-checked (via `node -e` + `assert`) the payment-method matching against both real notes formats plus the admin walk-in format, the peak-day aggregation logic, and the max-date reduction for "last booking." Could not hit the actual admin endpoints live - they require an admin session and I don't have admin credentials (and didn't open `pw.txt`, per your instruction) - so I instead ran a read-only script against the real DB to confirm the exact bug impact (3/6 bookings cancelled, notes format matches exactly what the fix expects) rather than claiming a live admin-UI check I didn't actually do.
+
 ---
 
 ## Questions — only what I can't work out myself

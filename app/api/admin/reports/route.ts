@@ -3,6 +3,38 @@ import { bookings } from "@/lib/db/schema";
 import { and, gte, lte } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/server-auth";
+import { TIMEZONE } from "@/lib/constants";
+
+// Self-service bookings record their payment mode as a suffix on `notes`
+// (see app/api/bookings/route.ts) - there's no dedicated payment-method
+// column. Matching on the exact "- payhere" suffix (not just a substring
+// like "online") avoids misreading a "pay_at_venue" booking's notes, which
+// also contain the word "online" since both share the same notes template.
+function isOnlinePayment(notes: string | null): boolean {
+  return !!notes && /- payhere$/.test(notes);
+}
+
+// The day of week (in the venue's timezone) with the most confirmed
+// bookings in range - null rather than a fake default when there's nothing
+// to compute it from.
+function computePeakPaymentDay(confirmedBookings: (typeof bookings.$inferSelect)[]): string | null {
+  const counts = new Map<string, number>();
+  for (const b of confirmedBookings) {
+    const day = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone: TIMEZONE }).format(
+      new Date(`${b.bookingDate}T00:00:00`)
+    );
+    counts.set(day, (counts.get(day) ?? 0) + 1);
+  }
+  let peakDay: string | null = null;
+  let peakCount = 0;
+  for (const [day, count] of counts) {
+    if (count > peakCount) {
+      peakCount = count;
+      peakDay = day;
+    }
+  }
+  return peakDay;
+}
 
 // GET /api/admin/reports - Get analytics data
 export async function GET(request: NextRequest) {
@@ -27,8 +59,10 @@ export async function GET(request: NextRequest) {
           : undefined
       );
 
-    // Calculate statistics
-    const totalRevenue = allBookings.reduce((sum, b) => {
+    // Calculate statistics - cancelled bookings never happened, so they
+    // don't count as revenue regardless of what amountLkr was set to.
+    const nonCancelledBookings = allBookings.filter((b) => b.status !== "cancelled");
+    const totalRevenue = nonCancelledBookings.reduce((sum, b) => {
       return sum + (b.amountLkr ? parseFloat(b.amountLkr as string) : 0);
     }, 0);
 
@@ -94,11 +128,11 @@ export async function GET(request: NextRequest) {
       },
       payments: {
         averageValue: averageBookingValue.toFixed(0),
-        peakPaymentDay: "Saturday", // TODO: Calculate from data
+        peakPaymentDay: computePeakPaymentDay(confirmedBookings),
         paymentMethods: {
-          atVenue: confirmedBookings.filter((b) => !b.notes?.includes("online"))
+          atVenue: confirmedBookings.filter((b) => !isOnlinePayment(b.notes))
             .length,
-          online: confirmedBookings.filter((b) => b.notes?.includes("online"))
+          online: confirmedBookings.filter((b) => isOnlinePayment(b.notes))
             .length,
         },
       },
