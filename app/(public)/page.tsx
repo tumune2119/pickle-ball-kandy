@@ -36,7 +36,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Input, Select, Textarea } from "@/components/ui/Input";
 import Reveal, { RevealGroup, RevealItem } from "@/components/ui/Reveal";
-import { COURT_NAME, COURT_LOCATION } from "@/lib/constants";
+import { COURT_NAME, COURT_LOCATION, CANCELLATION_POLICY_HOURS } from "@/lib/constants";
 
 const galleryImages = [
   { id: "1", src: "/images/court-1.jpg", alt: "Professional court setup", caption: "Professional Court Setup" },
@@ -90,7 +90,7 @@ const membershipTiers = [
     priceLabel: "Per Month:",
     price: "LKR 14,250",
     footnote: "~LKR 1,425 per session",
-    cta: { label: "Subscribe Now", href: undefined },
+    cta: { label: "Ask About This Plan", href: "#contact" as string | undefined },
     highlighted: true,
   },
   {
@@ -100,7 +100,7 @@ const membershipTiers = [
     priceLabel: "Per Month:",
     price: "LKR 28,125",
     footnote: "~LKR 1,125 per session",
-    cta: { label: "Subscribe Now", href: undefined },
+    cta: { label: "Ask About This Plan", href: "#contact" },
     highlighted: false,
   },
 ];
@@ -154,8 +154,8 @@ const pricingFaqs = [
     a: "Each booking includes 1 hour of court access, professional pickleballs, and free parking. Equipment rental is available separately.",
   },
   {
-    q: "Can I cancel or reschedule my booking?",
-    a: "Yes, you can cancel free of charge up to 4 hours before your booking. Reschedules are also free if made 4+ hours in advance.",
+    q: "Can I cancel my booking?",
+    a: `Yes, you can cancel free of charge up to ${CANCELLATION_POLICY_HOURS} hours before your booking from your account (or via the Manage Booking page if you booked as a guest). Need to reschedule instead? Contact us directly for now.`,
   },
   {
     q: "Do memberships expire?",
@@ -533,9 +533,12 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <button className="text-sage-600 dark:text-sage-400 font-semibold hover:text-sage-700 dark:hover:text-sage-300 transition-colors">
+                <a
+                  href="#contact"
+                  className="text-sage-600 dark:text-sage-400 font-semibold hover:text-sage-700 dark:hover:text-sage-300 transition-colors"
+                >
                   {offer.cta}
-                </button>
+                </a>
               </Card>
             </RevealItem>
           ))}

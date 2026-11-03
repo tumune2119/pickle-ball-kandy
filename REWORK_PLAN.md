@@ -165,6 +165,15 @@ Also fixed two things found while in this code, not originally listed: `BookingF
 
 **Incidental:** restarted the local dev server mid-slice after the new API routes returned 500s that turned out to be a stale Turbopack build cache (confirmed via a standalone script hitting the same code path successfully) rather than a real bug - noting this since it's a local dev-environment action, not a data change.
 
+### Slice 7 — done, 2026-11-03
+Rewrote the "Booking Policy" box on `/my-bookings` (C4) to only state what the app actually enforces now: free cancellation up to `CANCELLATION_POLICY_HOURS` hours (now a real import, not a hardcoded "4" string, so it can't silently drift from the actual enforced value), and a "contact us" line for reschedule/questions. Dropped the no-show forfeiture, group-discount, and membership-discount bullets entirely - none of those have any backing logic anywhere in the schema, and (per C4) they're the kind of claim that actively misleads a paying customer, not just unfinished copy.
+
+While in this territory, fixed the matching issue on the public homepage: the pricing FAQ's "reschedule... free if made 4+ hours in advance" claimed a self-service feature that doesn't exist in the UI (there's no reschedule button anywhere, dead or otherwise, after Slice 6's audit of `MyBookingsList`) - reworded to match what's actually true today. Also fixed three genuinely dead buttons found in the same file while looking at this: the two "Subscribe Now" membership CTAs had `href: undefined` (rendered a button that did nothing on click) - now link to `#contact`, relabeled "Ask About This Plan" since there's no actual subscription flow to send them to; "Inquire Now" and "Book Lesson" were plain `<button>`s with no handler at all - now real anchor links to `#contact` too.
+
+**Deliberately not touched:** the membership pricing ("LKR 14,250/month... unused slots carry over") and group-discount percentages ("4-6 people: 10% discount") are business-policy claims, not claims about what the software automates - a human taking a phone/WhatsApp inquiry could honor them today even with zero code behind them, which is a different category from "30+ Active Members" (a verifiably false fact) or "reschedule for free" (a claimed self-service feature that doesn't exist). Rewriting those numbers without real input from you would just substitute my guess for whatever was there before, not make the page more honest - flagging this distinction so it's a visible decision, not an oversight.
+
+**Verified:** `tsc --noEmit` clean, lint unchanged (6 warnings), `npm run build` succeeds (36 routes). Viewed `/my-bookings` live at 390px, confirmed the policy box now shows exactly the two true statements.
+
 ---
 
 ## Questions — only what I can't work out myself
