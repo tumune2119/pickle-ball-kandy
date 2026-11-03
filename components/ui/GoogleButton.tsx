@@ -25,7 +25,7 @@ export default function GoogleButton({ label = "Continue with Google" }: { label
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-white/5 text-gray-700 dark:text-gray-200 font-semibold hover:bg-gray-50 dark:hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-lg border-2 border-border-default bg-surface text-text-primary font-bold hover:bg-surface-sunken transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1Z" />
@@ -35,7 +35,7 @@ export default function GoogleButton({ label = "Continue with Google" }: { label
         </svg>
         {loading ? "Redirecting..." : label}
       </button>
-      {error && <p className="text-xs text-red-600 dark:text-red-400 mt-2 text-center">{error}</p>}
+      {error && <p className="text-xs text-danger-700 dark:text-danger-300 mt-2 text-center">{error}</p>}
     </div>
   );
 }

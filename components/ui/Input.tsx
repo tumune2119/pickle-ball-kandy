@@ -2,9 +2,9 @@ import { forwardRef } from "react";
 import { cn } from "@/lib/cn";
 
 const FIELD_BASE =
-  "w-full px-4 py-2 rounded-lg border border-border-default bg-surface-sunken text-text-primary " +
+  "w-full px-4 py-2 rounded-lg border-2 border-border-default bg-surface-sunken text-text-primary " +
   "placeholder:text-text-faint " +
-  "focus:outline-none focus:ring-2 focus:ring-focus-ring focus:border-transparent focus:bg-surface " +
+  "focus:outline-none focus:ring-2 focus:ring-focus-ring focus:border-ink dark:focus:border-concrete-100 focus:bg-surface " +
   "transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
 interface FieldWrapperProps {
@@ -129,7 +129,7 @@ export function Checkbox({ className, ...props }: React.InputHTMLAttributes<HTML
   return (
     <input
       type="checkbox"
-      className={cn("w-4 h-4 rounded accent-brand-500 cursor-pointer", className)}
+      className={cn("w-4 h-4 rounded accent-rush-blue-500 cursor-pointer", className)}
       {...props}
     />
   );
@@ -139,7 +139,7 @@ export function Radio({ className, ...props }: React.InputHTMLAttributes<HTMLInp
   return (
     <input
       type="radio"
-      className={cn("w-4 h-4 accent-brand-500 cursor-pointer", className)}
+      className={cn("w-4 h-4 accent-rush-blue-500 cursor-pointer", className)}
       {...props}
     />
   );

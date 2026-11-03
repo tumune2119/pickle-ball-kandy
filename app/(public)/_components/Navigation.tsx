@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -85,7 +86,7 @@ export default function Navigation() {
   // height behind it (HeroSection compensates with extra top padding).
   const linkColor = transparent
     ? "text-white/90 hover:text-white"
-    : "text-text-muted hover:text-brand-600 dark:hover:text-brand-400";
+    : "text-text-muted hover:text-rush-blue-600 dark:hover:text-rush-blue-400";
 
   return (
     <header
@@ -100,12 +101,12 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <Link href="#home" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 bg-linear-to-br from-sage-500 to-sage-700 rounded-lg flex items-center justify-center shadow-md shadow-sage-600/20 transition-transform group-hover:scale-105">
-              <span className="text-white font-bold text-lg">🏓</span>
+            <div className="w-10 h-10 rounded-md border-2 border-ink overflow-hidden transition-transform group-hover:scale-105 shrink-0 bg-white">
+              <Image src="/brand/logo.jpg" alt="" width={40} height={40} className="w-full h-full object-cover" priority />
             </div>
             <span
               className={cn(
-                "hidden sm:inline font-bold font-display text-lg transition-colors",
+                "hidden sm:inline font-display text-xl uppercase tracking-tight skew-display transition-colors",
                 transparent ? "text-white" : "text-text-primary"
               )}
             >
@@ -127,7 +128,7 @@ export default function Navigation() {
                   {active && (
                     <motion.span
                       layoutId="nav-underline"
-                      className="absolute left-3 right-3 -bottom-0.5 h-0.5 rounded-full bg-brand-400"
+                      className="absolute left-3 right-3 -bottom-0.5 h-0.5 rounded-full bg-action-lime"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -199,12 +200,12 @@ export default function Navigation() {
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               className="md:hidden overflow-hidden"
             >
-              <div className="mb-4 p-2 space-y-1 rounded-2xl bg-surface/95 backdrop-blur-xl border border-border-default shadow-xl">
+              <div className="mb-4 p-2 space-y-1 rounded-xl bg-surface border-2 border-ink shadow-[4px_4px_0_var(--color-ink)]">
                 {SECTIONS.map((item) => (
                   <Link
                     key={item.id}
                     href={`#${item.id}`}
-                    className="block px-4 py-2 text-text-muted hover:bg-highlight hover:text-brand-700 dark:hover:text-brand-400 rounded-lg transition-colors"
+                    className="block px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
                     {item.label}
@@ -215,7 +216,7 @@ export default function Navigation() {
                     <>
                       <Link
                         href="/dashboard"
-                        className="flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-brand-700 dark:hover:text-brand-400 rounded-lg transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                         onClick={() => setIsOpen(false)}
                       >
                         <CircleUserRound className="w-4 h-4" aria-hidden="true" />
@@ -223,7 +224,7 @@ export default function Navigation() {
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-brand-700 dark:hover:text-brand-400 rounded-lg transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                       >
                         <LogOut className="w-4 h-4" aria-hidden="true" />
                         Logout
@@ -232,7 +233,7 @@ export default function Navigation() {
                   ) : (
                     <Link
                       href="/login"
-                      className="block px-4 py-2 text-text-muted hover:bg-highlight hover:text-brand-700 dark:hover:text-brand-400 rounded-lg transition-colors"
+                      className="block px-4 py-2 text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
                       Login

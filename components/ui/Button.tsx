@@ -5,42 +5,61 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import Spinner from "./Spinner";
 
-export type ButtonVariant = "primary" | "secondary" | "soft" | "ghost" | "destructive";
-// "brand" = marigold/sage (public/customer surfaces), "admin" = blue (admin surfaces).
+export type ButtonVariant = "primary" | "lime" | "secondary" | "soft" | "ghost" | "destructive";
+// "brand" = rush-blue/lime sticker-button system (public/customer surfaces),
+// "admin" = clean flat blue, no thick border/offset shadow ("toned down").
 export type ButtonTone = "brand" | "admin";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors " +
+  "inline-flex items-center justify-center gap-2 font-bold transition-[transform,box-shadow,background-color,color] " +
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-focus-ring focus-visible:ring-offset-page " +
   "disabled:opacity-50 disabled:pointer-events-none";
 
 const SIZES: Record<ButtonSize, string> = {
   sm: "px-4 py-1.5 text-sm",
-  md: "px-6 py-2 text-base",
-  lg: "px-8 py-3 text-lg",
+  md: "px-6 py-2.5 text-base",
+  lg: "px-8 py-3.5 text-lg",
 };
 
+// Sticker/comic "pressed button" treatment: a thick ink border + a hard
+// (non-blurred) offset shadow that shrinks and the button translates toward
+// it on press - a deliberate graffiti/Y2K signature, not a soft drop shadow.
+// Admin never gets this (see variantClasses below) - "same brand, toned down".
+const STICKER =
+  "rounded-md border-2 border-ink shadow-[3px_3px_0_var(--color-ink)] " +
+  "hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-ink)] " +
+  "active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_var(--color-ink)]";
+
 function variantClasses(variant: ButtonVariant, tone: ButtonTone): string {
+  if (tone === "admin") {
+    switch (variant) {
+      case "primary":
+        return "rounded-lg bg-admin-action hover:bg-admin-action-hover text-admin-text-on-action shadow-sm";
+      case "lime":
+      case "secondary":
+        return "rounded-lg bg-admin-surface hover:bg-admin-bg text-admin-text border border-admin-border";
+      case "soft":
+        return "rounded-lg bg-admin-bg hover:bg-admin-border/40 text-admin-action";
+      case "ghost":
+        return "rounded-lg bg-transparent hover:bg-admin-bg text-admin-text-muted";
+      case "destructive":
+        return "rounded-lg bg-danger-100 hover:bg-danger-300/60 text-danger-800 dark:text-danger-300";
+    }
+  }
   switch (variant) {
     case "primary":
-      return tone === "admin"
-        ? "bg-admin-action hover:bg-admin-action-hover text-admin-text-on-action shadow-sm shadow-info-900/20"
-        : "bg-action-primary hover:bg-action-primary-hover text-text-on-action shadow-sm shadow-brand-900/20";
+      return cn(STICKER, "bg-action-primary hover:bg-action-primary-hover text-text-on-action");
+    case "lime":
+      return cn(STICKER, "bg-action-lime hover:bg-action-lime-hover text-text-on-lime");
     case "secondary":
-      return tone === "admin"
-        ? "bg-admin-surface hover:bg-info-200 text-admin-text border border-admin-border"
-        : "bg-action-secondary hover:bg-action-secondary-hover text-text-primary";
+      return cn(STICKER, "bg-surface text-text-primary");
     case "soft":
-      return tone === "admin"
-        ? "bg-admin-bg hover:bg-info-200 text-admin-action"
-        : "bg-highlight hover:bg-brand-200 dark:hover:bg-brand-900/50 text-brand-700 dark:text-brand-300";
+      return "rounded-md bg-highlight hover:bg-lime-200 dark:hover:bg-lime-900/50 text-lime-800 dark:text-lime-300 border-2 border-transparent";
     case "ghost":
-      return tone === "admin"
-        ? "bg-transparent hover:bg-admin-bg text-admin-text-muted"
-        : "bg-transparent hover:bg-surface-sunken text-text-muted";
+      return "rounded-md bg-transparent hover:bg-surface-sunken text-text-muted border-2 border-transparent";
     case "destructive":
-      return "bg-danger-100 hover:bg-danger-300/60 text-danger-800 dark:text-danger-300";
+      return cn(STICKER, "bg-danger-100 hover:bg-danger-300/60 text-danger-800 dark:text-danger-300");
   }
 }
 
@@ -89,6 +108,11 @@ export default function Button({
   children,
   ...props
 }: ButtonProps) {
+  // The sticker press effect is driven by CSS active:/hover: (see STICKER)
+  // so it works identically on <button> and <Link>; framer-motion only adds
+  // a small scale on top, and admin skips both the sticker shadow and this
+  // scale nudge entirely to stay visually quiet.
+  const scaleAmount = tone === "admin" || variant === "soft" || variant === "ghost" ? 1 : 1.015;
   const classes = cn(
     BASE,
     SIZES[size],
@@ -103,8 +127,7 @@ export default function Button({
       <MotionLink
         href={href}
         className={classes}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.97 }}
+        whileHover={{ scale: scaleAmount }}
         transition={{ duration: 0.15 }}
         {...linkProps}
       >
@@ -119,8 +142,7 @@ export default function Button({
     <motion.button
       className={classes}
       disabled={loading || buttonProps.disabled}
-      whileHover={{ scale: loading ? 1 : 1.02 }}
-      whileTap={{ scale: loading ? 1 : 0.97 }}
+      whileHover={{ scale: loading ? 1 : scaleAmount }}
       transition={{ duration: 0.15 }}
       {...buttonProps}
     >

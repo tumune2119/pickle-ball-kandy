@@ -147,7 +147,7 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
   return (
     <div className={cn("relative", className)}>
       {label && (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor={id} className="block text-sm font-bold text-text-primary mb-2">
           {label}
         </label>
       )}
@@ -160,20 +160,20 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
         aria-haspopup="dialog"
         aria-expanded={open}
         className={cn(
-          "w-full flex items-center justify-between gap-2 px-4 py-3 rounded-lg border border-gray-300 dark:border-white/15 bg-surface text-left",
-          "hover:border-sage-400 dark:hover:border-sage-600",
-          "focus:outline-none focus:ring-2 focus:ring-sage-600 dark:focus:ring-sage-500 focus:border-transparent transition-colors"
+          "w-full flex items-center justify-between gap-2 px-4 py-3 rounded-lg border-2 border-border-default bg-surface text-left",
+          "hover:border-rush-blue-400",
+          "focus:outline-none focus:ring-2 focus:ring-rush-blue-500 focus:border-ink transition-colors"
         )}
       >
-        <span className={cn("text-lg", selected ? "text-text-primary" : "text-gray-400 dark:text-gray-500")}>
+        <span className={cn("text-lg", selected ? "text-text-primary" : "text-text-faint")}>
           {selected
             ? selected.toLocaleDateString("en-LK", { weekday: "short", year: "numeric", month: "long", day: "numeric" })
             : "Pick a date to play"}
         </span>
-        <CalendarIcon className="w-5 h-5 text-sage-600 dark:text-sage-400 shrink-0" aria-hidden="true" />
+        <CalendarIcon className="w-5 h-5 text-rush-blue-500 shrink-0" aria-hidden="true" />
       </button>
 
-      {hint && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{hint}</p>}
+      {hint && <p className="text-xs text-text-muted mt-1">{hint}</p>}
 
       {mounted &&
         createPortal(
@@ -188,7 +188,7 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
                 role="dialog"
                 aria-label="Choose a date"
                 style={{ position: "fixed", top: coords.top, left: coords.left, width: coords.width }}
-                className="z-50 max-w-[calc(100vw-2rem)] rounded-xl border border-white/60 dark:border-white/10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-xl p-3"
+                className="z-50 max-w-[calc(100vw-2rem)] rounded-xl border-2 border-ink bg-surface shadow-[4px_4px_0_var(--color-ink)] p-3"
               >
                 <div className="flex items-center justify-between mb-2">
                   <button
@@ -196,7 +196,7 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
                     onClick={() => canGoPrev && setViewDate(new Date(year, month - 1, 1))}
                     disabled={!canGoPrev}
                     aria-label="Previous month"
-                    className="p-1 rounded-lg hover:bg-sage-50 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed text-gray-600 dark:text-gray-300"
+                    className="p-1 rounded-lg hover:bg-rush-blue-50 dark:hover:bg-rush-blue-900/40 disabled:opacity-30 disabled:cursor-not-allowed text-text-muted"
                   >
                     <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                   </button>
@@ -208,7 +208,7 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
                     onClick={() => canGoNext && setViewDate(new Date(year, month + 1, 1))}
                     disabled={!canGoNext}
                     aria-label="Next month"
-                    className="p-1 rounded-lg hover:bg-sage-50 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed text-gray-600 dark:text-gray-300"
+                    className="p-1 rounded-lg hover:bg-rush-blue-50 dark:hover:bg-rush-blue-900/40 disabled:opacity-30 disabled:cursor-not-allowed text-text-muted"
                   >
                     <ChevronRight className="w-4 h-4" aria-hidden="true" />
                   </button>
@@ -216,7 +216,7 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
 
                 <div className="grid grid-cols-7 gap-0.5 mb-0.5">
                   {WEEKDAYS.map((w, i) => (
-                    <div key={i} className="text-center text-[11px] font-medium text-gray-500 dark:text-gray-400 py-0.5">
+                    <div key={i} className="text-center text-[11px] font-bold text-text-faint py-0.5">
                       {w}
                     </div>
                   ))}
@@ -240,11 +240,11 @@ export default function DatePicker({ label, hint, value, onChange, min, max, cla
                         aria-label={d.toLocaleDateString("en-LK", { weekday: "long", month: "long", day: "numeric" })}
                         aria-pressed={isSelected}
                         className={cn(
-                          "aspect-square w-full rounded-full text-xs font-medium transition-colors flex items-center justify-center",
-                          disabled && "text-gray-300 dark:text-gray-700 cursor-not-allowed",
-                          !disabled && !isSelected && "text-text-primary hover:bg-sage-100 dark:hover:bg-sage-900/40",
-                          isSelected && "bg-sage-600 text-white hover:bg-sage-700",
-                          !isSelected && isToday && !disabled && "ring-1 ring-sage-400 dark:ring-sage-600"
+                          "aspect-square w-full rounded-full text-xs font-bold transition-colors flex items-center justify-center",
+                          disabled && "text-text-faint/50 cursor-not-allowed",
+                          !disabled && !isSelected && "text-text-primary hover:bg-lime-100 dark:hover:bg-lime-900/40",
+                          isSelected && "bg-action-lime text-text-on-lime",
+                          !isSelected && isToday && !disabled && "ring-2 ring-rush-blue-400"
                         )}
                       >
                         {d.getDate()}
