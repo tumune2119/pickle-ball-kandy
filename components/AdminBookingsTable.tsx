@@ -171,34 +171,34 @@ export default function AdminBookingsTable() {
       {/* Table */}
       <div className="bg-admin-surface rounded-xl border border-admin-border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full table-fixed">
+          <table className="w-full">
             <thead className="bg-admin-bg border-b border-admin-border">
               <tr>
-                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[9%]">
-                  ID
+                <th className="px-4 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                  Booking ID
                 </th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[16%]">
+                <th className="px-4 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
                   Customer
                 </th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[9%]">
+                <th className="px-4 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
                   Court
                 </th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[14%]">
+                <th className="px-4 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
                   Date & Time
                 </th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[7%]">
+                <th className="px-4 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
                   Players
                 </th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[11%]">
+                <th className="px-4 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
                   Status
                 </th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[11%]">
+                <th className="px-4 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
                   Payment
                 </th>
-                <th className="px-3 py-3 text-right text-xs font-bold text-admin-text-muted uppercase w-[11%]">
+                <th className="px-4 py-3 text-right text-xs font-bold text-admin-text-muted uppercase">
                   Amount
                 </th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[12%]">
+                <th className="px-4 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
                   Actions
                 </th>
               </tr>
@@ -225,37 +225,37 @@ export default function AdminBookingsTable() {
               <RevealGroup as="tbody" className="divide-y divide-admin-border" stagger={0.04}>
                 {filteredBookings.map((booking) => (
                   <RevealItem key={booking.id} as="tr" y={8} className="hover:bg-admin-bg/60 transition-colors">
-                    <td className="px-3 py-4 font-mono text-sm font-semibold text-admin-text truncate">
+                    <td className="px-4 py-4 font-mono text-sm font-semibold text-admin-text">
                       {booking.id.slice(0, 8)}
                     </td>
-                    <td className="px-3 py-4 text-sm text-admin-text truncate">
+                    <td className="px-4 py-4 text-sm text-admin-text whitespace-nowrap">
                       {booking.customerName}
                       {booking.isGuest && (
                         <span className="ml-1.5 text-xs text-admin-text-muted">(Guest)</span>
                       )}
                     </td>
-                    <td className="px-3 py-4 text-sm text-admin-text truncate">{booking.courtName}</td>
-                    <td className="px-3 py-4 text-sm text-admin-text">
+                    <td className="px-4 py-4 text-sm text-admin-text whitespace-nowrap">{booking.courtName}</td>
+                    <td className="px-4 py-4 text-sm text-admin-text whitespace-nowrap">
                       <div>{formatDate(booking.bookingDate)}</div>
-                      <div className="text-admin-action font-semibold whitespace-nowrap">
-                        {booking.startTime}-{booking.endTime}
+                      <div className="text-admin-action font-semibold">
+                        {booking.startTime.slice(0, 5)} - {booking.endTime.slice(0, 5)}
                       </div>
                     </td>
-                    <td className="px-3 py-4 text-sm text-admin-text font-semibold">{booking.numPlayers}</td>
-                    <td className="px-3 py-4">
+                    <td className="px-4 py-4 text-sm text-admin-text font-semibold">{booking.numPlayers}</td>
+                    <td className="px-4 py-4">
                       <Badge tone={bookingStatusTone(booking.status)}>
                         {statusLabel[booking.status] ?? booking.status}
                       </Badge>
                     </td>
-                    <td className="px-3 py-4 text-sm">
+                    <td className="px-4 py-4 text-sm">
                       <Badge tone={paymentStatusTone(booking.paymentStatus)}>
                         {paymentLabel[booking.paymentStatus] ?? booking.paymentStatus}
                       </Badge>
                     </td>
-                    <td className="px-3 py-4 text-right font-bold text-admin-text">
+                    <td className="px-4 py-4 text-right font-bold text-admin-text whitespace-nowrap">
                       {formatCurrency(booking.amountLkr)}
                     </td>
-                    <td className="px-3 py-4">
+                    <td className="px-4 py-4">
                       <div className="flex items-center gap-1.5">
                         <Tooltip label="Print ticket">
                           <Link
