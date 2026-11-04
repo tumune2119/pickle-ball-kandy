@@ -103,7 +103,11 @@ export default function AdminSidebarNav() {
           <Link key={item.href} href={item.href} className={itemClass(active)}>
             {active && (
               <motion.span
-                layoutId="admin-nav-active"
+                // Scoped to collapsed/expanded so toggling collapse mounts a
+                // fresh pill instead of morphing the old (wide) one into the
+                // new (narrow) shape - that cross-shape FLIP animation was
+                // what squished the icon on top of it mid-transition.
+                layoutId={collapsed ? "admin-nav-active-collapsed" : "admin-nav-active-expanded"}
                 className="absolute inset-0 rounded-lg bg-admin-action border-2 border-ink"
                 transition={{ type: "spring", stiffness: 400, damping: 32 }}
               />

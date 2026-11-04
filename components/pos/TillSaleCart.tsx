@@ -254,8 +254,8 @@ export default function TillSaleCart() {
         ) : (
           <div className="space-y-2 mb-4">
             {lines.map((l) => (
-              <div key={l.product.id} className="flex items-center justify-between gap-2 text-sm">
-                <span className="flex-1 text-admin-text">{l.product.name}</span>
+              <div key={l.product.id} className="flex flex-wrap items-center gap-2 text-sm">
+                <span className="w-full text-admin-text">{l.product.name}</span>
                 <div className="flex items-center gap-1.5">
                   <button onClick={() => removeFromCart(l.product.id)} className="p-2 rounded-lg border-2 border-ink hover:bg-admin-bg" aria-label={`Remove one ${l.product.name}`}>
                     <Minus className="w-4 h-4" aria-hidden="true" />
@@ -265,14 +265,14 @@ export default function TillSaleCart() {
                     <Plus className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
-                <span className="w-20 text-right font-mono text-admin-text">
+                <span className="ml-auto text-right font-mono text-admin-text">
                   {formatCurrency(Number(l.product.priceLkr) * l.quantity)}
                 </span>
               </div>
             ))}
             {customLines.map((c) => (
-              <div key={c.id} className="flex items-center justify-between gap-2 text-sm">
-                <span className="flex-1 text-admin-text">
+              <div key={c.id} className="flex flex-wrap items-center gap-2 text-sm">
+                <span className="w-full text-admin-text">
                   {c.name}
                   <span className="ml-1.5 text-xs text-admin-text-muted">(Custom)</span>
                 </span>
@@ -288,7 +288,7 @@ export default function TillSaleCart() {
                     <X className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
-                <span className="w-20 text-right font-mono text-admin-text">
+                <span className="ml-auto text-right font-mono text-admin-text">
                   {formatCurrency(Number(c.priceLkr) * c.quantity)}
                 </span>
               </div>
