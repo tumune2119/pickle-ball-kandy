@@ -66,7 +66,12 @@ export default function AdminSidebarNav() {
 
   const itemClass = (active: boolean) =>
     cn(
-      "relative flex items-center rounded-lg font-bold text-base transition-colors",
+      // w-full matters most in collapsed mode: the Tooltip wrapper around
+      // each item is inline-flex, which otherwise sizes the Link as a flex
+      // item that shrinks to hug just the icon (~20px) instead of filling
+      // the row - that's what made the active pill squeeze tight around
+      // the icon instead of filling the full button.
+      "relative flex w-full items-center rounded-lg font-bold text-base transition-colors",
       collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3",
       active ? "text-admin-text-on-action" : "text-admin-text-muted hover:bg-admin-bg"
     );
