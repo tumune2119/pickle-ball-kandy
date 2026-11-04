@@ -18,7 +18,13 @@ export async function GET(request: NextRequest) {
       ? await db.select().from(products).where(eq(products.active, true))
       : await db.select().from(products);
 
-    return NextResponse.json({ products: allProducts });
+    // "Custom Item" is an internal row the sales route finds-or-creates to
+    // satisfy posSaleItems' FK for one-off custom lines (see
+    // app/api/pos/sales/route.ts) - never a real catalog entry to browse,
+    // edit, or sell from directly.
+    const visibleProducts = allProducts.filter((p) => p.category !== "custom");
+
+    return NextResponse.json({ products: visibleProducts });
   } catch (error) {
     console.error("Get products error:", error);
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });

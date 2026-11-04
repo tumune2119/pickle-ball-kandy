@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Minus, Printer, ShoppingCart } from "lucide-react";
+import { Plus, Minus, Printer, ShoppingCart, PenLine, X } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import { formatCurrency } from "@/lib/utils";
 import { attemptOrQueue } from "@/lib/pos-queue";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Skeleton from "@/components/ui/Skeleton";
+import { Input } from "@/components/ui/Input";
 
 interface Product {
   id: string;
@@ -24,9 +25,26 @@ interface CartLine {
   quantity: number;
 }
 
+// A one-off item typed in at the till, not from the catalog (e.g. a repair
+// fee, a lost-paddle charge). Kept separate from `cart`/`products` since it
+// has no real catalog id - the server resolves it against a single
+// internal "Custom Item" row (see app/api/pos/sales/route.ts).
+interface CustomLine {
+  id: string;
+  name: string;
+  priceLkr: string;
+  quantity: number;
+}
+
+interface ReceiptLine {
+  name: string;
+  quantity: number;
+  priceLkr: number;
+}
+
 interface CompletedSale {
   id: string;
-  lines: CartLine[];
+  receiptLines: ReceiptLine[];
   total: number;
   paymentMethod: "cash" | "card";
   queued: boolean;
@@ -36,6 +54,10 @@ export default function TillSaleCart() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<Record<string, number>>({});
+  const [customLines, setCustomLines] = useState<CustomLine[]>([]);
+  const [customFormOpen, setCustomFormOpen] = useState(false);
+  const [customName, setCustomName] = useState("");
+  const [customPrice, setCustomPrice] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
   const [checkingOut, setCheckingOut] = useState(false);
   const [error, setError] = useState("");
@@ -66,14 +88,31 @@ export default function TillSaleCart() {
     .map(([productId, quantity]) => ({ product: products.find((p) => p.id === productId)!, quantity }))
     .filter((l) => l.product);
 
-  const total = lines.reduce((sum, l) => sum + Number(l.product.priceLkr) * l.quantity, 0);
+  const catalogTotal = lines.reduce((sum, l) => sum + Number(l.product.priceLkr) * l.quantity, 0);
+  const customTotal = customLines.reduce((sum, c) => sum + Number(c.priceLkr) * c.quantity, 0);
+  const total = catalogTotal + customTotal;
+  const isEmpty = lines.length === 0 && customLines.length === 0;
 
   const addToCart = (productId: string) => setCart((c) => ({ ...c, [productId]: (c[productId] ?? 0) + 1 }));
   const removeFromCart = (productId: string) =>
     setCart((c) => ({ ...c, [productId]: Math.max(0, (c[productId] ?? 0) - 1) }));
 
+  const adjustCustomQty = (id: string, delta: number) =>
+    setCustomLines((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, quantity: c.quantity + delta } : c)).filter((c) => c.quantity > 0)
+    );
+
+  const addCustomLine = () => {
+    const price = Number(customPrice);
+    if (!customName.trim() || !price || price <= 0) return;
+    setCustomLines((prev) => [...prev, { id: crypto.randomUUID(), name: customName.trim(), priceLkr: customPrice, quantity: 1 }]);
+    setCustomName("");
+    setCustomPrice("");
+    setCustomFormOpen(false);
+  };
+
   const checkout = async () => {
-    if (lines.length === 0) return;
+    if (isEmpty) return;
     setCheckingOut(true);
     setError("");
 
@@ -93,7 +132,10 @@ export default function TillSaleCart() {
       payload: {
         id: saleId,
         paymentMethod,
-        items: lines.map((l) => ({ productId: l.product.id, quantity: l.quantity })),
+        items: [
+          ...lines.map((l) => ({ productId: l.product.id, quantity: l.quantity })),
+          ...customLines.map((c) => ({ custom: { name: c.name, priceLkr: Number(c.priceLkr) }, quantity: c.quantity })),
+        ],
       },
     });
 
@@ -104,8 +146,13 @@ export default function TillSaleCart() {
       return;
     }
 
-    setCompletedSale({ id: saleId, lines, total, paymentMethod, queued: result.status === "queued" });
+    const receiptLines: ReceiptLine[] = [
+      ...lines.map((l) => ({ name: l.product.name, quantity: l.quantity, priceLkr: Number(l.product.priceLkr) })),
+      ...customLines.map((c) => ({ name: c.name, quantity: c.quantity, priceLkr: Number(c.priceLkr) })),
+    ];
+    setCompletedSale({ id: saleId, receiptLines, total, paymentMethod, queued: result.status === "queued" });
     setCart({});
+    setCustomLines([]);
   };
 
   if (completedSale) {
@@ -122,8 +169,57 @@ export default function TillSaleCart() {
   return (
     <div className="grid lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 space-y-6">
+        {/* Custom item - always available, not tied to the catalog, for a
+            one-off charge (repair fee, lost item, anything not stocked). */}
+        <Card poster padding="md" className="border-dashed">
+          {!customFormOpen ? (
+            <button
+              onClick={() => setCustomFormOpen(true)}
+              className="w-full flex items-center justify-center gap-2 py-2 font-bold text-admin-text rounded-lg hover:bg-admin-bg transition-colors"
+            >
+              <PenLine className="w-4 h-4" aria-hidden="true" />
+              Custom Item
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Input
+                  label="Item name"
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  placeholder="e.g. Racquet repair"
+                  autoFocus
+                />
+                <Input
+                  label="Price (LKR)"
+                  type="number"
+                  value={customPrice}
+                  onChange={(e) => setCustomPrice(e.target.value)}
+                  placeholder="0.00"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button tone="admin" variant="lime" onClick={addCustomLine} disabled={!customName.trim() || !Number(customPrice)}>
+                  Add to Cart
+                </Button>
+                <Button
+                  tone="admin"
+                  variant="secondary"
+                  onClick={() => {
+                    setCustomFormOpen(false);
+                    setCustomName("");
+                    setCustomPrice("");
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </Card>
+
         {Object.keys(byCategory).length === 0 && (
-          <p className="text-admin-text-muted">No products yet - add some in Settings → Point of Sale.</p>
+          <p className="text-admin-text-muted">No products yet - add some in Products.</p>
         )}
         {Object.entries(byCategory).map(([category, items]) => (
           <div key={category}>
@@ -153,7 +249,7 @@ export default function TillSaleCart() {
           <ShoppingCart className="w-5 h-5" aria-hidden="true" />
           Cart
         </h3>
-        {lines.length === 0 ? (
+        {isEmpty ? (
           <p className="text-sm text-admin-text-muted">Tap a product to add it.</p>
         ) : (
           <div className="space-y-2 mb-4">
@@ -171,6 +267,29 @@ export default function TillSaleCart() {
                 </div>
                 <span className="w-20 text-right font-mono text-admin-text">
                   {formatCurrency(Number(l.product.priceLkr) * l.quantity)}
+                </span>
+              </div>
+            ))}
+            {customLines.map((c) => (
+              <div key={c.id} className="flex items-center justify-between gap-2 text-sm">
+                <span className="flex-1 text-admin-text">
+                  {c.name}
+                  <span className="ml-1.5 text-xs text-admin-text-muted">(Custom)</span>
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <button onClick={() => adjustCustomQty(c.id, -1)} className="p-2 rounded-lg border-2 border-ink hover:bg-admin-bg" aria-label={`Remove one ${c.name}`}>
+                    <Minus className="w-4 h-4" aria-hidden="true" />
+                  </button>
+                  <span className="w-6 text-center font-bold">{c.quantity}</span>
+                  <button onClick={() => adjustCustomQty(c.id, 1)} className="p-2 rounded-lg border-2 border-ink hover:bg-admin-bg" aria-label={`Add one ${c.name}`}>
+                    <Plus className="w-4 h-4" aria-hidden="true" />
+                  </button>
+                  <button onClick={() => setCustomLines((prev) => prev.filter((x) => x.id !== c.id))} className="p-2 text-danger-700 dark:text-danger-300" aria-label={`Remove ${c.name}`}>
+                    <X className="w-4 h-4" aria-hidden="true" />
+                  </button>
+                </div>
+                <span className="w-20 text-right font-mono text-admin-text">
+                  {formatCurrency(Number(c.priceLkr) * c.quantity)}
                 </span>
               </div>
             ))}
@@ -200,7 +319,7 @@ export default function TillSaleCart() {
 
         {error && <p className="text-sm text-danger-700 dark:text-danger-300 mb-3">{error}</p>}
 
-        <Button tone="admin" variant="lime" fullWidth size="lg" onClick={checkout} loading={checkingOut} disabled={lines.length === 0}>
+        <Button tone="admin" variant="lime" fullWidth size="lg" onClick={checkout} loading={checkingOut} disabled={isEmpty}>
           Checkout
         </Button>
       </Card>
@@ -227,12 +346,12 @@ function SaleReceipt({ sale, onNewSale }: { sale: CompletedSale; onNewSale: () =
             <span>Ref</span>
             <span>{sale.id.slice(0, 8).toUpperCase()}</span>
           </div>
-          {sale.lines.map((l) => (
-            <div key={l.product.id} className="flex justify-between">
+          {sale.receiptLines.map((l, i) => (
+            <div key={i} className="flex justify-between">
               <span>
-                {l.quantity} × {l.product.name}
+                {l.quantity} × {l.name}
               </span>
-              <span>{formatCurrency(Number(l.product.priceLkr) * l.quantity)}</span>
+              <span>{formatCurrency(l.priceLkr * l.quantity)}</span>
             </div>
           ))}
         </div>

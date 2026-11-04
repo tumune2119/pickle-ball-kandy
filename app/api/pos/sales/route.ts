@@ -5,8 +5,32 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, requireAdminOnly } from "@/lib/server-auth";
 
 interface SaleItemInput {
-  productId: string;
+  productId?: string;
+  // A one-off item not in the catalog (e.g. a repair fee, a lost-item
+  // charge) - the only place this route accepts a client-supplied price,
+  // since it's the cashier typing a deliberate amount at the till, not a
+  // catalog lookup that must stay server-trusted.
+  custom?: { name: string; priceLkr: number };
   quantity: number;
+}
+
+const CUSTOM_PRODUCT_NAME = "Custom Item";
+
+// Finds or creates the one well-known catalog row that every custom sale
+// line is attached to (satisfies the posSaleItems.productId foreign key),
+// without the client ever seeing or choosing a real catalog id for it.
+// shortcut: no unique constraint on products.name, so two requests racing
+// on the very first custom sale could each insert their own row - harmless
+// (each sale just points at whichever one it resolved), upgrade by adding
+// a unique index + onConflictDoNothing if that duplication is ever a problem.
+async function getOrCreateCustomProductId(): Promise<string> {
+  const existing = await db.select().from(products).where(eq(products.name, CUSTOM_PRODUCT_NAME)).limit(1);
+  if (existing.length) return existing[0].id;
+  const created = await db
+    .insert(products)
+    .values({ name: CUSTOM_PRODUCT_NAME, category: "custom", priceLkr: "0", active: false })
+    .returning();
+  return created[0].id;
 }
 
 // POST /api/pos/sales - Ring up a retail/rental sale at the till.
@@ -42,11 +66,36 @@ export async function POST(request: NextRequest) {
 
     const catalog = await db.select().from(products);
     const catalogById = new Map(catalog.map((p) => [p.id, p]));
+    let customProductId: string | null = null;
 
     let totalLkr = 0;
     const lineItems: (typeof posSaleItems.$inferInsert)[] = [];
     for (const item of items) {
-      const product = catalogById.get(item.productId);
+      if (!item.quantity || item.quantity < 1) {
+        return NextResponse.json({ error: "Invalid quantity" }, { status: 400 });
+      }
+
+      if (item.custom) {
+        const { name, priceLkr } = item.custom;
+        if (!name?.trim() || typeof priceLkr !== "number" || !(priceLkr > 0)) {
+          return NextResponse.json({ error: "Invalid custom item" }, { status: 400 });
+        }
+        customProductId ??= await getOrCreateCustomProductId();
+        const lineTotal = priceLkr * item.quantity;
+        totalLkr += lineTotal;
+        lineItems.push({
+          id: crypto.randomUUID(),
+          saleId: id,
+          productId: customProductId,
+          productName: name.trim(),
+          quantity: item.quantity,
+          unitPriceLkr: String(priceLkr),
+          lineTotalLkr: String(lineTotal),
+        });
+        continue;
+      }
+
+      const product = item.productId ? catalogById.get(item.productId) : undefined;
       if (!product) {
         return NextResponse.json({ error: `Unknown product: ${item.productId}` }, { status: 400 });
       }
