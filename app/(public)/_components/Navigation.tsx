@@ -8,10 +8,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, LogOut, CircleUserRound, LayoutDashboard } from "lucide-react";
 import { COURT_NAME } from "@/lib/constants";
 import { supabase } from "@/lib/auth";
-import { useAuthUser } from "@/lib/useAuthUser";
-import { useAdminRole } from "@/lib/useAdminRole";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 import ThemeToggle from "@/components/ThemeToggle";
 import Button from "@/components/ui/Button";
+import UserMenu from "@/components/UserMenu";
 import { cn } from "@/lib/cn";
 
 const SECTIONS = [
@@ -26,9 +26,8 @@ const linkColor = "text-text-muted hover:text-lime-600 dark:hover:text-lime-400"
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
-  const user = useAuthUser();
-  const adminRole = useAdminRole();
-  const isStaff = adminRole === "admin" || adminRole === "staff";
+  const user = useCurrentUser();
+  const isStaff = user?.role === "admin" || user?.role === "staff";
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -100,37 +99,21 @@ export default function Navigation() {
             })}
           </div>
 
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center space-x-2">
+          {/* Desktop CTA - the account avatar sits to the right of Book Now,
+              not inline among plain text links. */}
+          <div className="hidden md:flex items-center space-x-3">
             <ThemeToggle variant="neutral" />
             {user === undefined ? (
               <div className="w-16 h-5" aria-hidden="true" />
-            ) : user ? (
-              <>
-                {isStaff ? (
-                  <Link href="/admin/dashboard" className={cn("flex items-center gap-1.5 font-bold transition-colors px-3", linkColor)}>
-                    <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
-                    Admin Dashboard
-                  </Link>
-                ) : (
-                  <Link href="/dashboard" className={cn("flex items-center gap-1.5 font-bold transition-colors px-3", linkColor)}>
-                    <CircleUserRound className="w-4 h-4" aria-hidden="true" />
-                    My Account
-                  </Link>
-                )}
-                <button onClick={handleLogout} className={cn("flex items-center gap-1.5 font-bold transition-colors px-3", linkColor)}>
-                  <LogOut className="w-4 h-4" aria-hidden="true" />
-                  Logout
-                </button>
-              </>
-            ) : (
+            ) : user === null ? (
               <Link href="/login" className={cn("font-bold transition-colors px-3", linkColor)}>
                 Login
               </Link>
-            )}
+            ) : null}
             <Button href="/book" size="md">
               Book Now
             </Button>
+            {user && <UserMenu user={user} onLogout={handleLogout} />}
           </div>
 
           {/* Mobile Menu Button */}
