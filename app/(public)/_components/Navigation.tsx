@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, LogOut, CircleUserRound, LayoutDashboard } from "lucide-react";
 import { COURT_NAME } from "@/lib/constants";
@@ -29,6 +29,11 @@ export default function Navigation() {
   const user = useCurrentUser();
   const isStaff = user?.role === "admin" || user?.role === "staff";
   const router = useRouter();
+  const pathname = usePathname();
+  const onHome = pathname === "/";
+  // Every section lives on "/" (see app/(public)/page.tsx) - from any other
+  // route, a bare "#id" has nothing to scroll to, so route home first.
+  const sectionHref = (id: string) => (onHome ? `#${id}` : `/#${id}`);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -67,9 +72,9 @@ export default function Navigation() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
-          <Link href="#home" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 rounded-md border-2 border-ink overflow-hidden transition-transform group-hover:scale-105 shrink-0 bg-white">
-              <Image src="/brand/logo.jpg" alt="" width={40} height={40} className="w-full h-full object-cover" priority />
+          <Link href={sectionHref("home")} className="flex items-center space-x-2 group">
+            <div className="w-10 h-10 rounded-md border-2 border-ink overflow-hidden transition-transform group-hover:scale-105 shrink-0 bg-white p-1">
+              <Image src="/brand/logo-icon-square.png" alt="" width={40} height={40} className="w-full h-full object-contain" priority />
             </div>
             <span className="hidden sm:inline font-display text-xl uppercase tracking-tight skew-display text-text-primary">
               {COURT_NAME}
@@ -79,11 +84,11 @@ export default function Navigation() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
             {SECTIONS.map((item) => {
-              const active = activeSection === item.id;
+              const active = onHome && activeSection === item.id;
               return (
                 <Link
                   key={item.id}
-                  href={`#${item.id}`}
+                  href={sectionHref(item.id)}
                   className={cn("relative px-3 py-2 font-bold transition-colors", linkColor)}
                 >
                   {item.label}
@@ -155,7 +160,7 @@ export default function Navigation() {
                 {SECTIONS.map((item) => (
                   <Link
                     key={item.id}
-                    href={`#${item.id}`}
+                    href={sectionHref(item.id)}
                     className="block px-4 py-3 font-bold text-text-muted hover:bg-highlight hover:text-lime-800 dark:hover:text-lime-300 rounded-lg transition-colors"
                     onClick={() => setIsOpen(false)}
                   >

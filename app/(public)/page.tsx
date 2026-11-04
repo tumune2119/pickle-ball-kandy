@@ -206,7 +206,7 @@ const contactFaqs = [
 // throughout the page (see the hero's "Vol. 01" tag).
 function SectionTag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-block bg-ink text-white text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full mb-4 -rotate-1">
+    <span className="inline-block bg-action-lime text-text-on-lime border-2 border-ink text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full mb-4 -rotate-1">
       {children}
     </span>
   );
@@ -300,7 +300,7 @@ export default function Home() {
           </Reveal>
           <div className="grid md:grid-cols-2 gap-10 items-center">
             <Reveal className="relative rounded-lg border-2 border-ink overflow-hidden shadow-[6px_6px_0_var(--color-ink)] aspect-square bg-white">
-              <Image src="/brand/logo.jpg" alt="Pickle Rush logo" fill className="object-contain p-8" />
+              <Image src="/brand/logo-full.png" alt="Pickle Rush logo" fill className="object-contain p-8" />
             </Reveal>
             <Reveal delay={0.1} className="space-y-6">
               <h3 className="text-3xl font-display uppercase">Our Story</h3>

@@ -15,6 +15,7 @@ interface Product {
   category: string;
   priceLkr: string;
   stockCount: number | null;
+  imageUrl: string | null;
   active: boolean;
 }
 
@@ -134,6 +135,10 @@ export default function TillSaleCart() {
                   onClick={() => addToCart(p.id)}
                   className="text-left p-4 rounded-lg border-2 border-ink bg-admin-surface hover:bg-admin-bg active:translate-x-[1px] active:translate-y-[1px] transition-[transform,background-color]"
                 >
+                  {p.imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element -- data: URLs aren't optimizable by next/image
+                    <img src={p.imageUrl} alt="" className="w-full aspect-square rounded object-cover mb-2 border border-admin-border" />
+                  )}
                   <div className="font-bold text-admin-text">{p.name}</div>
                   <div className="text-admin-action font-bold font-mono text-lg">{formatCurrency(Number(p.priceLkr))}</div>
                 </button>

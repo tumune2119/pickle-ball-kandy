@@ -1,10 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Phone, Mail, MessageCircle } from "lucide-react";
 import { COURT_NAME } from "@/lib/constants";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const onHome = usePathname() === "/";
+  // Every section lives on "/" (see Navigation.tsx's identical helper) - a
+  // bare "#id" has nothing to scroll to from any other route.
+  const sectionHref = (id: string) => (onHome ? `#${id}` : `/#${id}`);
 
   return (
     // Intentionally theme-agnostic: a fixed ink/deep-blue band anchors the
@@ -16,8 +23,8 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 rounded-md border-2 border-concrete-100 overflow-hidden shrink-0 bg-white">
-                <Image src="/brand/logo.jpg" alt="" width={32} height={32} className="w-full h-full object-cover" />
+              <div className="w-8 h-8 rounded-md border-2 border-concrete-100 overflow-hidden shrink-0 bg-white p-1">
+                <Image src="/brand/logo-icon-square.png" alt="" width={32} height={32} className="w-full h-full object-contain" />
               </div>
               <h3 className="font-display text-lg uppercase tracking-tight skew-display text-white">{COURT_NAME}</h3>
             </div>
@@ -29,22 +36,22 @@ export default function Footer() {
             <h4 className="font-display uppercase text-white mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#home" className="hover:text-lime-400 transition-colors">
+                <Link href={sectionHref("home")} className="hover:text-lime-400 transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="#about" className="hover:text-lime-400 transition-colors">
+                <Link href={sectionHref("about")} className="hover:text-lime-400 transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="#pricing" className="hover:text-lime-400 transition-colors">
+                <Link href={sectionHref("pricing")} className="hover:text-lime-400 transition-colors">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="#contact" className="hover:text-lime-400 transition-colors">
+                <Link href={sectionHref("contact")} className="hover:text-lime-400 transition-colors">
                   Contact
                 </Link>
               </li>

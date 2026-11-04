@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "@/lib/auth";
+import { getSession, supabase } from "@/lib/auth";
 
 export interface CurrentUser {
   fullName: string;
@@ -18,7 +18,7 @@ export function useCurrentUser(): CurrentUser | null | undefined {
   useEffect(() => {
     let active = true;
 
-    (async () => {
+    const load = async () => {
       const session = await getSession();
       if (!session) {
         if (active) setUser(null);
@@ -39,10 +39,20 @@ export function useCurrentUser(): CurrentUser | null | undefined {
       setUser(
         data.user ? { fullName: data.user.fullName, email: data.user.email, role: data.user.role } : null
       );
-    })();
+    };
+
+    load();
+
+    // Re-fetch on every sign-in/sign-out so the avatar/login link update
+    // immediately instead of needing a page refresh (handleLogout's
+    // supabase.auth.signOut() otherwise left this hook's one-shot state stale).
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      load();
+    });
 
     return () => {
       active = false;
+      listener.subscription.unsubscribe();
     };
   }, []);
 

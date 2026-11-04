@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { name, category, priceLkr, stockCount } = body;
+    const { name, category, priceLkr, stockCount, imageUrl } = body;
 
     if (!name || !category || priceLkr === undefined || priceLkr === null) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
         category,
         priceLkr: String(priceLkr),
         stockCount: stockCount === undefined || stockCount === null ? null : Number(stockCount),
+        imageUrl: imageUrl || null,
       })
       .returning();
 
@@ -63,7 +64,7 @@ export async function PATCH(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { id, name, category, priceLkr, stockCount, active } = body;
+    const { id, name, category, priceLkr, stockCount, active, imageUrl } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Missing product id" }, { status: 400 });
@@ -75,6 +76,7 @@ export async function PATCH(request: NextRequest) {
     if (priceLkr !== undefined) updates.priceLkr = String(priceLkr);
     if (stockCount !== undefined) updates.stockCount = stockCount === null ? null : Number(stockCount);
     if (active !== undefined) updates.active = Boolean(active);
+    if (imageUrl !== undefined) updates.imageUrl = imageUrl || null;
 
     const updated = await db.update(products).set(updates).where(eq(products.id, id)).returning();
 

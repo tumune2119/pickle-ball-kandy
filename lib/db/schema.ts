@@ -225,6 +225,10 @@ export const products = pgTable(
     category: varchar("category", { length: 50 }).notNull(), // 'rental', 'retail', 'membership', 'other'
     priceLkr: numeric("price_lkr", { precision: 10, scale: 2 }).notNull(),
     stockCount: integer("stock_count"), // null = not tracked
+    // A small, pre-resized data: URL (set client-side before upload) rather
+    // than a storage bucket - the catalog is a handful of admin-uploaded
+    // product icons, not user-generated media, so no object storage needed.
+    imageUrl: text("image_url"),
     active: boolean("active").default(true).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`now()`)

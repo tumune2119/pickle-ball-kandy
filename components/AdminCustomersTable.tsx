@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
 import { Input } from "@/components/ui/Input";
 import Skeleton from "@/components/ui/Skeleton";
+import Tooltip from "@/components/ui/Tooltip";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
 interface AdminCustomer {
@@ -66,28 +67,28 @@ export default function AdminCustomersTable() {
       {/* Table */}
       <div className="bg-admin-surface rounded-xl border border-admin-border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full table-fixed">
             <thead className="bg-admin-bg border-b border-admin-border">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[18%]">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[24%]">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[14%]">
                   Phone
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-center text-xs font-bold text-admin-text-muted uppercase w-[10%]">
                   Bookings
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[13%]">
                   Last Booking
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[13%]">
                   Member Since
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[8%]">
                   Actions
                 </th>
               </tr>
@@ -114,30 +115,32 @@ export default function AdminCustomersTable() {
               <RevealGroup as="tbody" className="divide-y divide-admin-border" stagger={0.04}>
                 {filteredCustomers.map((customer) => (
                   <RevealItem key={customer.id} as="tr" y={8} className="hover:bg-admin-bg/60 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-admin-text">{customer.fullName}</td>
-                    <td className="px-6 py-4 text-sm text-admin-text-muted">{customer.email}</td>
-                    <td className="px-6 py-4 text-sm text-admin-text-muted font-mono">
+                    <td className="px-3 py-4 font-semibold text-admin-text truncate">{customer.fullName}</td>
+                    <td className="px-3 py-4 text-sm text-admin-text-muted truncate">{customer.email}</td>
+                    <td className="px-3 py-4 text-sm text-admin-text-muted font-mono truncate">
                       {customer.phoneNumber}
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-3 py-4 text-center">
                       <span className="inline-block bg-admin-bg text-admin-action px-3 py-1 rounded-full font-bold text-sm">
                         {customer.totalBookings}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-admin-text-muted">
+                    <td className="px-3 py-4 text-sm text-admin-text-muted truncate">
                       {customer.lastBooking ? formatDate(customer.lastBooking) : "Never"}
                     </td>
-                    <td className="px-6 py-4 text-sm text-admin-text-muted">
+                    <td className="px-3 py-4 text-sm text-admin-text-muted truncate">
                       {formatDate(customer.createdAt)}
                     </td>
-                    <td className="px-6 py-4">
-                      <a
-                        href={`mailto:${customer.email}`}
-                        className="inline-flex items-center gap-1 text-admin-action hover:text-admin-action-hover font-semibold text-sm transition-colors"
-                      >
-                        <Mail className="w-3.5 h-3.5" aria-hidden="true" />
-                        Email
-                      </a>
+                    <td className="px-3 py-4">
+                      <Tooltip label={`Email ${customer.fullName}`}>
+                        <a
+                          href={`mailto:${customer.email}`}
+                          className="inline-flex p-1.5 text-admin-action hover:text-admin-action-hover transition-colors"
+                          aria-label={`Email ${customer.fullName}`}
+                        >
+                          <Mail className="w-4 h-4" aria-hidden="true" />
+                        </a>
+                      </Tooltip>
                     </td>
                   </RevealItem>
                 ))}

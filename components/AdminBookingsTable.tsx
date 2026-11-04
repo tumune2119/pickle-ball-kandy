@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import Badge, { bookingStatusTone, paymentStatusTone } from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
+import Tooltip from "@/components/ui/Tooltip";
 import { Select } from "@/components/ui/Input";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
@@ -170,34 +171,34 @@ export default function AdminBookingsTable() {
       {/* Table */}
       <div className="bg-admin-surface rounded-xl border border-admin-border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full table-fixed">
             <thead className="bg-admin-bg border-b border-admin-border">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
-                  Booking ID
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[9%]">
+                  ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[16%]">
                   Customer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[9%]">
                   Court
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[14%]">
                   Date & Time
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[7%]">
                   Players
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[11%]">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[11%]">
                   Payment
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-right text-xs font-bold text-admin-text-muted uppercase w-[11%]">
                   Amount
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-admin-text-muted uppercase">
+                <th className="px-3 py-3 text-left text-xs font-bold text-admin-text-muted uppercase w-[12%]">
                   Actions
                 </th>
               </tr>
@@ -224,71 +225,78 @@ export default function AdminBookingsTable() {
               <RevealGroup as="tbody" className="divide-y divide-admin-border" stagger={0.04}>
                 {filteredBookings.map((booking) => (
                   <RevealItem key={booking.id} as="tr" y={8} className="hover:bg-admin-bg/60 transition-colors">
-                    <td className="px-6 py-4 font-mono text-sm font-semibold text-admin-text">
+                    <td className="px-3 py-4 font-mono text-sm font-semibold text-admin-text truncate">
                       {booking.id.slice(0, 8)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-admin-text">
+                    <td className="px-3 py-4 text-sm text-admin-text truncate">
                       {booking.customerName}
                       {booking.isGuest && (
                         <span className="ml-1.5 text-xs text-admin-text-muted">(Guest)</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-admin-text">{booking.courtName}</td>
-                    <td className="px-6 py-4 text-sm text-admin-text">
+                    <td className="px-3 py-4 text-sm text-admin-text truncate">{booking.courtName}</td>
+                    <td className="px-3 py-4 text-sm text-admin-text">
                       <div>{formatDate(booking.bookingDate)}</div>
-                      <div className="text-admin-action font-semibold">
-                        {booking.startTime} - {booking.endTime}
+                      <div className="text-admin-action font-semibold whitespace-nowrap">
+                        {booking.startTime}-{booking.endTime}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-admin-text font-semibold">{booking.numPlayers}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-4 text-sm text-admin-text font-semibold">{booking.numPlayers}</td>
+                    <td className="px-3 py-4">
                       <Badge tone={bookingStatusTone(booking.status)}>
                         {statusLabel[booking.status] ?? booking.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 text-sm">
+                    <td className="px-3 py-4 text-sm">
                       <Badge tone={paymentStatusTone(booking.paymentStatus)}>
                         {paymentLabel[booking.paymentStatus] ?? booking.paymentStatus}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 text-right font-bold text-admin-text">
+                    <td className="px-3 py-4 text-right font-bold text-admin-text">
                       {formatCurrency(booking.amountLkr)}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <Link
-                          href={`/pos/receipt/booking/${booking.id}`}
-                          target="_blank"
-                          className="flex items-center gap-1 text-admin-action hover:text-admin-action-hover font-semibold text-sm transition-colors"
-                        >
-                          <Printer className="w-3.5 h-3.5" aria-hidden="true" />
-                          Print
-                        </Link>
+                    <td className="px-3 py-4">
+                      <div className="flex items-center gap-1.5">
+                        <Tooltip label="Print ticket">
+                          <Link
+                            href={`/pos/receipt/booking/${booking.id}`}
+                            target="_blank"
+                            className="p-1.5 text-admin-action hover:text-admin-action-hover transition-colors"
+                            aria-label="Print ticket"
+                          >
+                            <Printer className="w-4 h-4" aria-hidden="true" />
+                          </Link>
+                        </Tooltip>
                         {booking.status !== "cancelled" &&
                           (booking.checkedInAt ? (
-                            <span className="flex items-center gap-1 text-success-700 dark:text-success-400 font-semibold text-sm">
-                              <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
-                              Checked in
-                            </span>
+                            <Tooltip label="Checked in">
+                              <span className="p-1.5 text-success-700 dark:text-success-400">
+                                <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+                              </span>
+                            </Tooltip>
                           ) : (
-                            <button
-                              onClick={() => handleCheckIn(booking.id)}
-                              disabled={checkingInId === booking.id}
-                              className="flex items-center gap-1 text-admin-text-muted hover:text-admin-action font-semibold text-sm transition-colors disabled:opacity-50"
-                            >
-                              <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                              {checkingInId === booking.id ? "Checking in…" : "Check In"}
-                            </button>
+                            <Tooltip label={checkingInId === booking.id ? "Checking in…" : "Check in"}>
+                              <button
+                                onClick={() => handleCheckIn(booking.id)}
+                                disabled={checkingInId === booking.id}
+                                className="p-1.5 text-admin-text-muted hover:text-admin-action transition-colors disabled:opacity-50"
+                                aria-label="Check in"
+                              >
+                                <UserCheck className="w-4 h-4" aria-hidden="true" />
+                              </button>
+                            </Tooltip>
                           ))}
                         {booking.status !== "cancelled" && (
-                          <button
-                            onClick={() => handleCancel(booking.id)}
-                            disabled={cancellingId === booking.id}
-                            className="flex items-center gap-1 text-danger-700 dark:text-danger-300 hover:text-danger-900 dark:hover:text-danger-100 font-semibold text-sm transition-colors disabled:opacity-50"
-                          >
-                            <X className="w-3.5 h-3.5" aria-hidden="true" />
-                            {cancellingId === booking.id ? "Cancelling…" : "Cancel"}
-                          </button>
+                          <Tooltip label={cancellingId === booking.id ? "Cancelling…" : "Cancel booking"}>
+                            <button
+                              onClick={() => handleCancel(booking.id)}
+                              disabled={cancellingId === booking.id}
+                              className="p-1.5 text-danger-700 dark:text-danger-300 hover:text-danger-900 dark:hover:text-danger-100 transition-colors disabled:opacity-50"
+                              aria-label="Cancel booking"
+                            >
+                              <X className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                          </Tooltip>
                         )}
                       </div>
                     </td>
